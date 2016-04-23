@@ -21,6 +21,7 @@ public class InvertedIndexMapper extends Mapper<Object, Text, Text, IntWritable>
     @Override
     public void map(Object key, Text value, Context context) throws IOException, InterruptedException
     {
+	/*get split from RecordReader*/
 	FileSplit fileSplit = (FileSplit) context.getInputSplit();
 	String fileName = fileSplit.getPath().getName();
 	String temp = new String();
@@ -31,6 +32,8 @@ public class InvertedIndexMapper extends Mapper<Object, Text, Text, IntWritable>
 	    Text word = new Text();
 	    word.set(itr.nextToken() + "#" + fileName);
 	    context.write(word, new IntWritable(1));
+
+	    /*OutputFormat: <word#filename, 1> */
 	}
     }
 

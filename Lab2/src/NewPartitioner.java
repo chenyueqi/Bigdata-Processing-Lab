@@ -19,6 +19,7 @@ public class NewPartitioner extends HashPartitioner<Text, IntWritable>
     public int getPartition(Text key, IntWritable value, int numReduceTasks)
     {
 	String term = new String();
+	/*partitioner according to word instead of <word, filename>*/
 	term = key.toString().split(",")[0];
 	return super.getPartition(new Text(term), value, numReduceTasks);
     }

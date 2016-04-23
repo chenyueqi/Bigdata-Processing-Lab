@@ -24,9 +24,10 @@ public class InvertedIndexReducer extends Reducer<Text, IntWritable, Text, Text>
 	int sum = 0;
 	Text word1 = new Text();
 	Text word2 = new Text();
-	word1.set(key.toString().split("#")[0]);
+	word1.set(key.toString().split("#")[0]);//word
 	String temp = new String();
-	temp = key.toString().split("#")[1];
+	temp = key.toString().split("#")[1];//filename
+
 	for(IntWritable val : values)
 	    sum += val.get();
 
@@ -43,6 +44,8 @@ public class InvertedIndexReducer extends Reducer<Text, IntWritable, Text, Text>
 		out.append(";");
 		cnt += Long.parseLong(p.substring(p.indexOf(",") +1, p.indexOf(">")));
 	    }
+
+	    /*TODO calculate average */
 	    out.append("<total," + cnt + ">.");
 	    if(cnt > 0)
 		context.write(CurrentItem, new Text(out.toString()));
