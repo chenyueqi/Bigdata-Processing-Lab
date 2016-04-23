@@ -18,6 +18,7 @@ import org.apache.hadoop.util.*;
 
 public class InvertedIndexMapper extends Mapper<Object, Text, Text, IntWritable>
 {
+    @Override
     public void map(Object key, Text value, Context context) throws IOException, InterruptedException
     {
 	FileSplit fileSplit = (FileSplit) context.getInputSplit();

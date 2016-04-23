@@ -11,10 +11,11 @@ import java.util.*;
 
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.io.IntWritable;
-import org.apache.hadoop.mapred.lib.HashPartitioner;
+import org.apache.hadoop.mapreduce.lib.partition.HashPartitioner;
 
 public class NewPartitioner extends HashPartitioner<Text, IntWritable>
 {
+    @Override
     public int getPartition(Text key, IntWritable value, int numReduceTasks)
     {
 	String term = new String();

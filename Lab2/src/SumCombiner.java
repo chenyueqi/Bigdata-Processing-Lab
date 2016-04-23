@@ -19,9 +19,7 @@ public class SumCombiner extends Reducer<Text, IntWritable, Text, IntWritable>
     {
 	int sum = 0;
 	for(IntWritable val : values)
-	{
 	    sum += val.get();
-	}
 
 	IntWritable result = new IntWritable();
 	result.set(sum);
