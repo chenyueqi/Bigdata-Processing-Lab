@@ -3,6 +3,7 @@ This repository serves as a series of labs in the course Big Data Processing: Co
 
 ## authors
     Yueqi Chen (Yueqichen.0x0@gmail.com)
+    Wei Liu (liuwei13cs@smail.nju.edu.cn)
 
 ## environment
     hadoop 0.20.205
