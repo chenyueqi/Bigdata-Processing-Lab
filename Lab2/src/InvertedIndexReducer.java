@@ -51,7 +51,7 @@ public class InvertedIndexReducer extends Reducer<Text, IntWritable, Text, Text>
 
 	    /*TODO calculate average */
 	    if(cnt_file > 0)
-		out.append("<average, " + (double)(cnt_word)/(double)cnt_file + ">.");
+		out.insert(0, (double)(cnt_word)/(double)cnt_file + ", ");
 
 	    if(cnt_word > 0)
 		context.write(CurrentItem, new Text(out.toString()));
@@ -78,7 +78,7 @@ public class InvertedIndexReducer extends Reducer<Text, IntWritable, Text, Text>
 	}
 
 	if(cnt_file > 0)
-	    out.append("<average, " + (double)(cnt_word)/(double)(cnt_file) + ">.");
+	    out.insert(0, (double)(cnt_word)/(double)cnt_file + ", ");
 	if(cnt_word > 0)
 	    context.write(CurrentItem, new Text(out.toString()));
 /*
