@@ -31,23 +31,29 @@ public class InvertedIndexReducer extends Reducer<Text, IntWritable, Text, Text>
 	for(IntWritable val : values)
 	    sum += val.get();
 
-	word2.set("<" + temp + "," + sum + ">");
+	word2.set(temp + ":" + sum);
 
 
 	if(!CurrentItem.equals(word1) && (!CurrentItem.equals(" ")))
 	{
-	    StringBuilder out = new StringBuilder();
-	    long cnt = 0;
+	    StringBuffer out = new StringBuffer();
+	    long cnt_word = 0;
+	    long cnt_file = 0;
 	    for(String p:postingList)
 	    {
 		out.append(p);
-		out.append(" ; ");
-		cnt += Long.parseLong(p.substring(p.indexOf(",") + 1, p.indexOf(">")));
+		out.append("; ");
+		long num =  Long.parseLong(p.substring(p.indexOf(":") + 1, p.length()));
+		if(num >0)
+		    cnt_file++;
+		cnt_word += num;
 	    }
 
 	    /*TODO calculate average */
-	    out.append("<total, " + cnt + ">.");
-	    if(cnt > 0)
+	    if(cnt_file > 0)
+		out.append("<average, " + (double)(cnt_word)/(double)cnt_file + ">.");
+
+	    if(cnt_word > 0)
 		context.write(CurrentItem, new Text(out.toString()));
 	    postingList = new ArrayList<String>();
 	}
@@ -57,8 +63,25 @@ public class InvertedIndexReducer extends Reducer<Text, IntWritable, Text, Text>
 
     public void cleanup(Context context) throws IOException, InterruptedException
     {
-	StringBuilder out = new StringBuilder();
+	StringBuffer out = new StringBuffer();
 
+	long cnt_word = 0;
+	long cnt_file = 0;
+	for(String p:postingList)
+	{
+	    out.append(p);
+	    out.append(" ; ");
+	    long num =  Long.parseLong(p.substring(p.indexOf(":") + 1, p.length()));
+	    if(num >0)
+		cnt_file++;
+	    cnt_word += num;
+	}
+
+	if(cnt_file > 0)
+	    out.append("<average, " + (double)(cnt_word)/(double)(cnt_file) + ">.");
+	if(cnt_word > 0)
+	    context.write(CurrentItem, new Text(out.toString()));
+/*
 	long cnt = 0;
 	for(String p:postingList)
 	{
@@ -70,5 +93,6 @@ public class InvertedIndexReducer extends Reducer<Text, IntWritable, Text, Text>
 	out.append("<total, " + cnt + ">.");
 	if(cnt > 0)
 	    context.write(CurrentItem, new Text(out.toString()));
+*/
     }
 }
