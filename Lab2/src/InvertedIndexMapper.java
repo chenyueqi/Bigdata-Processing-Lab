@@ -6,6 +6,7 @@
  * Time: 2016/4/22 21:18
 */
 
+
 import java.io.IOException;
 import java.util.*;
 
@@ -13,7 +14,7 @@ import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Mapper;
-import org.apache.hadoop.mapred.FileSplit;
+import org.apache.hadoop.mapreduce.lib.input.FileSplit;
 import org.apache.hadoop.util.*;
 
 public class InvertedIndexMapper extends Mapper<Object, Text, Text, IntWritable>

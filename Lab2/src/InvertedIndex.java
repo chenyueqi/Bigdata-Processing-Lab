@@ -22,6 +22,8 @@ public class InvertedIndex
 {
     public static void main(String[] args) throws Exception
     {
+	System.out.println("input = " + args[0] + ", output = " + args[1]);
+
 	/*environment configuration*/
 	Configuration conf = new Configuration();
 

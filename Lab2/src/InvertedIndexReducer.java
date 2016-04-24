@@ -41,12 +41,12 @@ public class InvertedIndexReducer extends Reducer<Text, IntWritable, Text, Text>
 	    for(String p:postingList)
 	    {
 		out.append(p);
-		out.append(";");
-		cnt += Long.parseLong(p.substring(p.indexOf(",") +1, p.indexOf(">")));
+		out.append(" ; ");
+		cnt += Long.parseLong(p.substring(p.indexOf(",") + 1, p.indexOf(">")));
 	    }
 
 	    /*TODO calculate average */
-	    out.append("<total," + cnt + ">.");
+	    out.append("<total, " + cnt + ">.");
 	    if(cnt > 0)
 		context.write(CurrentItem, new Text(out.toString()));
 	    postingList = new ArrayList<String>();
@@ -67,7 +67,7 @@ public class InvertedIndexReducer extends Reducer<Text, IntWritable, Text, Text>
 	    cnt += Long.parseLong(p.substring(p.indexOf(",") +1, p.indexOf(">")));
 
 	}
-	out.append("<total," + cnt + ">.");
+	out.append("<total, " + cnt + ">.");
 	if(cnt > 0)
 	    context.write(CurrentItem, new Text(out.toString()));
     }
