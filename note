@@ -2,7 +2,7 @@
 
 ================= 关于编译 ========================
 
-使用命令 javac -classpath ${hadoop-core-0.20.205.0.jar} -d ./ ./*.java 其中${filename}表示filename文件的目录，注意根据自己情况修改，下同。建议添加在必要情况下添加爱 -Xdiag:verbose 命令获得更多的编译信息
+使用命令 javac -classpath ${hadoop-core-0.20.205.0.jar} -d ./ ./*.java 其中${filename}表示filename文件的目录，注意根据自己情况修改，下同。建议添加在必要情况下添加 -Xdiag:verbose 命令获得更多的编译信息
 使用命令 jar cf Jarname.jar *.class 在当前目录生成一个Jarname.jar包
-使用命令 export HADOOP_CLASSPATH = ./Jarname.jar
-使用命令 hadoop jar Jarname.jar <主类名> [参数]
+使用命令 export HADOOP_CLASSPATH=./Jarname.jar
+使用命令 hadoop jar Jarname.jar <主类名> [参数] 在本地运行

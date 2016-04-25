@@ -1,0 +1,87 @@
+本笔记基于hadoop 2.7.2(Yarn: Yet Another Resource Negotiator) 
+
+======================= 为什么要使用Yarn ===================
+https://developer.yahoo.com/blogs/hadoop/next-generation-apache-hadoop-mapreduce-3061.html
+Reliablility
+Availability
+Scalability
+
+Support for alternate programming paradigms to MapReduce
+Support for shot-lived services
+
+********************** Yarn在Hadoop基础上的改进 **************
+https://www.ibm.com/developerworks/cn/opensource/os-cn-hadoop-yarn/
+
+重构的基本思想是JobTracker的两个主要功能分离， 即资源管理  和 任务调度/监控
+ResourceManager 全局管理，接受JobSummiter提交的作业，调度，启动每个Job所属的ApplicationMaster。 ResourceManager中存在一个ApplicaitonMasters，检测ApplicationMaster 的运行状况。
+每个节点上存在NodeManager作为代理，监控应用程序的资源使用情况，负责容器的维护， 向RM保持heartbeat
+ApplicationMaster 负责一个 Job 生命周期内的所有工作，可以运行在 ResourceManager 以外的机器上。承担Hadoop JobTracker中的监控Job下的tasks的运行情况的监控。
+
+1. 与Hadoop 中的JobTracker相比， RM的资源消耗大大减少，让监测每个Job子任务的状态的程序分布式化
+2. ApplicationMaster是一个可变部分，用户也可以自己写，
+3. 资源划分更加细粒度
+4. 容器作为资源隔离
+
+======================= 关于配置的问题 ========================
+https://www.ibm.com/developerworks/cn/opensource/os-cn-hadoop-yarn/
+
+JAVA_HOME全局变量 $VARN_INSTALL/etc/hadoop/haodoop-env.sh
+		  $VARN_INSTALL/etc/hadoop/yarn-env.sh
+
+$YARN_INSTALL/etc/hadoop
+
+*********************** core-site.xml *************************
+hadoop.tmp.dir 同Hadooea
+fs.defaultFS 同Hadoop中fs.default.name
+
+*********************** hdfs-site.xml *************************
+dfs.namenode.name.dir 同Hadoop中dfs.name.dir
+dfs.datanode.data.dir 同Hadoop中dfs.data.dir
+dfs.replication 同Hadoop
+
+*********************** mapred-site.xml.template ***************
+mapred-site.xml.template重命名为mapred-site.xml
+mapreduce.framework.name Yarn支持第三方MapReuce开发框架以支持非Yarn架构，通常情况下这个配置的值都设置为yarn，如果没有配置这项，那么提交的Yarn job只会运行在locale模式，而不是分布式模式
+
+*********************** yarn-site.xml **************************
+http://www.cloudera.com/documentation/enterprise/5-3-x/topics/cdh_ig_yarn_cluster_deploy.html#topic_11_4_2_unique_1
+
+yarn.nodemanager.aux-services  Shuffle service that needs to be set for Map Reduce applications
+
+
+
+======================== HDFS的使用 ============================
+
+************************ HDFS命令客户端操作 ********************
+因为很多命令已经在hadoop_learn/note中说明，所以这里将关注命令的不同
+hdfs dfs -ls -R 
+
+======================== 启动Yarn ===============================
+
+第一次启动：
+$bin/hdfs namenode -format
+
+先行启动hdfs 
+$sbin/start-dfs.sh
+
+web interface NameNode: http://localhost:50070  //好像不行
+
+$bin/hdfs dfs -mkdir /user
+$bin/hdfs dfs -mkdir /user/<username>
+
+$sbin/start-yarn.sh
+
+web interface for the RM(ResourceManager): http://localhost:8088/
+
+$sbin/stop-yarn.sh 关闭
+
+
+========================== 建议 ====================================
+碰到进程打不开的情况最直接粗暴的做法是hdfs namenode -format 然后删除所有的日志和本地依赖文件
+
+问题：
+在关闭yarn 的时候 显示 no proxyserver to stop 这个好像在单机版的yarn中是正常的, tasktracker,和datanode 的停止是通过调用hadoop-daemons来完成的。Hadoop-daemon实质上是ssh到每一个slave去执行一个当地的hadoop- daemon命令，比如：hadoop-daemon stop datanoade。单机版里面没有集群
+在启动了hdfs之后 通过web interface 发现50070端口打不开
+
+为什么yarn能执行DAG任务
+Apache Pig 和Apache Tez 通过map  reduce 同步障的组合就能实现DAG
