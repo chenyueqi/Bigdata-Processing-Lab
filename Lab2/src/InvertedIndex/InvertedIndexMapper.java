@@ -9,6 +9,7 @@
 
 import java.io.IOException;
 import java.util.*;
+import java.util.regex.*;
 
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.io.IntWritable;
@@ -24,7 +25,11 @@ public class InvertedIndexMapper extends Mapper<Object, Text, Text, IntWritable>
     {
 	/*get split from RecordReader*/
 	FileSplit fileSplit = (FileSplit) context.getInputSplit();
-	String fileName = fileSplit.getPath().getName();
+
+	Pattern p = Pattern.compile("(((\\.txt)|(\\.TXT))(\\.segmented))|(\\.)");
+	Matcher m = p.matcher(fileSplit.getPath().getName());
+	String fileName = m.replaceAll("");
+
 	String temp = new String();
 	String line = value.toString();
 	StringTokenizer itr = new StringTokenizer(line);

@@ -49,7 +49,6 @@ public class InvertedIndexReducer extends Reducer<Text, IntWritable, Text, Text>
 		cnt_word += num;
 	    }
 
-	    /*TODO calculate average */
 	    if(cnt_file > 0)
 		out.insert(0, (double)(cnt_word)/(double)cnt_file + ", ");
 
@@ -81,18 +80,5 @@ public class InvertedIndexReducer extends Reducer<Text, IntWritable, Text, Text>
 	    out.insert(0, (double)(cnt_word)/(double)cnt_file + ", ");
 	if(cnt_word > 0)
 	    context.write(CurrentItem, new Text(out.toString()));
-/*
-	long cnt = 0;
-	for(String p:postingList)
-	{
-	    out.append(p);
-	    out.append(";");
-	    cnt += Long.parseLong(p.substring(p.indexOf(",") +1, p.indexOf(">")));
-
-	}
-	out.append("<total, " + cnt + ">.");
-	if(cnt > 0)
-	    context.write(CurrentItem, new Text(out.toString()));
-*/
     }
 }
