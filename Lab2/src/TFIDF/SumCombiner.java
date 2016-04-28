@@ -3,7 +3,7 @@
  * Project Name: Inverted Index Table for Hadoop (Lab2)
  * Group Name: What the f**k
  * Created: Yueqi Chen (Yueqichen.0x0@gmail.com)
- * Time: 2016/4/22/21:36
+ * Time: 2016/4/28 19:00
 */
 
 import java.io.IOException;
@@ -25,6 +25,6 @@ public class SumCombiner extends Reducer<Text, IntWritable, Text, IntWritable>
 	result.set(sum);
 	context.write(key, result);
 
-	/*OutputFormat: <word#filename, wordnumber>*/
+	/*OutputFormat: <word#author#filename, wordnumber>*/
     }
 }
