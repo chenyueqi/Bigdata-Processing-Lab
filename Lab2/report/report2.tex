@@ -11,6 +11,10 @@
 \usepackage{listings} 
 \usepackage{enumitem}
 \usepackage{algorithm}
+\usepackage{amsmath} 
+\usepackage{algpseudocode}
+\graphicspath{{figs/}}
+\floatname{algorithm}{Class} 
 \begin{document}
 
 \setcounter{page}{1}
@@ -122,7 +126,8 @@ Zip Code, China}
 \noindent
 本次实验的本地开发与测试环境如下：\\
 \begin{center}
-\includegraphics[height = 2.5cm]{2.png}
+\includegraphics[height = 2.5cm]{2.png}\\
+fig. 开发与测试环境
 \end{center}
 本次实验，我们完成了三个MapReduce任务的编写： (1)带词频属性的文档倒排算法. (2)对每个词语的平均出现次数进行全局排序. (3)为每位作家、计算每个词语的TF-IDF。
 同时，我们也初步熟悉了集群的使用与在集群上执行任务的方法。\\下面几节我将详述实验的设计、测试与运行的结果。
@@ -141,24 +146,83 @@ Zip Code, China}
 2. Combine过程： 经过map方法处理后，Combine过程将key值相同的value值累加，得到一个词语在文档中的词频。\\
 3. Reduce过程： 经过上述的两个过程后，Reduce过程将相同的词语的value值与词频属性组合成倒排引索文件的格式。\\
 \\
-Map,Reduce各阶段的K,V类型见下表：
+MapReduce各阶段的K,V类型见下表：
 \begin{center}
 \includegraphics[height=2.6cm]{0.png}
 \end{center}
-\subsubsection{Map与Reduce的伪代码}
+\subsubsection{相关伪代码}
 \noindent
-\textbf{Map:}
-\begin{center}
-\includegraphics[height=3.5cm]{1.png}
-\end{center}
-\textbf{Reduce：}
-\begin{center}
-\includegraphics[height = 6cm]{3.png}
-\end{center}
+\textbf{Mapper:}
+\begin{algorithm}[H]
+	{\bfseries Input :}~小说文档\\
+	{\bfseries Output :}~键值对（词语\#文档id, 词频）
+	\caption{$class~Mapper$}
+	\begin{algorithmic}[1]
+    	\Procedure {Map}{doc\_id j,doc d}
+    	\State $F \leftarrow new AssociativeArray$
+    	\For{$\bm{all}$ term $t$ in doc $d$ do}
+    	\State $F\{t\} \leftarrow F\{t\} + 1$
+    	\EndFor
+    	\For{$\bm{all}$ term $t \in F$ do}
+    	\State Emit($(pair<t,j>,frequency F\{t\})$)
+    	\EndFor
+    \EndProcedure
+  \end{algorithmic}
+\end{algorithm}
+\noindent
+\textbf{Combiner:}
+\begin{algorithm}[H]
+	{\bfseries Input :}~键值对（词语\#文档id, 词频）\\
+	{\bfseries Output :}~键值对（词语\#文档id, 词频）
+	\caption{$class~Combiner$}
+	\begin{algorithmic}[1]
+    	\Procedure {Reduce}{Text t, int value}
+    	\State $Sum = 0$
+    	\For{$\bm{all}$ value $val$ in Text $t$ do}
+    	\State $Sum \leftarrow Sum + val$
+    	\EndFor
+    	\State Emit$(t, Sum)$
+    \EndProcedure
+  \end{algorithmic}
+\end{algorithm}
+\noindent
+\textbf{NewPartitioner:}
+\begin{algorithm}[H]
+	\caption{$class~NewPartitioner$}
+	\begin{algorithmic}[1]
+    	\Procedure {getPartition}{Text key, int value, int NumReduceTasks}
+    	\State ~$term \leftarrow key.split("\#")[0]$\\
+    	~~~~~~~\Return super.getPartition(term, value, NumReduceTasks)
+    \EndProcedure
+  \end{algorithmic}
+\end{algorithm}
+\noindent
+\textbf{Reducer：}
+\begin{algorithm}[H]
+	{\bfseries Input :}~Combiner的结果\\
+	{\bfseries Output :}~[词语]~平均出现次数~小说名: 词频
+	\caption{$class~Reducer$}
+	\begin{algorithmic}[1]
+    	\Procedure {Setup}{~}
+    		\State $t_{prev} \leftarrow \emptyset$
+    		\State $P \leftarrow new PostingsList$
+    	\EndProcedure
+    	\Procedure {Reduce}{tuple$<t,n>, tf [f]$}
+    		\State if $t \neq t_{prev}$ \^{} $t_{prev} \neq \emptyset$ then
+    		\State ~~~~~Emit($t_{prev},P$)
+    		\State ~~~~~$P$.Reset()
+    		\State $P$.Add($<n,f>$)
+    		\State $t_{prev} \leftarrow t$
+    	\EndProcedure
+    	\Procedure {Close}{~}
+    		\State Emit$(t,P)$
+    	\EndProcedure
+  	\end{algorithmic}
+\end{algorithm}
 \subsection{对词语出现次数进行全局排序}
 \subsubsection{任务设计思路}
 \noindent
-对词语出现次数进行全局排序是基于上面带词频属性的倒排索引的输出结果来操作的，将上面的输出按照平均出现次数由小到大进行排列。为完成这个任务，我们设计了ResultSort与ResultSortMapper两个类。该任务中，Mapper使用ResultSortMapper类,Paritioner与Reducer均使用默认类。\\
+对词语出现次数进行全局排序是基于上面带词频属性的倒排索引的输出结果来操作的，将上面的输出按照平均出现次数由小到大进行排列。为完成这个任务，我们设计了ResultSort与ResultSortMapper两个类。该任务中，Mapper使用ResultSortMapper类,Paritioner\\与Reducer均使用默认类。\\
 \\本任务的Map与Reduce设计如下：\\
 1. Map过程： 从输入数据中使用字符串相关处理函数拆分出每个词语的平均出现次数作为key，原本的记录作为value。\\
 2. Reduce过程： 将reduce task数目设为1，此时只有一个Reducer，也就是只有一个Partitioner，那么所有Map的输出都会经过一个Partitioner到一个Reducer里，在一个Reducer里会自动根据key的值即平均出现次数来排序，从而实现排序的目标，此时不会对每个键值对做任何具体的操作。\\
@@ -166,26 +230,119 @@ Map,Reduce各阶段的K,V类型见下表：
 \begin{center}
 \includegraphics[height=2.6cm]{14.png}
 \end{center}
-\subsubsection{Map的伪代码}
+\subsubsection{相关伪代码}
 \noindent
-\textbf{Map的伪代码如下:}
-\begin{center}
-\includegraphics[height=3.5cm]{1.png}
-\end{center}
+\textbf{Mapper的伪代码如下:}
+\begin{algorithm}[H]
+	{\bfseries Input :}~倒排索引记录\\
+	{\bfseries Output :}~键值对（平均出现次数， 倒排索引记录）
+	\caption{$class~Mapper$}
+	\begin{algorithmic}[1]
+    	\Procedure {Map}{InvertedIndexRecord record}
+    	\State $average \leftarrow Word frequency in record$
+    	\State Emit($average, record$)
+    \EndProcedure
+  \end{algorithmic}
+\end{algorithm}
 \subsection{为每位作家、计算每个词语的TF-IDF}
 \subsubsection{任务设计思路}
-TBD.
-\subsubsection{Map与Reduce伪代码}
-TBD.
-
+\noindent
+对于TF-IDF计算，我们在一定程度上借鉴了InvertedIndex的设计思想。\\
+为完成TFIDF任务我们共设计了五个类： TFIDF, TFIDFMapper, TFIDFReducer, NewPartitioner, SumCombiner.\\
+\\TFIDF是主类，负责启动配置作业，提交作业与获得完成结果的过程。\\NewParitioner类是自定义的patitioner。类似于InvertedIndex，由于在parition时要根据键的一部分作为依据进行分区选择reducer才能获得正确结果，因而我们重新设计了这个paritioner。
+\\TFIDFMapper, TFIDFReducer, SumCombiner分别为Map,Reduce与Combine类。
+\\下面我将叙述Map与Reduce的设计思路：
+\\1. Map过程： Map过程首先分析输入的(key,value)对，即文档id与具体文档，使用java的字符串处理函数得到索引中需要的信息：词语，作者，小说名。从而得到键值对：~~key：(词语\#作者\#小说名)(使用\#便于后面的切割)~与~value（即词语出现次数）：1。\\
+2. Combine过程： 经过map方法处理后，Combine过程将key值相同的value值累加，得到一个词语在文档中的词频。\\
+3. Parition过程：将key中的(词语\#小说名)部分切割出来，以此为依据进行分区选择Reducer。\\
+4. Reduce过程： 经过上述的两个过程后，Reduce过程将相同的词语与作者的value值与词频属性组合，从而计算出TF值与IDF值，将作者姓名，词语与TF值、IDF值组合成一条记录输出。\\
+\\
+MapReduce各阶段的K,V类型见下表：
+\begin{center}
+\includegraphics[height=2.4cm]{15.png}
+\end{center}
+\subsubsection{相关伪代码}
+\noindent
+\textbf{Mapper:}
+\begin{algorithm}[H]
+	{\bfseries Input :}~小说文档\\
+	{\bfseries Output :}~键值对（词语\#文档\#小说名, 词频）
+	\caption{$class~Mapper$}
+	\begin{algorithmic}[1]
+    	\Procedure {Map}{doc\_id j,doc d}
+    	\State $author \leftarrow j.split()$
+    	\State $doc\_name \leftarrow j.split()$
+    	\State $F \leftarrow new AssociativeArray$
+    	\For{$\bm{all}$ term $t$ in doc $d$ do}
+    	\State $F\{t\} \leftarrow F\{t\} + 1$
+    	\EndFor
+    	\For{$\bm{all}$ term $t \in F$ do}
+    	\State Emit($(pair<t,author,doc\_name>,frequency F\{t\})$)
+    	\EndFor
+    \EndProcedure
+  \end{algorithmic}
+\end{algorithm}
+\noindent
+\textbf{Combiner:}
+\begin{algorithm}[H]
+	{\bfseries Input :}~键值对（词语\#作者\#小说名, 词频）\\
+	{\bfseries Output :}~键值对（词语\#作者\#小说名, 词频）
+	\caption{$class~Combiner$}
+	\begin{algorithmic}[1]
+    	\Procedure {Reduce}{Text t, int value}
+    	\State $Sum = 0$
+    	\For{$\bm{all}$ value $val$ in Text $t$ do}
+    	\State $Sum \leftarrow Sum + val$
+    	\EndFor
+    	\State Emit$(t, Sum)$
+    \EndProcedure
+  \end{algorithmic}
+\end{algorithm}
+\noindent
+\textbf{NewPartitioner:}
+\begin{algorithm}[H]
+	\caption{$class~NewPartitioner$}
+	\begin{algorithmic}[1]
+    	\Procedure {getPartition}{Text key, int value, int NumReduceTasks}
+    	\State ~$word \leftarrow key.split("\#")[0]$
+    	\State ~$author\_name \leftarrow key.split("\#")[1]$
+    	\State ~$term \leftarrow word + author\_name$\\
+    	~~~~~~~\Return super.getPartition(term, value, NumReduceTasks)
+    \EndProcedure
+  \end{algorithmic}
+\end{algorithm}
+\noindent
+\textbf{Reducer：}
+\begin{algorithm}[H]
+	{\bfseries Input :}~Combiner的结果key与value\\
+	{\bfseries Output :}~[作者，词语]~~TF-IDF
+	\caption{$class~Reducer$}
+	\begin{algorithmic}[1]
+    	\Procedure {Reduce}{tuple$<t,author,doc\_name>, tf [f]$}
+    		\State TF calculate
+    		\State if $t \neq t_{prev}$ \^{} $t_{prev} \neq \emptyset$ then
+    		\State ~~~~~~the number of files count
+    		\State ~~~~~~IDF calculate
+    		\State ~~~~~~Emit($t_{prev},P$)
+    		\State ~~~~~~$P$.Reset()
+    		\State $P$.Add($<author,TF,IDF>$)
+    		\State $t_{prev} \leftarrow t$
+    	\EndProcedure
+    	\Procedure {Close}{~}
+    		\State Emit$(t,P)$
+    	\EndProcedure
+  	\end{algorithmic}
+\end{algorithm}
 \section{实验测试与运行结果}
 \noindent
 \subsection{JAR包执行方式说明}
 \noindent
-1. 首先使用scp指令将jar包传送到服务器。\\
-2. 使用ssh登录到服务器\\
-3. 使用hadoop jar InvertedIndex.jar /data/wuxia\_novels InvertedIndexoutput指令执行InvertedIndex.jar\\
-3. 使用hadoop jar ResultSort.jar InvertedIndexoutput指令以上面的执行结果为输入数据来执行ResultSort.jar
+1. 使用IDE或者javac指令进行编译，导出各个jar文件\\
+2. 使用scp指令将jar包传送到服务器。\\
+3. 使用ssh登录到服务器\\
+4. 使用hadoop jar InvertedIndex.jar InvertedIndex /data/wuxia\_novels InvertedIndexoutput指令执行InvertedIndex.jar\\
+5. 使用hadoop jar ResultSort.jar ResultSort InvertedIndexoutput ResultSortoutput指令以上面的执行结果为输入数据来执行ResultSort.jar\\
+6. 使用hadoop jar TFIDF.jar TFIDF /data/wuxia\_novels TFIDFoutput指令执行TFIDF.jar
 \subsection{实验运行结果展示}
 \noindent
 我们的程序均首先在本地做了简单的测试后提交到集群进行运行。\\
@@ -208,6 +365,13 @@ TBD.
 \includegraphics[height = 7.5cm]{7.png}
 \end{center}
 
+\item 为每位作家、每个词语计算TF-IDF值的任务的运行结果：
+该任务的输出结果在HDFS上的存放路径为：hdfs://master01:9000/user/2016st21/Lab2/TFIDFoutput .\\
+该任务在集群上对全部数据集运行的结果的部分截图如下（输出格式为:~[作家] TAB 词语,~~TF值,~~IDF值）：
+\begin{center}
+\includegraphics[height = 7cm]{19.png}
+\end{center}
+
 \item “江湖”、“风雪”两个词语的输出结果如下：
 \begin{center}
 \includegraphics[height = 10cm]{8.png}\\
@@ -215,16 +379,19 @@ TBD.
 ~\\ \includegraphics[height = 3.8cm]{9.png}\\
 “风雪”的输出结果
 \end{center}
+从上面的结果可以看到，不出意料地江湖基本出现在了所有的武侠小说之中，正所谓“人在江湖，身不由己”。
 \end{itemize}
 本实验在集群上执行MapReduce Job后获得的执行报告如下：
 \begin{itemize}[leftmargin=*]
 \item 在集群All Application（ http://114.212.190.91:8088/ ） 的WebUI页面中查看Job的执行状态的截图如下：\\
 \begin{center}
-\includegraphics[height = 8cm]{10.png}
+\includegraphics[height = 9cm]{10.png}
+\includegraphics[height = 2.5cm]{16.png}
 \end{center}
 \item 在WebUI页面（http://114.212.190.91:19888/jobhistory）找到对应的job如下
 \begin{center}
 \includegraphics[height = 5cm]{11.png}
+\includegraphics[height = 2.2cm]{17.png}
 \end{center}
 \item 根据Job ID链接进入Job详细页面，几个job的详细信息如下所示。
 \begin{itemize}[leftmargin=*]
@@ -237,15 +404,28 @@ TBD.
 \begin{flushleft}
 \includegraphics[height = 14cm]{13.png}
 \end{flushleft}
+\item TFIDF
+\begin{flushleft}
+\includegraphics[height = 14cm]{18.png}
+\end{flushleft}
 \end{itemize}  
-
 \end{itemize}
-\section{实验中遇到的问题与解决方案}
-
+\subsection{查看实验结果后得出的一些结论}
+\noindent
+根据倒排索引得出来的结果，我们不难发现武侠小说中关于词频的一些规律：
+\begin{itemize}
+\item	纯阿拉伯数字类出现的较多，是最普遍的，这个毋庸置疑
+\item	时间和物质量词类因为小说的不同，自然出现频率低，具有独占性，对于搜索和定位来说是较优的关键字。
+\item	出现了一些英文字母和单词，按常理来说中国的武侠小说是不应该含西文的。不过考虑到这些小说是网上下载的资源，因为大部分应该都是下载的链接信息或者出处信息。
+\item	统计结果中出现的四字成语、古文俗语较多，频率大，这个不难看出小说行文的文采与流畅之处，毕竟都是大师作品，不是一些烂俗的网络小说。
+\item	人名、地名等唯一性的词语频率较低，正常现象。
+\item	的、地、得等助词出现的频率最高，符合汉语的表达习惯。
+\end{itemize}
 \section{实验总结}
+\noindent
 本次实验是大数据处理综合实验的第二次实验，在这次实验中我们完成了三个MapReduce任务的编写： (1)带词频属性的文档倒排算法. (2)对每个词语的平均出现次数进行全局排序. (3)为每位作家、计算每个词语的TF-IDF。通过本次实验，我们小组的人都对MapReduce算法设计与编程有了一定的了解，同时进一步加深了对前面所学的Hadoop MapReduce基本构架的理解。\\
-\\这次实验各个任务中最主要的问题就是Map与Reduce过程的设计与(key,value)键值对类型的确定。在正确确定了键值对的类型转换过程后，整个编程任务的完成就变得比较容易了。此外，在具体实现时，我们更进一步的了解了java字符串相关的操作函数。灵活使用这些函数，我们也得以方便地从输入文本与文件名中分割出想要的信息，例如作者的姓名与各个文件名。\\
-\\本次实验是我们第一次深入的了解Hadoop MapReduce的算法设计与程序的编写和运行，整体完成较为顺利，也为后面的实验打下了较好的基础。
+\\这次实验各个任务中最主要的问题就是Map与Reduce过程的设计与(key,value)键值对类型的确定。在实验中，为确定Map与Reduce的设计与各个过程中键值对的类型转换过程，我们查阅了课本课件等相关资料，也在一起进行了一些讨论。在较好的确定各个过程key与value的类型及转换过程后，整个编程任务的完成就变得比较容易了。此外，在具体实现时，我们更进一步的了解了java字符串相关的操作函数。灵活使用这些函数，我们也得以方便地从输入文本与文件名中分割出想要的信息，例如作者的姓名与各个文件名。\\
+\\本次实验是我们第一次较为深入地了解Hadoop MapReduce的算法设计与程序的编写和运行，整体完成较为顺利，也为后面的实验打下了较好的基础。
 \vspace{6mm}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  参考文献
@@ -254,8 +434,7 @@ TBD.
 \begin{thebibliography}{99}
 %\setlength{\parskip}{0pt}  %段落之间的竖直距离
 \addtolength{\itemsep}{-0.8 em} % 缩小参考文献间的垂直间距
-  \bibitem{Art} 作者. 文章题目[J]. {\kaishu 期刊名称}, 年份, {\bf 卷号(期数)}: 起始页码.
-  \bibitem{Book} 作者. {\kaishu 书名}[M]. 出版地: 出版社, 年份.
+  \bibitem{Book} 黄宜华. {\kaishu 深入理解大数据~大数据处理与编程实践}[M]. 北京: 机械工业出版社, 2014.7.
   \bibitem{Book-part} 作者. {\kaishu 章节名}[M]// 编者. {\kaishu 书名}. 出版地: 出版社, 年份: 起始页码.
   \bibitem{Conference} 作者. 文章题目[C]// 编者. {\kaishu 会议论文集名}. 出版地: 出版社, 年份: 起始页码.
   \bibitem{Wangl2000} Reckdahl K. {\it Using Import graphics in \LaTeX2e}[M]. 王磊, 译. [出版地不详]: [出版社不详], 2000.
