@@ -59,15 +59,15 @@ public class TFIDFReducer extends Reducer<Text, IntWritable, Text, Text>
 		out.append(word + ", ");
 		out.append(cnt_word + ", ");
 		if(author.equals("卧龙生"))
-		    out.append(Math.log(54/(cnt_file + 1)));
+		    out.append(Math.log((double)54/(double)(cnt_file + 1)));
 		else if(author.equals("古龙"))
-		    out.append(Math.log(70/(cnt_file + 1)));
+		    out.append(Math.log((double)70/(double)(cnt_file + 1)));
 		else if(author.equals("李凉"))
-		    out.append(Math.log(41/(cnt_file + 1)));
+		    out.append(Math.log((double)41/(double)(cnt_file + 1)));
 		else if(author.equals("梁羽生"))
-		    out.append(Math.log(38/(cnt_file + 1)));
+		    out.append(Math.log((double)38/(double)(cnt_file + 1)));
 		else if(author.equals("金庸"))
-		    out.append(Math.log(15/(cnt_file + 1)));
+		    out.append(Math.log((double)15/(double)(cnt_file + 1)));
 	    }
 
 	    if(cnt_word > 0 && CurrentItem.toString().split("#").length == 2)
@@ -99,15 +99,15 @@ public class TFIDFReducer extends Reducer<Text, IntWritable, Text, Text>
 	    out.append(word + ", ");
 	    out.append(cnt_word + ", ");
 	    if(author.equals("卧龙生"))
-		out.append(Math.log(54/(cnt_file + 1)));
+		out.append(Math.log((double)54/(double)(cnt_file + 1)));
 	    else if(author.equals("古龙"))
-		out.append(Math.log(70/(cnt_file + 1)));
+		out.append(Math.log((double)70/(double)(cnt_file + 1)));
 	    else if(author.equals("李凉"))
-		out.append(Math.log(41/(cnt_file + 1)));
+		out.append(Math.log((double)41/(double)(cnt_file + 1)));
 	    else if(author.equals("梁羽生"))
-		out.append(Math.log(38/(cnt_file + 1)));
+		out.append(Math.log((double)38/(double)(cnt_file + 1)));
 	    else if(author.equals("金庸"))
-		out.append(Math.log(15/(cnt_file + 1)));
+		out.append(Math.log((double)15/(double)(cnt_file + 1)));
 	}
 
 	if(cnt_word > 0 && CurrentItem.toString().split("#").length == 2)
