@@ -170,49 +170,50 @@ fig. 开发与测试环境
 	{\bfseries Output :}~键值对（词语\#文档名, 词频）
 	\caption{$class~Mapper$}
 	\begin{algorithmic}[1]
-    	\Procedure {Map}{doc\_id j,doc d}
-    	\State $F \leftarrow new AssociativeArray$
-    	\For{$\bm{all}$ term $t$ in doc $d$ do}
-    	\State $F\{t\} \leftarrow F\{t\} + 1$
-    	\EndFor
-    	\For{$\bm{all}$ term $t \in F$ do}
-    	\State Emit($(pair<t,j>,frequency F\{t\})$)
+    	\Procedure {Map}{Object key, Text line}
+    	\State 获得文件名为fileName
+    	\For{$\bm{all}$ term $t$ $\bm{in}$ line $l$}
+    	\State Emit($t\#fileName, one$)
     	\EndFor
     \EndProcedure
   \end{algorithmic}
 \end{algorithm}
+
 \noindent
 \textbf{Combiner:}
 \begin{algorithm}[H]
-	{\bfseries Input :}~键值对（词语\#文档id, 词频）\\
-	{\bfseries Output :}~键值对（词语\#文档id, 词频）
+	{\bfseries Input :}~键值对（词语\#文档名, 词频）\\
+	{\bfseries Output :}~键值对（词语\#文档名, 词频）
 	\caption{$class~Combiner$}
 	\begin{algorithmic}[1]
-    	\Procedure {Reduce}{Text t, int value}
+    	\Procedure {Combine}{Text key, IntWritable value}
     	\State $Sum = 0$
-    	\For{$\bm{all}$ value $val$ in Text $t$ do}
+    	\For{$\bm{all}$  $val$ $\bm{in}$ value do}
     	\State $Sum \leftarrow Sum + val$
     	\EndFor
-    	\State Emit$(t, Sum)$
+    	\State Emit$(key, Sum)$
     \EndProcedure
   \end{algorithmic}
 \end{algorithm}
+
+\newpage
 \noindent
 \textbf{NewPartitioner:}
 \begin{algorithm}[H]
 	\caption{$class~NewPartitioner$}
 	\begin{algorithmic}[1]
-    	\Procedure {getPartition}{Text key, int value, int NumReduceTasks}
+    	\Procedure {getPartition}{Text key, IntWritable value, int NumReduceTasks}
     	\State ~$term \leftarrow key.split("\#")[0]$\\
     	~~~~~~~\Return super.getPartition(term, value, NumReduceTasks)
     \EndProcedure
   \end{algorithmic}
 \end{algorithm}
+
 \noindent
 \textbf{Reducer：}
 \begin{algorithm}[H]
-	{\bfseries Input :}~Combiner的结果\\
-	{\bfseries Output :}~[词语]~平均出现次数~小说名: 词频
+	{\bfseries Input :}~Combiner的结果$<$Text key, IntWritable value$>$\\
+	{\bfseries Output :}~词语~平均出现次数~ [小说名: 词频]
 	\caption{$class~Reducer$}
 	\begin{algorithmic}[1]
     	\Procedure {Setup}{~}
@@ -220,17 +221,21 @@ fig. 开发与测试环境
     		\State $P \leftarrow new PostingsList$
     	\EndProcedure
     	\Procedure {Reduce}{tuple$<t,n>, tf [f]$}
-    		\State if $t \neq t_{prev}$ \^{} $t_{prev} \neq \emptyset$ then
+    		\State if $t \neq t_{prev}$ \&\& $t_{prev} \neq \emptyset$ then
+    		\State ~~~~~计算平均出现次数并插入到$P$的头部
     		\State ~~~~~Emit($t_{prev},P$)
     		\State ~~~~~$P$.Reset()
     		\State $P$.Add($<n,f>$)
     		\State $t_{prev} \leftarrow t$
     	\EndProcedure
     	\Procedure {Close}{~}
+	    	\State 计算平均出现次数并插入到$P$的头部
     		\State Emit$(t,P)$
     	\EndProcedure
   	\end{algorithmic}
 \end{algorithm}
+
+\newpage
 \subsection{基于平均出现次数对词语进行全局排序}
 \subsubsection{设计思路}
 \noindent
@@ -253,12 +258,13 @@ Map,Reduce各阶段的K,V类型见下表：
 	\caption{$class~Mapper$}
 	\begin{algorithmic}[1]
     	\Procedure {Map}{InvertedIndexRecord record}
-    	\State $average \leftarrow Word frequency in record$
+    	\State $average \leftarrow Word~frequency~in~record$
     	\State Emit($average, record$)
     \EndProcedure
   \end{algorithmic}
 \end{algorithm}
 
+\newpage
 \subsection{为每位作家、计算每个词语的TF-IDF}
 \subsubsection{设计思路}
 \noindent
@@ -281,74 +287,83 @@ MapReduce各阶段的K,V类型见下表：
 \noindent
 \textbf{Mapper:}
 \begin{algorithm}[H]
-	{\bfseries Input :}~小说文档\\
-	{\bfseries Output :}~键值对（词语\#文档\#小说名, 词频）
+	{\bfseries Input :}~文本文件的行\\
+	{\bfseries Output :}~键值对（词语\#作者名\#小说名, 词频）
 	\caption{$class~Mapper$}
 	\begin{algorithmic}[1]
-    	\Procedure {Map}{doc\_id j,doc d}
-    	\State $author \leftarrow j.split()$
-    	\State $doc\_name \leftarrow j.split()$
-    	\State $F \leftarrow new AssociativeArray$
-    	\For{$\bm{all}$ term $t$ in doc $d$ do}
-    	\State $F\{t\} \leftarrow F\{t\} + 1$
-    	\EndFor
-    	\For{$\bm{all}$ term $t \in F$ do}
-    	\State Emit($(pair<t,author,doc\_name>,frequency F\{t\})$)
+    	\Procedure {Map}{Object key, Text value}
+    	\State $author \leftarrow value.split()$
+    	\State $fileName \leftarrow value.split()$
+    	\For{$\bm{all}$ term $t$ $\bm{in}$ line $l$}
+    	\State Emit($t\#author\#fileName, one$)
     	\EndFor
     \EndProcedure
   \end{algorithmic}
 \end{algorithm}
+
 \noindent
 \textbf{Combiner:}
 \begin{algorithm}[H]
-	{\bfseries Input :}~键值对（词语\#作者\#小说名, 词频）\\
-	{\bfseries Output :}~键值对（词语\#作者\#小说名, 词频）
+	{\bfseries Input :}~键值对（词语\#作者名\#文档名, 词频）\\
+	{\bfseries Output :}~键值对（词语\#作者名\#文档名, 词频）
 	\caption{$class~Combiner$}
 	\begin{algorithmic}[1]
-    	\Procedure {Reduce}{Text t, int value}
+    	\Procedure {Combine}{Text key, IntWritable value}
     	\State $Sum = 0$
-    	\For{$\bm{all}$ value $val$ in Text $t$ do}
+    	\For{$\bm{all}$  $val$ $\bm{in}$ value do}
     	\State $Sum \leftarrow Sum + val$
     	\EndFor
-    	\State Emit$(t, Sum)$
+    	\State Emit$(key, Sum)$
     \EndProcedure
   \end{algorithmic}
 \end{algorithm}
+
 \noindent
 \textbf{NewPartitioner:}
 \begin{algorithm}[H]
 	\caption{$class~NewPartitioner$}
 	\begin{algorithmic}[1]
-    	\Procedure {getPartition}{Text key, int value, int NumReduceTasks}
+    	\Procedure {getPartition}{Text key, IntWritable value, int NumReduceTasks}
     	\State ~$word \leftarrow key.split("\#")[0]$
-    	\State ~$author\_name \leftarrow key.split("\#")[1]$
-    	\State ~$term \leftarrow word + author\_name$\\
+    	\State ~$author \leftarrow key.split("\#")[1]$
+    	\State ~$term \leftarrow word + author$\\
     	~~~~~~~\Return super.getPartition(term, value, NumReduceTasks)
     \EndProcedure
   \end{algorithmic}
 \end{algorithm}
+
+\newpage
 \noindent
 \textbf{Reducer：}
 \begin{algorithm}[H]
-	{\bfseries Input :}~Combiner的结果key与value\\
-	{\bfseries Output :}~[作者，词语]~~TF-IDF
+	{\bfseries Input :}~Combiner的结果$<$Text key, IntWritable value$>$\\
+	{\bfseries Output :}~词语~平均出现次数~ [小说名: 词频]
 	\caption{$class~Reducer$}
 	\begin{algorithmic}[1]
-    	\Procedure {Reduce}{tuple$<t,author,doc\_name>, tf [f]$}
-    		\State TF calculate
-    		\State if $t \neq t_{prev}$ \^{} $t_{prev} \neq \emptyset$ then
-    		\State ~~~~~~the number of files count
-    		\State ~~~~~~IDF calculate
-    		\State ~~~~~~Emit($t_{prev},P$)
-    		\State ~~~~~~$P$.Reset()
-    		\State $P$.Add($<author,TF,IDF>$)
+    	\Procedure {Setup}{~}
+    		\State $t_{prev} \leftarrow \emptyset$
+    		\State $P \leftarrow new PostingsList$
+    	\EndProcedure
+    	\Procedure {Reduce}{tuple$<t,n>, tf [f]$}
+    		\State if $t \neq t_{prev}$ \&\& $t_{prev} \neq \emptyset$ then
+    		\State ~~~~~$author \leftarrow t_{prev}.split()$
+    		\State ~~~~~$word \leftarrow t_{prev}.split()$
+    		\State ~~~~~计算TF, TDF
+    		\State ~~~~~Emit($author$,$<word, TF, IDF>$)
+    		\State ~~~~~$P$.Reset()
+    		\State $P$.Add($<n,f>$)
     		\State $t_{prev} \leftarrow t$
     	\EndProcedure
     	\Procedure {Close}{~}
-    		\State Emit$(t,P)$
+	    	\State ~~~~~$author \leftarrow t_{prev}.split()$
+    		\State ~~~~~$word \leftarrow t_{prev}.split()$
+    		\State ~~~~~计算TF, TDF
+    		\State ~~~~~Emit($author$,$<word, TF, IDF>$)
     	\EndProcedure
   	\end{algorithmic}
 \end{algorithm}
+
+\newpage
 \section{实验测试与运行结果}
 \noindent
 \subsection{JAR包执行方式说明}
