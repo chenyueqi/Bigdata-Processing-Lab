@@ -15,6 +15,7 @@
 \usepackage{algpseudocode}
 \graphicspath{{figs/}}
 \floatname{algorithm}{Class} 
+\usepackage{hyperref}
 \begin{document}
 
 \setcounter{page}{1}
@@ -52,23 +53,20 @@
 \newcommand{\cnkeywords}{Hadoop、倒排索引、全局排序、TF-IDF}
 \newcommand{\cnclassno}{O212.xx} % 中图分类号
 %%
-\newcommand{\enfirstauthor}{FIRST Name}
-\newcommand{\ensecondauthor}{SECOND Name}
-\newcommand{\enfirstinst}{First Author's Working Unit $($Up to Department$)$, Province, 
-Zip Code, China}
-\newcommand{\ensecondinst}{Second Author's Working Unit $($Up to Department$)$, Province, 
-Zip Code, China}
-\newcommand{\entitle}{English Title}
-\newcommand{\enkeywords}{keyword 1; keyword 2; ......}
-\newcommand{\amsno}{62Nxx} % AMS Subject Claassification
+%\newcommand{\enfirstauthor}{FIRST Name}
+%\newcommand{\ensecondauthor}{SECOND Name}
+%\newcommand{\enfirstinst}{First Author's Working Unit $($Up to Department$)$, Province, 
+%Zip Code, China}
+%\newcommand{\ensecondinst}{Second Author's Working Unit $($Up to Department$)$, Province, 
+%Zip Code, China}
+%\newcommand{\entitle}{English Title}
+%\newcommand{\enkeywords}{keyword 1; keyword 2; ......}
+%\newcommand{\amsno}{62Nxx} % AMS Subject Claassification
 %%
 %% 中文摘要
-\newcommand{\cnabstract}{摘要内容.}
+%\newcommand{\cnabstract}{摘要内容.}
 %% 英文摘要
-\newcommand{\enabstract}{The abstract comes here.}
-\newcommand{\fundinfo}{XXXX基金资助(12345678).}
-\newcommand{\authorsinfo}{陈越琦：121160005 完成代码实现并调试测试~~~~~刘威：131220085 完成实验报告}
-\newcommand{\authorsinfoo}{杨杰才：121160005 帮助刘威完成实验报告~~~~~周子博：121250229 帮助陈越琦实现集群测试}
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %        文章正文                                              %
@@ -116,12 +114,21 @@ Zip Code, China}
 \textbf{摘~~~要:}\quad 本次实验我们小组通过课堂上介绍的“带词频属性的文档倒排算法”，统计了词语的倒排索引并输出，按照要求输出了词语的平均出现次数，使用给定的小说数据集在集群上完成了调试和测试。在此基础上，完成了两个选做任务：基于平均出现次数对词语的全局排序与计算出每位作家每个词语的TF-IDF并输出。实验分别在本地进行了简单测试并提交到集群运行获得最终运行结果。在得到实验结果后，我们将输出结果下载到本地，然后对倒排索引的结果进行了简要的分析，得到了一些比较有趣的结论。\\
 \\ \textbf{关键词:}\quad\cnkeywords
 \end{minipage}
+
+\hypersetup{CJKbookmarks=true}
+\section{引 \hy \hy \hy言}
+
+倒排索引是文档检索系统中最常用的数据结构，被广泛的应用于全文搜索引擎。它主要用来存储某个单词（或词组），在一个文档或一组文档中的存储位置的映射，即提供了一种根据内容来查找文档的方式，由于不是根据文档来确定文档所包含的内容，而是进行了相反的操作，因而被称为倒排索引。在本次实验中，我们实现了(1)带词频属性的文档倒排算法。除了实验任务外，我们还设计了两个MapReduce Job完成选做内容：(2)根据每个词语的平均出现次数进行全局排序; (3)为每位作家、计算每个词语的TF-IDF。
+
+实验报告的第2节简要介绍了实验环境和完成情况。第3节中将详细介绍实验各个部分的设计。测试与运行的结果留在第4节中展示。在第5节中总结实验内容和团队合作。
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\authorsinfo}{陈越琦：121160005 完成代码实现并调试测试~~~~~刘威：131220085 完成实验报告}
+\newcommand{\authorsinfoo}{杨杰才：121160005 帮助刘威完成实验报告~~~~~周子博：121250229 帮助陈越琦实现集群测试}
+
 \footnote[1]{\scriptsize{\authorsinfo}}\vspace{2em}
 \footnote[0]{\scriptsize{\authorsinfoo}}\vspace{2em}
-\section{引\hy\hy\hy 言}
-\noindent
-倒排索引是文档检索系统中最常用的数据结构，被广泛的应用于全文搜索引擎。它主要用来存储某个单词（或词组），在一个文档或一组文档中的存储位置的映射，即提供了一种根据内容来查找文档的方式，由于不是根据文档来确定文档所包含的内容，而是进行了相反的操作，因而被称为倒排索引。在本次实验中，我们实现了带词频属性的文档倒排算法。除了实验任务外，我们还设计了两个MapReduce Job来进行选作内容的设计，分别进行以下两个工作：(1)对每个词语的平均出现次数进行全局排序，输出排序后的结果; (2)为每位作家、计算每个词语的TF-IDF。\\
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\tableofcontents
 \newpage
 
 \section{实验环境与概述}
@@ -129,7 +136,7 @@ Zip Code, China}
 本次实验的本地开发与测试环境如下：\\
 \begin{center}
 \includegraphics[height = 2.5cm]{2.png}\\
-fig. 开发与测试环境
+\caption{开发与测试环境}
 \end{center}
 本次实验，我们完成了三个MapReduce任务的编写：
 
@@ -139,7 +146,7 @@ fig. 开发与测试环境
 \item 为每位作家、计算每个词语的TF-IDF。
 \end{enumerate}
 
-\noindent 在第3节中将详细介绍实验设计，第4节中展现测试与运行的结果。
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{实验具体设计}
 
@@ -150,16 +157,17 @@ fig. 开发与测试环境
 为完成InvertedIndex任务我们分别实现了五个类： InvertedIndex, InvertedIndexMapper, InvertedIndexReducer, NewPartitioner, SumCombiner.\\
 \begin{enumerate}
 \item InvertedIndex是主类，负责配置并启动作业。
-\item InvertedIndexMapper是Map类，输入为$<$Object ,Text$>$键值对，输出为$<$Text, IntWritable$>$键值对。从输入的split中获得文本的行，切割行中每一词语，并加上文件名作为键。
+\item InvertedIndexMapper是Map类，输入为$<$Object ,Text$>$键值对，输出为$<$Text, IntWritable$>$键值对。从输入的split中获得文本的行，切割行中每一词语，并加上小说名作为键。
 \item SumCombiner是Combine类，对中间结果中的词频进行累加，减少中间数据的传输。
-\item NewParitioner中重新定义getPartitioner方法覆盖父类中同名方法。根据词语进行分区而不是Map结果中的词语文件名组合。避免后者可能导致的错误：同一个词语的键值对可能被分到不同Reducer。
+\item NewParitioner中重新定义getPartitioner方法覆盖父类中同名方法。根据词语进行分区而不是Map结果中的词语小说名组合。避免后者可能导致的错误：同一个词语的键值对可能被分到不同Reducer。
 \item InvertedIndexReducer是Reduce类，根据不同词语统计出最终结果并计算输出平均出现次数和相应文档信息。
 \end{enumerate}
 
 
-作业各阶段的键值对见下表：
+\noindent MapReduce各阶段的K,V类型见下表：
 \begin{center}
-\includegraphics[height=2.6cm]{0.png}
+\includegraphics[width = 15cm]{0.png}
+\caption{作业各阶段的键值}
 \end{center}
 
 \subsubsection{相关伪代码}
@@ -186,7 +194,7 @@ fig. 开发与测试环境
 	{\bfseries Output :}~键值对（词语\#文档名, 词频）
 	\caption{$class~Combiner$}
 	\begin{algorithmic}[1]
-    	\Procedure {Combine}{Text key, IntWritable value}
+    	\Procedure {Combine}{Text key, Iterable$<$IntWritable$>$ value}
     	\State $Sum = 0$
     	\For{$\bm{all}$  $val$ $\bm{in}$ value do}
     	\State $Sum \leftarrow Sum + val$
@@ -212,7 +220,7 @@ fig. 开发与测试环境
 \noindent
 \textbf{Reducer：}
 \begin{algorithm}[H]
-	{\bfseries Input :}~Combiner的结果$<$Text key, IntWritable value$>$\\
+	{\bfseries Input :}~Combiner的结果$<$Text key, Iterable$<$IntWritable$>$ $>$\\
 	{\bfseries Output :}~词语~平均出现次数~ [小说名: 词频]
 	\caption{$class~Reducer$}
 	\begin{algorithmic}[1]
@@ -245,9 +253,10 @@ fig. 开发与测试环境
 \item ResultSortMapper是Map类，输入为输入为$<$Object ,Text$>$键值对，输出为$<$DoubleWritable, Text$>$键值对。从倒排文件中获得输入并切割得到每个词语的平均出现次数，以此为键，输入的剩下内容为值。
 \end{enumerate}
 
-Map,Reduce各阶段的K,V类型见下表：
+\noindent MapReduce各阶段的K,V类型见下表(因为使用默认的IdentityReducer类，所以忽视Reduce阶段的键值对)：
 \begin{center}
 \includegraphics[height=2.6cm]{14.png}
+\caption{作业各阶段的键值}
 \end{center}
 \subsubsection{相关伪代码}
 \noindent
@@ -272,16 +281,17 @@ TF-IDF计算在一定程度上与InvertedIndex的设计思想相似。\\
 为完成TFIDF任务我们分别实现了五个类： TFIDF, TFIDFMapper, TFIDFReducer, NewPartitioner, SumCombiner.\\
 \begin{enumerate}
 \item TFIDF是主类，负责配置并启动作业。
-\item TFIDFMapper是Map类，输入为$<$Object ,Text$>$键值对，输出为$<$Text, IntWritable$>$键值对。从输入的split中获得文本的行，切割行中每一词语，并加上作者名和文件名作为键。
+\item TFIDFMapper是Map类，输入为$<$Object ,Text$>$键值对，输出为$<$Text, IntWritable$>$键值对。从输入的split中获得文本的行，切割行中每一词语，并加上作者名和小说名作为键。
 \item SumCombiner是Combine类，对中间结果中的词频进行累加，减少中间数据的传输。
-\item NewParitioner中重新定义getPartitioner方法覆盖父类中同名方法。根据词语作者名的组合进行分区而不是Map结果中的词语作者名文件名组合。避免后者可能导致的错误：同一个词语作者名的键值对可能被分到不同Reducer。也不是单一的根据词语进行分区，避免同一个词语同一个作者不是连续出现。
+\item NewParitioner中重新定义getPartitioner方法覆盖父类中同名方法。根据词语作者名的组合进行分区而不是Map结果中的词语作者名小说名组合。避免后者可能导致的错误：同一个词语作者名的键值对可能被分到不同Reducer。也不是单一的根据词语进行分区，避免同一个词语同一个作者不是连续出现。
 \item TFIDFReducer是Reduce类，根据不同词语作者名统计出最终结果并计算输出TF和IDF。
 \end{enumerate}
 
 
-MapReduce各阶段的K,V类型见下表：
+\noindent MapReduce各阶段的K,V类型见下表：
 \begin{center}
-\includegraphics[height=2.4cm]{15.png}
+\includegraphics[width = 15cm]{15.png}
+\caption{作业各阶段的键值}
 \end{center}
 \subsubsection{相关伪代码}
 \noindent
@@ -308,7 +318,7 @@ MapReduce各阶段的K,V类型见下表：
 	{\bfseries Output :}~键值对（词语\#作者名\#文档名, 词频）
 	\caption{$class~Combiner$}
 	\begin{algorithmic}[1]
-    	\Procedure {Combine}{Text key, IntWritable value}
+    	\Procedure {Combine}{Text key, Iterable$<$IntWritable$>$ value}
     	\State $Sum = 0$
     	\For{$\bm{all}$  $val$ $\bm{in}$ value do}
     	\State $Sum \leftarrow Sum + val$
@@ -336,7 +346,7 @@ MapReduce各阶段的K,V类型见下表：
 \noindent
 \textbf{Reducer：}
 \begin{algorithm}[H]
-	{\bfseries Input :}~Combiner的结果$<$Text key, IntWritable value$>$\\
+	{\bfseries Input :}~Combiner的结果$<$Text key, Iterable$<$IntWritable$>$ $>$\\
 	{\bfseries Output :}~词语~平均出现次数~ [小说名: 词频]
 	\caption{$class~Reducer$}
 	\begin{algorithmic}[1]
@@ -420,11 +430,13 @@ MapReduce各阶段的K,V类型见下表：
 \includegraphics[height = 9cm]{10.png}
 \includegraphics[height = 2.5cm]{16.png}
 \end{center}
+\newpage
 \item 在WebUI页面（http://114.212.190.91:19888/jobhistory）找到对应的job如下
 \begin{center}
 \includegraphics[height = 5cm]{11.png}
 \includegraphics[height = 2.2cm]{17.png}
 \end{center}
+\newpage
 \item 根据Job ID链接进入Job详细页面，几个job的详细信息如下所示。
 \begin{itemize}[leftmargin=*]
 \item InvertedIndexTable：\\
@@ -432,10 +444,12 @@ MapReduce各阶段的K,V类型见下表：
 \begin{flushleft}
 \includegraphics[height = 14cm]{12.png}
 \end{flushleft}
+\newpage
 \item ResultSort
 \begin{flushleft}
 \includegraphics[height = 14cm]{13.png}
 \end{flushleft}
+\newpage
 \item TFIDF
 \begin{flushleft}
 \includegraphics[height = 14cm]{18.png}
@@ -444,9 +458,8 @@ MapReduce各阶段的K,V类型见下表：
 \end{itemize}
 \subsection{一些有趣的发现}
 \noindent
-根据倒排索引得出来的结果，我们不难发现武侠小说中关于词频的一些规律：
+根据倒排索引得出来的结果，我们不难发现武侠小说中关于词频的一些有趣的现象：
 \begin{itemize}
-\item	纯阿拉伯数字类出现的较多，是最普遍的，这个毋庸置疑
 \item	时间和物质量词类因为小说的不同，自然出现频率低，具有独占性，对于搜索和定位来说是较优的关键字。
 \item	出现了一些英文字母和单词，按常理来说中国的武侠小说是不应该含西文的。不过考虑到这些小说是网上下载的资源，因为大部分应该都是下载的链接信息或者出处信息。
 \item	统计结果中出现的四字成语、古文俗语较多，频率大，这个不难看出小说行文的文采与流畅之处，毕竟都是大师作品，不是一些烂俗的网络小说。
@@ -454,10 +467,22 @@ MapReduce各阶段的K,V类型见下表：
 \item	的、地、得等助词出现的频率最高，符合汉语的表达习惯。
 \end{itemize}
 \section{实验总结}
-\noindent
-本次实验是大数据处理综合实验的第二次实验，在这次实验中我们完成了三个MapReduce任务的编写： (1)带词频属性的文档倒排算法. (2)对每个词语的平均出现次数进行全局排序. (3)为每位作家、计算每个词语的TF-IDF。通过本次实验，我们小组的人都对MapReduce算法设计与编程有了一定的了解，同时进一步加深了对前面所学的Hadoop MapReduce基本构架的理解。\\
-\\这次实验各个任务中最主要的问题就是Map与Reduce过程的设计与(key,value)键值对类型的确定。在实验中，为确定Map与Reduce的设计与各个过程中键值对的类型转换过程，我们查阅了课本课件等相关资料，也在一起进行了一些讨论。在较好的确定各个过程key与value的类型及转换过程后，整个编程任务的完成就变得比较容易了。此外，在具体实现时，我们更进一步的了解了java字符串相关的操作函数。灵活使用这些函数，我们也得以方便地从输入文本与文件名中分割出想要的信息，例如作者的姓名与各个文件名。\\
-\\本次实验是我们第一次较为深入地了解Hadoop MapReduce的算法设计与程序的编写和运行，整体完成较为顺利，也为后面的实验打下了较好的基础。
+\subsection{实验内容总结}
+
+本次实验是大数据处理综合实验的第二次实验，在这次实验中我们完成了三个MapReduce任务的编写： (1)带词频属性的文档倒排算法. (2)根据每个词语的平均出现次数进行全局排序. (3)为每位作家、计算每个词语的TF-IDF。通过本次实验，加深了对MapReduce算法设计与编程的了解，同时进一步巩固了对Hadoop MapReduce基本构架的理解。
+
+本次实验各个任务中最主要的问题是确定不同阶段的键值对。为确定Map与Reduce的设计与各个过程中键值对的类型转换过程，我们根据教材中内容举一反三完成了选做内容。此外，在具体实现时，我们在java零基础的情况下学习了字符串相关的操作方法，灵活切割输入文本与文件名获得有关信息，例如作者名与小说名。
+
+本次实验是我们第一次较为深入地了解Hadoop MapReduce的算法设计与程序的编写和运行，整体完成较为顺利，为后面的实验打下了较好的基础。
+
+代码链接: \url{https://github.com/chenyueqi/BPLab/tree/master/Lab2/src}
+
+\subsection{团队合作总结}
+
+
+在本次实验中，我们小组采取的是“代码实现+实验报告”的分工模式，即两位同学合作实现代码并完成测试，另外两位同学合作完成实验报告。但是在合作过程中，我们发现这并不是最佳最高效的合作模式。主要表现在完成实验报告的同学仅仅通过与代码实现的同学交流并不能准确理解设计思路，最终还是要依赖阅读代码。而负责代码实现的同学最终还要修改实验报告使得报告中的表达更加准确。
+
+为了进一步提高效率，我们打算在下一次实验中尝试另外一种分工模式：“包产到户”。即在动手实验之前，通过集体交流确定实验内容和内容之间的依赖关系，然后将实验内容划分成不同部分，分别交由几个人完成。每位同学在完成自己的代码部分的同时完成对应的实验报告部分。这一分工模式强烈依赖先期交流的高效性和彻底性以及讨论结果的一致性，但是能让每位同学的参与度大大提高。同时也能让每位同学掌握更多技能，成为多面手。
 \vspace{6mm}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  参考文献
