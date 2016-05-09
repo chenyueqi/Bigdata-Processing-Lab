@@ -78,14 +78,15 @@ public class InvertedIndexReducer extends Reducer<Text, IntWritable, Text, Text>
 		cnt_word += num;
 	    }
 
+	    if(cnt_word > 0)
+		    context.write(CurrentItem, new Text(out.toString()));
+
 	    if(cnt_file > 0)
         {
 	        double fre = (double)(cnt_word)/(double)cnt_file;
             addData("Wuxia", word1.toString(), "content", "frequency", Double.toString(fre));
         }
 
-	    if(cnt_word > 0)
-		    context.write(CurrentItem, new Text(out.toString()));
 	    postingList = new ArrayList<String>();
 	}
 	CurrentItem = new Text(word1);
@@ -108,12 +109,13 @@ public class InvertedIndexReducer extends Reducer<Text, IntWritable, Text, Text>
 	    cnt_word += num;
 	}
 
+	if(cnt_word > 0)
+	    context.write(CurrentItem, new Text(out.toString()));
+
 	if(cnt_file > 0)
     {
 	    double fre = (double)(cnt_word)/(double)cnt_file;
         addData("Wuxia", CurrentItem.toString(), "content", "frequency", Double.toString(fre));
     }
-	if(cnt_word > 0)
-	    context.write(CurrentItem, new Text(out.toString()));
     }
 }
