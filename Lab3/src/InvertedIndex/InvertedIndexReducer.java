@@ -34,6 +34,33 @@ public class InvertedIndexReducer extends Reducer<Text, IntWritable, Text, Text>
 
     static Configuration conf = new Configuration();
 
+    static List<Put> putList = new ArrayList<Put>();
+
+    public static class HBase{
+        private static Configuration conf = null;
+        static
+        {
+            conf = HBaseConfiguration.create();
+            conf.set("hbase.zookeeper.property.clientPort", "2181");
+        }
+
+	public static void addData (String tableName, String rowKey,
+				String family, String qualifier, String value) throws IOException{
+			HTable table = new HTable(conf, tableName);
+			Put put = new Put(Bytes.toBytes(rowKey));
+			put.add(Bytes.toBytes(family),Bytes.toBytes(qualifier),Bytes.toBytes(value));
+			table.put(put);
+			System.out.println("insert record success!");
+		}
+		
+		public void addDatas (String tableName, List<Put> putList) throws IOException{
+			HTable table = new HTable(conf, tableName);
+			table.put(putList);
+			System.out.println("insert record success!");
+		}
+
+    }
+
     public void addData(String tableName, String rowKey, String family, String qualifier, String value) throws IOException
     {
         try{
@@ -84,7 +111,10 @@ public class InvertedIndexReducer extends Reducer<Text, IntWritable, Text, Text>
 	    if(cnt_file > 0)
         {
 	        double fre = (double)(cnt_word)/(double)cnt_file;
-            addData("Wuxia", word1.toString(), "content", "frequency", Double.toString(fre));
+            //addData("Wuxia", word1.toString(), "content", "frequency", Double.toString(fre));
+            Put put = new Put(Bytes.toBytes(word1.toString()));
+            put.add(Bytes.toBytes(new String("content")),Bytes.toBytes(new String("frequency")),Bytes.toBytes(Double.toString(fre)));
+            putList.add(put);
         }
 
 	    postingList = new ArrayList<String>();
@@ -114,8 +144,18 @@ public class InvertedIndexReducer extends Reducer<Text, IntWritable, Text, Text>
 
 	if(cnt_file > 0)
     {
-	    double fre = (double)(cnt_word)/(double)cnt_file;
-        addData("Wuxia", CurrentItem.toString(), "content", "frequency", Double.toString(fre));
+	        double fre = (double)(cnt_word)/(double)cnt_file;
+            Put put = new Put(Bytes.toBytes(CurrentItem.toString()));
+            put.add(Bytes.toBytes(new String("content")),Bytes.toBytes(new String("frequency")),Bytes.toBytes(Double.toString(fre)));
+            putList.add(put);
     }
+    HBase hbase = new HBase();
+    try{
+        hbase.addDatas("Wuxia",putList);
     }
+    catch (IOException e)
+    {
+        e.printStackTrace();
+    }
+}
 }
