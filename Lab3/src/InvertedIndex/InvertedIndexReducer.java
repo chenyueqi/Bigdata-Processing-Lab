@@ -43,35 +43,11 @@ public class InvertedIndexReducer extends Reducer<Text, IntWritable, Text, Text>
             conf = HBaseConfiguration.create();
             conf.set("hbase.zookeeper.property.clientPort", "2181");
         }
+	public void addDatas (String tableName, List<Put> putList) throws IOException{
+		HTable table = new HTable(conf, tableName);
+		table.put(putList);
+	}
 
-	public static void addData (String tableName, String rowKey,
-				String family, String qualifier, String value) throws IOException{
-			HTable table = new HTable(conf, tableName);
-			Put put = new Put(Bytes.toBytes(rowKey));
-			put.add(Bytes.toBytes(family),Bytes.toBytes(qualifier),Bytes.toBytes(value));
-			table.put(put);
-			System.out.println("insert record success!");
-		}
-		
-		public void addDatas (String tableName, List<Put> putList) throws IOException{
-			HTable table = new HTable(conf, tableName);
-			table.put(putList);
-			System.out.println("insert record success!");
-		}
-
-    }
-
-    public void addData(String tableName, String rowKey, String family, String qualifier, String value) throws IOException
-    {
-        try{
-            HTable table = new HTable(conf, tableName);
-            Put put = new Put(Bytes.toBytes(rowKey));
-            put.add(Bytes.toBytes(family), Bytes.toBytes(qualifier), Bytes.toBytes(value));
-            table.put(put);
-        } catch (IOException e)
-        {
-            e.printStackTrace();
-        }
     }
 
 
@@ -109,13 +85,12 @@ public class InvertedIndexReducer extends Reducer<Text, IntWritable, Text, Text>
 		    context.write(CurrentItem, new Text(out.toString()));
 
 	    if(cnt_file > 0)
-        {
+            {
 	        double fre = (double)(cnt_word)/(double)cnt_file;
-            //addData("Wuxia", word1.toString(), "content", "frequency", Double.toString(fre));
-            Put put = new Put(Bytes.toBytes(word1.toString()));
-            put.add(Bytes.toBytes(new String("content")),Bytes.toBytes(new String("frequency")),Bytes.toBytes(Double.toString(fre)));
-            putList.add(put);
-        }
+        	Put put = new Put(Bytes.toBytes(word1.toString()));
+            	put.add(Bytes.toBytes(new String("content")),Bytes.toBytes(new String("frequency")),Bytes.toBytes(Double.toString(fre)));
+            	putList.add(put);
+            }
 
 	    postingList = new ArrayList<String>();
 	}
@@ -143,19 +118,20 @@ public class InvertedIndexReducer extends Reducer<Text, IntWritable, Text, Text>
 	    context.write(CurrentItem, new Text(out.toString()));
 
 	if(cnt_file > 0)
-    {
-	        double fre = (double)(cnt_word)/(double)cnt_file;
+    	{
+	    double fre = (double)(cnt_word)/(double)cnt_file;
             Put put = new Put(Bytes.toBytes(CurrentItem.toString()));
             put.add(Bytes.toBytes(new String("content")),Bytes.toBytes(new String("frequency")),Bytes.toBytes(Double.toString(fre)));
             putList.add(put);
+        }
+    
+    	HBase hbase = new HBase();
+    	try{
+            hbase.addDatas("Wuxia",putList);
+    	}
+    	catch (IOException e)
+    	{
+            e.printStackTrace();
+    	}
     }
-    HBase hbase = new HBase();
-    try{
-        hbase.addDatas("Wuxia",putList);
-    }
-    catch (IOException e)
-    {
-        e.printStackTrace();
-    }
-}
 }
