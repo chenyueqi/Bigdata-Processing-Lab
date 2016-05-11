@@ -1,0 +1,272 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                                                       %%
+%%     LaTeX + CTeX 《应用概率统计》论文模板, 只针对 A4 纸中文稿.        %%
+%%                                                                       %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%            中文稿 文章模板：A4 纸, 五号字, 单列              %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[a4paper,c1size,onecolumn,twoside,cap,Chinese]{APSart}
+\usepackage{listings} 
+\usepackage{enumitem}
+\usepackage{algorithm}
+\usepackage{amsmath} 
+\usepackage{algpseudocode}
+\graphicspath{{figs/}}
+\floatname{algorithm}{Class} 
+\usepackage{hyperref}
+\begin{document}
+
+\setcounter{page}{1}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%------------------ 编辑部提供的信息 ------------------------%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\pubvol}{xx}         % 卷号
+\newcommand{\enpubvol}{xx}       % 卷号
+\newcommand{\pubno}{x}           % 期号
+\newcommand{\enpubno}{x}         % 期号
+\newcommand{\pubyear}{20xx}      % 出版年份
+\newcommand{\enpubyear}{20xx}    % 出版年份
+\newcommand{\pubmonth}{xx}       % 出版月份
+\newcommand{\enpubmonth}{xx}     % 出版月份
+\newcommand{\ksym}{xxx}          % 开始页码
+\newcommand{\jsym}{xxx}          % 结束页码
+\newcommand{\receivedate}{本文XXXX年XX月XX日收到} % 论文收到日期
+\newcommand{\modifydate}{XXXX年XX月XX日收到修改稿}% 论文修改日期
+\newcommand{\doino}{10.3969/j.issn.1001-4268.20xx.0x.0xx} % doi号
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%-------------------- 作者提供的信息 ------------------------%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\runcnauthors}{~} %超过两个作者的请用：第一作者姓名~等
+\newcommand{\cnfirstauthor}{陈越琦}
+\newcommand{\cnsecondauthor}{刘威}
+\newcommand{\cnthirdauthor}{杨杰才}
+\newcommand{\cnfourthauthor}{周子博}
+\newcommand{\cnfirstinst}{121160005 ~~Yueqichen.0x0@gmail.com}
+\newcommand{\cnsecondinst}{131220085 ~~liuwei13cs@smail.nju.edu.cn}
+\newcommand{\cnthirdinst}{131220115 ~~mark\_grove@qq.com}
+\newcommand{\cnfourthinst}{121250229 ~~441842096@qq.com}
+\newcommand{\cntitle}{大数据实验2---倒排索引~实验报告}
+\newcommand{\cnkeywords}{Hadoop、倒排索引、全局排序、TF-IDF}
+\newcommand{\cnclassno}{O212.xx} % 中图分类号
+%%
+%\newcommand{\enfirstauthor}{FIRST Name}
+%\newcommand{\ensecondauthor}{SECOND Name}
+%\newcommand{\enfirstinst}{First Author's Working Unit $($Up to Department$)$, Province, 
+%Zip Code, China}
+%\newcommand{\ensecondinst}{Second Author's Working Unit $($Up to Department$)$, Province, 
+%Zip Code, China}
+%\newcommand{\entitle}{English Title}
+%\newcommand{\enkeywords}{keyword 1; keyword 2; ......}
+%\newcommand{\amsno}{62Nxx} % AMS Subject Claassification
+%%
+%% 中文摘要
+%\newcommand{\cnabstract}{摘要内容.}
+%% 英文摘要
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%        文章正文                                              %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\title{\zihao{3}\bf{\cntitle}
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 作者姓名与单位：三种形式中选一种
+% 后面英文摘要中的名字和单位同样处理
+% ---------------------
+% 第一种形式: 单一作者
+% ---------------------
+%\author{\zihao{4}\fangsong{\cnfirstauthor}\\[-1pt]
+%{\zihao{-5}(\cnfirstinst)}}
+
+% ---------------------
+% 第二种形式: 同一单位 多个作者 -- 名字左右并列,
+% ---------------------
+%\author{\zihao{4}\fangsong{\cnfirstauthor\hy\hy\hy\cnsecondauthor}\\[-1pt]
+%{\zihao{-5}(\cnfirstinst)}}
+
+% ---------------------
+% 第三种形式: 不同单位 多个作者 -- 名字与单位上下并列
+% ---------------------
+\author{\zihao{4}\fangsong{\cnfirstauthor}\\[-1pt]
+{\zihao{-5}(\cnfirstinst)}\and
+\zihao{4}\fangsong{\cnsecondauthor}\\[-1pt]
+{\zihao{-5}(\cnsecondinst)}\and
+\zihao{4}\fangsong{\cnthirdauthor}\\[-1pt]
+{\zihao{-5}(\cnthirdinst)}\and
+\zihao{4}\fangsong{\cnfourthauthor}\\[-1pt]
+{\zihao{-5}(\cnfourthinst)}
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\date{} % 这一行用来去掉默认的日期显示
+\maketitle
+\vspace{-6mm}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  中文摘要
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{minipage}[c]{13.5cm}
+\zihao{-5}
+\textbf{摘~~~要:}\quad 本次实验我们小组通过课堂上介绍的“带词频属性的文档倒排算法”，统计了词语的倒排索引并输出，按照要求输出了词语的平均出现次数，使用给定的小说数据集在集群上完成了调试和测试。在此基础上，完成了两个选做任务：基于平均出现次数对词语的全局排序与计算出每位作家每个词语的TF-IDF并输出。实验分别在本地进行了简单测试并提交到集群运行获得最终运行结果。在得到实验结果后，我们将输出结果下载到本地，然后对倒排索引的结果进行了简要的分析，得到了一些比较有趣的结论。\\
+\\ \textbf{关键词:}\quad\cnkeywords
+\end{minipage}
+
+\hypersetup{CJKbookmarks=true}
+\section{引 \hy \hy \hy言}
+
+倒排索引是文档检索系统中最常用的数据结构，被广泛的应用于全文搜索引擎。它主要用来存储某个单词（或词组），在一个文档或一组文档中的存储位置的映射，即提供了一种根据内容来查找文档的方式，由于不是根据文档来确定文档所包含的内容，而是进行了相反的操作，因而被称为倒排索引。在本次实验中，我们实现了(1)带词频属性的文档倒排算法。除了实验任务外，我们还设计了两个MapReduce Job完成选做内容：(2)根据每个词语的平均出现次数进行全局排序; (3)为每位作家、计算每个词语的TF-IDF。
+
+实验报告的第2节简要介绍了实验环境和完成情况。第3节中将详细介绍实验各个部分的设计。测试与运行的结果留在第4节中展示。在第5节中总结实验内容和团队合作。
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\authorsinfo}{陈越琦：121160005 完成代码实现并调试测试~~~~~刘威：131220085 完成实验报告}
+\newcommand{\authorsinfoo}{杨杰才：121160005 帮助刘威完成实验报告~~~~~周子博：121250229 帮助陈越琦实现集群测试}
+
+\footnote[1]{\scriptsize{\authorsinfo}}\vspace{2em}
+\footnote[0]{\scriptsize{\authorsinfoo}}\vspace{2em}
+\newpage
+\tableofcontents
+\newpage
+
+\section{实验环境与概述}
+\noindent
+本次实验的本地开发与测试环境如下：\\
+\begin{table}[H]
+\caption{开发测试环境}
+\centering
+\begin{tabular}{|c|c|}
+\hline
+软件 & 版本号\\
+\hline
+OS & ubuntu 15.04\\
+\hline
+kernel & 4.2.0-36-generic\\
+\hline
+JDK & 1.8.0\_66\\
+\hline
+Hadoop & 2.7.1\\
+\hline
+Hbase & 1.2.1\\
+\hline
+Hive & 1.2\\
+\hline
+\end{tabular}
+\end{table}
+
+本次实验依次完成了以下实验任务
+
+\begin{enumerate}
+\item 安装HBase和Hive
+\item 在HBase中创建“Wuxia”表并修改第2次实验中的MapReduce程序， 在Reduce阶段将倒排索引的信息通过文件输出，同时把每个词语对应的“平均出现次数”信息写入到HBase的"Wuxia"表中
+\item 将HBase中“Wuxia”表的表格内容保存在本地文件中。
+\item 通过Hive Shell命令行创建表"Wuxia"，导入平均出现次数和相应词语并查询
+\end{enumerate}
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{实验设计思路}
+\subsection{在Reduce阶段将倒排索引的结果输出到HBase中}
+\noindent 
+现在HBase中通过shell命令行建立"Wuxia"表：\\
+
+\textbf{hbase(main):xxx:x$>$create 'Wuxia', 'content'}\\
+
+\noindent 
+在实验2的基础上添加部分代码，从而实现将倒排索引的结果输出的HBase中的"Wuxia"表。在每个Reduce任务中将每个词语的平均出现次数和词语记录在全局的List中，关键语句如下：
+
+\textbf{static List$<$Put$>$ putList = new ArrayList$<$Put$>$();} //全局变量
+
+\textbf{...}
+
+//在每个Reduce任务中，插入以下语句
+
+\textbf{Put put = new Put(Bytes.toBytes(CurrentItem.toString()));}
+
+\textbf{put.add(Bytes.toBytes(new String("content")), Bytes.toBytes(new String("frequency")), Bytes.toBytes(Double.toString(fre)));}
+
+\textbf{putList.add(put);}
+\\
+在cleanup阶段，建立一个HBase Job，并通过zookeeper建立连接，将List中的内容输出HBase中，关键语句如下：
+
+//在HBase类的构造函数中，建立HBase Job，并通过zookeeper建立连接
+
+\textbf{conf = HBaseConfiguration.create();}
+
+\textbf{conf.set("hbase.zookeeper.property.clientPort", "2181");}
+
+\textbf{...}
+
+//在cleanup阶段将结果一次性输入到HBase中
+
+\textbf{ HBase hbase = new HBase();}
+
+\textbf{hbase.addDatas("Wuxia",putList);}
+
+\subsection{把HBase中"Wuxia"表保存到本地}
+
+
+
+\subsection{将数据导入到Hive中并查询}
+
+
+\section{实验测试与运行结果}
+
+\subsection{在Reduce阶段将倒排索引的结果输出到HBase中}
+
+
+\subsection{把HBase中"Wuxia"表保存到本地}
+
+\subsection{将数据导入到Hive中并查询}
+\begin{center}
+\includegraphics[width = 15cm]{1.png}
+\caption{创建表}
+\end{center}
+
+\begin{center}
+\includegraphics[width = 15cm]{2.png}
+\caption{将数据导入Hive}
+\end{center}
+
+\begin{center}
+\includegraphics[width = 10cm]{3.png}
+\includegraphics[width = 10cm]{4.png}
+\includegraphics[width = 10cm]{5.png}
+\includegraphics[width = 10cm]{6.png}
+\includegraphics[width = 10cm]{7.png}
+\includegraphics[width = 10cm]{8.png}
+\includegraphics[width = 10cm]{9.png}
+\includegraphics[width = 10cm]{10.png}
+\includegraphics[width = 10cm]{11.png}
+\caption{查询平均出现次数大于300的词语}
+\end{center}
+
+\begin{center}
+\includegraphics[width = 10cm]{12.png}
+\includegraphics[width = 10cm]{13.png}
+\includegraphics[width = 10cm]{14.png}
+\includegraphics[width = 10cm]{15.png}
+\includegraphics[width = 10cm]{16.png}
+\includegraphics[width = 10cm]{17.png}
+\includegraphics[width = 10cm]{18.png}
+\caption{平均次数前100的词语}
+\end{center}
+
+\section{实验总结}
+
+\vspace{6mm}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  参考文献
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newpage
+\zihao{-5}
+\begin{thebibliography}{99}
+%\setlength{\parskip}{0pt}  %段落之间的竖直距离
+\addtolength{\itemsep}{-0.8 em} % 缩小参考文献间的垂直间距
+  \bibitem{Book} 黄宜华. {\kaishu 深入理解大数据~大数据处理与编程实践}[M]. 北京: 机械工业出版社, 2014.7.
+  \bibitem{Book} https://en.wikipedia.org/wiki/Tf%E2%80%93idf
+\end{thebibliography}
+\clearpage
+\end{document}
