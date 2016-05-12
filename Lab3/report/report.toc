@@ -1,0 +1,12 @@
+\contentsline {section}{\numberline {\S 1\ignorespaces .}引 \hskip 10pt\hskip 10pt\hskip 10pt言}{1}{section.1}
+\contentsline {section}{\numberline {\S 2\ignorespaces .}实验环境与概述}{3}{section.2}
+\contentsline {subsection}{\numberline {2.1}HBase与Hive的安装与配置}{3}{subsection.2.1}
+\contentsline {section}{\numberline {\S 3\ignorespaces .}实验设计思路}{4}{section.3}
+\contentsline {subsection}{\numberline {3.1}在Reduce阶段将倒排索引结果的部分内容插入到HBase中}{4}{subsection.3.1}
+\contentsline {subsection}{\numberline {3.2}把HBase中"Wuxia"表保存到本地}{5}{subsection.3.2}
+\contentsline {subsection}{\numberline {3.3}将数据导入到Hive中并查询}{6}{subsection.3.3}
+\contentsline {section}{\numberline {\S 4\ignorespaces .}实验测试与运行结果}{6}{section.4}
+\contentsline {subsection}{\numberline {4.1}在Reduce阶段将倒排索引的结果输出到HBase中}{6}{subsection.4.1}
+\contentsline {subsection}{\numberline {4.2}把HBase中"Wuxia"表保存到本地}{8}{subsection.4.2}
+\contentsline {subsection}{\numberline {4.3}将数据导入到Hive中并查询}{9}{subsection.4.3}
+\contentsline {section}{\numberline {\S 5\ignorespaces .}实验总结}{13}{section.5}

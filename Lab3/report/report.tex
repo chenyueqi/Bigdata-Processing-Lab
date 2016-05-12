@@ -49,8 +49,8 @@
 \newcommand{\cnsecondinst}{131220085 ~~liuwei13cs@smail.nju.edu.cn}
 \newcommand{\cnthirdinst}{131220115 ~~mark\_grove@qq.com}
 \newcommand{\cnfourthinst}{121250229 ~~441842096@qq.com}
-\newcommand{\cntitle}{大数据实验2---倒排索引~实验报告}
-\newcommand{\cnkeywords}{Hadoop、倒排索引、全局排序、TF-IDF}
+\newcommand{\cntitle}{大数据实验3---HBase\_Hive~实验报告}
+\newcommand{\cnkeywords}{Hadoop、倒排索引、HBase、Hive}
 \newcommand{\cnclassno}{O212.xx} % 中图分类号
 %%
 %\newcommand{\enfirstauthor}{FIRST Name}
@@ -111,19 +111,19 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{minipage}[c]{13.5cm}
 \zihao{-5}
-\textbf{摘~~~要:}\quad 本次实验我们小组通过课堂上介绍的“带词频属性的文档倒排算法”，统计了词语的倒排索引并输出，按照要求输出了词语的平均出现次数，使用给定的小说数据集在集群上完成了调试和测试。在此基础上，完成了两个选做任务：基于平均出现次数对词语的全局排序与计算出每位作家每个词语的TF-IDF并输出。实验分别在本地进行了简单测试并提交到集群运行获得最终运行结果。在得到实验结果后，我们将输出结果下载到本地，然后对倒排索引的结果进行了简要的分析，得到了一些比较有趣的结论。\\
+\textbf{摘~~~要:}\quad 本次实验我们小组首先在本地上安装并配置了伪分布式HBase与Hive环境，然后在上次完成的带词频属性的文档倒排算法任务基础上进行代码的修改，完成其在HBase上的插入与遍历任务以及在Hive上的导入与查询任务。\\
 \\ \textbf{关键词:}\quad\cnkeywords
 \end{minipage}
 
 \hypersetup{CJKbookmarks=true}
 \section{引 \hy \hy \hy言}
 
-倒排索引是文档检索系统中最常用的数据结构，被广泛的应用于全文搜索引擎。它主要用来存储某个单词（或词组），在一个文档或一组文档中的存储位置的映射，即提供了一种根据内容来查找文档的方式，由于不是根据文档来确定文档所包含的内容，而是进行了相反的操作，因而被称为倒排索引。在本次实验中，我们实现了(1)带词频属性的文档倒排算法。除了实验任务外，我们还设计了两个MapReduce Job完成选做内容：(2)根据每个词语的平均出现次数进行全局排序; (3)为每位作家、计算每个词语的TF-IDF。
+HBase是一个分布式的、面向列的开源数据库，HBase在Hadoop之上提供了类似于Bigtable的能力。HBase是Apache的Hadoop项目的子项目。HBase不同于一般的关系数据库，它是一个适合于非结构化数据存储的数据库。hive是基于Hadoop的一个数据仓库工具，可以将结构化的数据文件映射为一张数据库表，并提供简单的sql查询功能，可以将sql语句转换为MapReduce任务进行运行。在本次实验中，我们将上次实验的内容进行修改，使之能完成在HBase与Hive上的相关任务。\\
 
 实验报告的第2节简要介绍了实验环境和完成情况。第3节中将详细介绍实验各个部分的设计。测试与运行的结果留在第4节中展示。在第5节中总结实验内容和团队合作。
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\newcommand{\authorsinfo}{陈越琦：121160005 完成代码实现并调试测试~~~~~刘威：131220085 完成实验报告}
-\newcommand{\authorsinfoo}{杨杰才：121160005 帮助刘威完成实验报告~~~~~周子博：121250229 帮助陈越琦实现集群测试}
+\newcommand{\authorsinfo}{陈越琦：121160005 完成选作任务并编写部分实验报告~~~~~刘威：131220085 完成必做任务前四部分并编写部分实验报告}
+\newcommand{\authorsinfoo}{杨杰才：121160005 完成必做任务Hive部分并编写部分实验报告~~~~~周子博：121250229 }
 
 \footnote[1]{\scriptsize{\authorsinfo}}\vspace{2em}
 \footnote[0]{\scriptsize{\authorsinfoo}}\vspace{2em}
@@ -155,9 +155,7 @@ Hive & 1.2\\
 \hline
 \end{tabular}
 \end{table}
-
 本次实验依次完成了以下实验任务
-
 \begin{enumerate}
 \item 安装HBase和Hive
 \item 在HBase中创建“Wuxia”表并修改第2次实验中的MapReduce程序， 在Reduce阶段将倒排索引的信息通过文件输出，同时把每个词语对应的“平均出现次数”信息写入到HBase的"Wuxia"表中
@@ -165,23 +163,51 @@ Hive & 1.2\\
 \item 通过Hive Shell命令行创建表"Wuxia"，导入平均出现次数和相应词语并查询
 \end{enumerate}
 
-
+\subsection{HBase与Hive的安装与配置}
+\subsubsection*{HBase的安装与配置}
+\noindent
+本部分，我们主要参考了网上的教程[2]来进行安装与配置，具体过程如下：\\
+本次使用的Hadoop版本是2.7.1，通过官方文档查询得知与之较好匹配的Hase版本是1.2.1，下载安装包后，按照如下步骤进行安装与配置。
+\begin{enumerate}
+\item	首先解压安装包，并放到对应的目录
+\item	与Hadoop安装一样，对/etc/profile文件进行修改，配置环境变量并使之生效
+\item	修改配置文件：$<$HBASE\_HOME$>$/conf/hbase-site.xml 
+\item	启动Hadoop和HDFS，并通过start-hbase.sh运行HBase，进行简单测试后，HBase正常运行，配置成功。
+\item   要运行涉及HBase JAVA API的程序还需要将$<$HBASE\_HOME$>$/lib的路径加入到\\HADOOP\_HOME环境变量中。
+\end{enumerate}
+安装与配置成功后没，使用jps命令查看当前运行的所有java进程如下：
+\begin{center}
+\includegraphics[width = 14cm]{22.png}
+\caption{jps命令查看java进程}
+可以看到，hadoop与hbase均成功启动。
+\end{center}
+\subsubsection*{Hive的安装与配置}
+\noindent
+本部分，我们主要参考了网上的教程[3]来进行安装与配置，具体过程如下：\\
+本次使用的Hadoop版本是2.7.1，通过官方文档查询得知与之较好匹配的Hive版本是1.2.1，下载安装包后，按照如下步骤进行安装。
+\begin{enumerate}
+\item	首先用apt-get命令按照了SQL
+\item	与Hadoop安装一样，对/etc/profile文件进行修改，配置环境变量并使之生效
+\item	复制hive /conf/hive-default.xml为hive-site.xml，并修改hive-site.xml中的内容
+\item	下载mysql-connector-java-5.1.27-bin.jar文件，并放到\$HIVE\_HOME/lib目录下
+\item	启动Hadoop，并运行Hive，进行简单测试后，Hive正常运行，配置成功。
+\end{enumerate}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{实验设计思路}
-\subsection{在Reduce阶段将倒排索引的结果输出到HBase中}
+\subsection{在Reduce阶段将倒排索引结果的部分内容插入到HBase中}
 \noindent 
-现在HBase中通过shell命令行建立"Wuxia"表：\\
-
+为实现这个任务，我们选择使用HBase的JAVA API来实现对HBase数据库进行操作，将词语与平均出现次数插入到'Wuxia'表中。而除平均出现次数之外的倒排索引信息仍输出到HDFS中的输出文件中。在本任务中，我使用词语的名字作为HBase每一行的rowKey。完成本任务的具体过程如下：\\
+~\\首先在HBase中通过shell命令行建立"Wuxia"表：\\
 \textbf{hbase(main):xxx:x$>$create 'Wuxia', 'content'}\\
 
 \noindent 
-在实验2的基础上添加部分代码，从而实现将倒排索引的结果输出的HBase中的"Wuxia"表。在每个Reduce任务中将每个词语的平均出现次数和词语记录在全局的List中，关键语句如下：
+在实验2的基础上对Reducer类进行部分代码修改，从而实现将倒排索引结果的词语名与平均出现次数插入到HBase中的"Wuxia"表。为实现这一目标，我们在每个Reduce任务中将每个词语的平均出现次数和词语构造为一个Put类的实例，将这个实例插入到全局Put类型的List中，关键语句如下：
 
 \textbf{static List$<$Put$>$ putList = new ArrayList$<$Put$>$();} //全局变量
 
 \textbf{...}
-
-//在每个Reduce任务中，插入以下语句
+\noindent
+//在reduce函数中，插入以下语句构造相应的Put变量：
 
 \textbf{Put put = new Put(Bytes.toBytes(CurrentItem.toString()));}
 
@@ -189,12 +215,12 @@ Hive & 1.2\\
 
 \textbf{putList.add(put);}
 \\
-在cleanup阶段，建立一个HBase Job，并通过zookeeper建立连接，将List中的内容输出HBase中，关键语句如下：
+\noindent
+最后，在cleanup函数中，建立一个HBase Job，并通过zookeeper建立连接，调用HTable类的put函数将List中的内容插入到HBase中，关键语句如下：
 
 //在HBase类的构造函数中，建立HBase Job，并通过zookeeper建立连接
 
 \textbf{conf = HBaseConfiguration.create();}
-
 \textbf{conf.set("hbase.zookeeper.property.clientPort", "2181");}
 
 \textbf{...}
@@ -202,24 +228,77 @@ Hive & 1.2\\
 //在cleanup阶段将结果一次性输入到HBase中
 
 \textbf{ HBase hbase = new HBase();}
-
 \textbf{hbase.addDatas("Wuxia",putList);}
 
+//addDatas函数是将PutList中的内容插入到'Wuxia'表中的函数，通过HTable类的put函数将Put实例依次插入到HBase的'Wuxia'表中。\\
+同时，保持实验二其他部分不变即可完成文件输出与HBase插入两部分过程。具体的实验过程与结果的截图将在第四节中展示。
 \subsection{把HBase中"Wuxia"表保存到本地}
-
-
-
+\noindent
+本任务中，我们编写了ReadHBase.java文件来实现这一任务。我们同样通过调用HBase的JAVA~API来实现对'Wuxia'表的遍历，然后将相应的内容按照~词语 TAB 平均出现次数~的格式输出到输出文件output中。\\
+~\\为完成这个任务，我们使用io.File类来进行文件的输出操作。实验的大体设计分为以下三部分：\\
+(1)建立一个HBase Job，进行设置并通过zookeeper建立连接，关键代码如下：\\
+	\textbf{conf = HBaseConfiguration.create();}\\
+	\textbf{conf.set("hbase.zookeeper.quo.rum", "localhost");}\\
+	\textbf{conf.set("hbase.zookeeper.property.clientPort", "2181");}\\
+(2)建立输出文件并通过HTable提供的getScanner方法来进行批量查询，创建Scan变量时使用默认空参数从而实现对整个表的遍历。本部分关键代码如下：\\
+ 	\textbf{File writename = new File("output"); }\\
+    \textbf{writename.createNewFile();}\\  
+    \textbf{Table table = new HTable(conf,tableName);}\\
+	\textbf{Scan s = new Scan();}\\
+	\textbf{ResultScanner ss = table.getScanner(s);}\\
+(3)对批量查询结果进行遍历，将相应的词语名rowKey与平均出现次数frequency输出到output文件。本部分关键代码如下：\\
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%排版仍需优化
+\textbf{for(Result r : ss)}\\
+\textbf{\{}\\
+    ~~~~for(KeyValue kv : r.raw())\\
+    ~~~~\{\\
+    ~~~~~~~~out.write(...);\\
+    ~~~~\}\\
+    ~~~~out.flush();\\
+\textbf{\}}\\
 \subsection{将数据导入到Hive中并查询}
-
+\noindent
+本部分任务，我们通过Hive Shell来完成。首先创建Table~Wuxia，然后将上一任务中的输出文件output导入到Wuxia中，最后通过相应的查询指令进行查询。具体的过程在第四节中会详细叙述。
 
 \section{实验测试与运行结果}
 
 \subsection{在Reduce阶段将倒排索引的结果输出到HBase中}
-
-
+\noindent
+本部分的测试与运行过程如下：\\
+(1)~将集群HDFS中的测试文件复制到本地，然后使用scp拷贝到我们的机器中。\\
+(2)~将修改后的代码编译得到.class文件并打包为InvertedIndex.jar包。\\
+(3)~在HBase中创建表'Wuxia'，如下图：\\
+\begin{center}
+\includegraphics[width = 14cm]{23.png}
+\caption{建表与查看}
+\end{center}
+(4)~使用命令hadoop jar InvertedIndex.jar InvertedIndex Lab3 Lab3out~运行这一任务。\\
+~\\本任务的运行结果如下：
+\begin{center}
+\includegraphics[width = 14cm]{19.png}
+\caption{HDFS中的输出倒排索引信息}
+\end{center}
+可以看到，倒排索引中的信息已不再输出平均出现次数。\\
+~\\使用scan 'Wuxia' 命令查看HBase中'Wuxia'表的插入结果如下（rowKey为词语的UTF-8编码，frequency为该词语的平均出现次数）：\\
+\begin{center}
+\includegraphics[width = 14cm]{20.png}
+\caption{'Wuxia'表中信息}
+\end{center}
+可以看到总共134881条记录已经全部成功插入到'Wuxia'表中。
 \subsection{把HBase中"Wuxia"表保存到本地}
-
+\noindent
+本任务的测试与运行过程如下：\\
+(1)~编译ReadHBase.java并打包得到ReadHBase.jar。\\
+(2)~使用hadoop jar ReadHBase.jar ReadHBase 命令来执行这一任务。\\
+(3)~执行结束后，在当前文件夹下即可看到输出文件output。\\
+~\\得到的输出文件output的部分内容的截图如下：
+\begin{center}
+\includegraphics[width = 14cm]{21.png}
+\caption{'Wuxia'表保存到本地的文件output}
+\end{center}
 \subsection{将数据导入到Hive中并查询}
+\noindent
+本部分全部在Hive Shell下完成，首先建表，然后将上面的输出文件output导入表中，最后查询。相应的命令与查询结果见下面的截图：
 \begin{center}
 \includegraphics[width = 15cm]{1.png}
 \caption{创建表}
@@ -266,7 +345,10 @@ Hive & 1.2\\
 %\setlength{\parskip}{0pt}  %段落之间的竖直距离
 \addtolength{\itemsep}{-0.8 em} % 缩小参考文献间的垂直间距
   \bibitem{Book} 黄宜华. {\kaishu 深入理解大数据~大数据处理与编程实践}[M]. 北京: 机械工业出版社, 2014.7.
-  \bibitem{Book} https://en.wikipedia.org/wiki/Tf%E2%80%93idf
+  \bibitem{Book} HBase安装配置之伪分布式模式-pdw2009的专栏-博客频道-CSDN.NET
+\\http://blog.csdn.net/pdw2009/article/details/21261417
+  \bibitem{Book} hadoop2.2 学习5 ubuntu在伪分布式环境下安装hive-幸运声的日志-网易博客\\
+http://blog.163.com/gibby\_l/blog/static/83003161201402410204518/
 \end{thebibliography}
 \clearpage
 \end{document}
