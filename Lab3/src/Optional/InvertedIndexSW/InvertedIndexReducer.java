@@ -87,7 +87,7 @@ public class InvertedIndexReducer extends Reducer<Text, IntWritable, Text, Text>
 	    if(cnt_file > 0)
             {
 	        double fre = (double)(cnt_word)/(double)cnt_file;
-        	Put put = new Put(Bytes.toBytes(word1.toString()));
+        	Put put = new Put(Bytes.toBytes(CurrentItem.toString()));
             	put.add(Bytes.toBytes(new String("content")),Bytes.toBytes(new String("frequency")),Bytes.toBytes(Double.toString(fre)));
             	putList.add(put);
             }

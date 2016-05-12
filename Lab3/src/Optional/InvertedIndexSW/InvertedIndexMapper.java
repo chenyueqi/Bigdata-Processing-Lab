@@ -37,7 +37,7 @@ public class InvertedIndexMapper extends Mapper<Object, Text, Text, IntWritable>
 	conf.set("hbase.zookeeper.property.clientPort", "2181");
 
 	stopwords = new TreeSet<String>();
-/*
+
 	HTable table = new HTable(conf, "StopWords");
 	
 	Scan s = new Scan();
@@ -45,8 +45,7 @@ public class InvertedIndexMapper extends Mapper<Object, Text, Text, IntWritable>
 
 	for (Result r : ss)
 	    for(KeyValue kv : r.raw())
-		stopwords.add(new String(kv.getValue()));
-		*/
+		    stopwords.add(new String(kv.getRow()));
     }
 
     @Override
@@ -64,7 +63,7 @@ public class InvertedIndexMapper extends Mapper<Object, Text, Text, IntWritable>
 	for(; itr.hasMoreTokens();)
 	{
 	    String temp = itr.nextToken();
-	//    if(!stopwords.contains(temp))
+	    if(!stopwords.contains(temp))
 	    {
 		Text word = new Text();
 		word.set(temp + "#" + fileName);
