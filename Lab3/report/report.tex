@@ -44,7 +44,7 @@
 \newcommand{\cnfirstauthor}{陈越琦}
 \newcommand{\cnsecondauthor}{刘威}
 \newcommand{\cnthirdauthor}{杨杰才}
-\newcommand{\cnfourthauthor}{周子博}
+%\newcommand{\cnfourthauthor}{周子博}
 \newcommand{\cnfirstinst}{121160005 ~~Yueqichen.0x0@gmail.com}
 \newcommand{\cnsecondinst}{131220085 ~~liuwei13cs@smail.nju.edu.cn}
 \newcommand{\cnthirdinst}{131220115 ~~mark\_grove@qq.com}
@@ -86,9 +86,8 @@
 % ---------------------
 % 第二种形式: 同一单位 多个作者 -- 名字左右并列,
 % ---------------------
-%\author{\zihao{4}\fangsong{\cnfirstauthor\hy\hy\hy\cnsecondauthor}\\[-1pt]
-%{\zihao{-5}(\cnfirstinst)}}
-
+%\author{\zihao{4}\fangsong{\cnfirstauthor\hy\hy\hy\cnsecondauthor\hy\hy\hy\cnthirdauthor}\\[-1pt]
+%{\zihao{-5}(\cnfirstinst)} {\zihao{-5}(\cnsecondinst)} {\zihao{-5}(\cnthirdinst)}}\
 % ---------------------
 % 第三种形式: 不同单位 多个作者 -- 名字与单位上下并列
 % ---------------------
@@ -97,10 +96,11 @@
 \zihao{4}\fangsong{\cnsecondauthor}\\[-1pt]
 {\zihao{-5}(\cnsecondinst)}\and
 \zihao{4}\fangsong{\cnthirdauthor}\\[-1pt]
-{\zihao{-5}(\cnthirdinst)}\and
-\zihao{4}\fangsong{\cnfourthauthor}\\[-1pt]
-{\zihao{-5}(\cnfourthinst)}
+{\zihao{-5}(\cnthirdinst)}
 }
+%\zihao{4}\fangsong{\cnfourthauthor}\\[-1pt]
+%{\zihao{-5}(\cnfourthinst)}
+%}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \date{} % 这一行用来去掉默认的日期显示
@@ -123,7 +123,7 @@ HBase是一个分布式的、面向列的开源数据库，HBase在Hadoop之上提供了类似于Bigtable的
 实验报告的第2节简要介绍了实验环境和完成情况。第3节中将详细介绍实验各个部分的设计。测试与运行的结果留在第4节中展示。在第5节中总结实验内容和团队合作。
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \newcommand{\authorsinfo}{陈越琦：121160005 完成选作任务并编写部分实验报告~~~~~刘威：131220085 完成必做任务前四部分并编写部分实验报告}
-\newcommand{\authorsinfoo}{杨杰才：121160005 完成必做任务Hive部分并编写部分实验报告~~~~~周子博：121250229 }
+\newcommand{\authorsinfoo}{杨杰才：121160005 完成必做任务Hive部分并编写部分实验报告}
 
 \footnote[1]{\scriptsize{\authorsinfo}}\vspace{2em}
 \footnote[0]{\scriptsize{\authorsinfoo}}\vspace{2em}
@@ -157,112 +157,146 @@ Hive & 1.2\\
 \end{table}
 本次实验依次完成了以下实验任务
 \begin{enumerate}
-\item 安装HBase和Hive
-\item 在HBase中创建“Wuxia”表并修改第2次实验中的MapReduce程序， 在Reduce阶段将倒排索引的信息通过文件输出，同时把每个词语对应的“平均出现次数”信息写入到HBase的"Wuxia"表中
-\item 将HBase中“Wuxia”表的表格内容保存在本地文件中。
-\item 通过Hive Shell命令行创建表"Wuxia"，导入平均出现次数和相应词语并查询
+\item 安装HBase和Hive.
+\item 在HBase中创建“Wuxia”表并修改第2次实验中的MapReduce程序， 在Reduce阶段将倒排索引的信息通过文件输出，同时把每个词语对应的“平均出现次数”信息写入到HBase的"Wuxia"表中.
+\item 将HBase中“Wuxia”表的表格内容保存在本地文件中.
+\item 通过Hive Shell命令行创建表"Wuxia"，导入平均出现次数和相应词语并查询.
+\item 从HBase中读入事先导入的停词表，重复任务2.
 \end{enumerate}
 
-\subsection{HBase与Hive的安装与配置}
-\subsubsection*{HBase的安装与配置}
-\noindent
-本部分，我们主要参考了网上的教程[2]来进行安装与配置，具体过程如下：\\
-本次使用的Hadoop版本是2.7.1，通过官方文档查询得知与之较好匹配的Hase版本是1.2.1，下载安装包后，按照如下步骤进行安装与配置。
+\subsection{HBase与Hive安装与配置}
+
+\subsubsection{HBase的安装与配置}
+
+根据教程[2]安装与配置，具体过程如下：
 \begin{enumerate}
-\item	首先解压安装包，并放到对应的目录
-\item	与Hadoop安装一样，对/etc/profile文件进行修改，配置环境变量并使之生效
-\item	修改配置文件：$<$HBASE\_HOME$>$/conf/hbase-site.xml 
-\item	启动Hadoop和HDFS，并通过start-hbase.sh运行HBase，进行简单测试后，HBase正常运行，配置成功。
-\item   要运行涉及HBase JAVA API的程序还需要将$<$HBASE\_HOME$>$/lib的路径加入到\\HADOOP\_HOME环境变量中。
+\item 查找与Hadoop版本匹配的HBase版本，下载安装包.
+\item 解压安装包并设置环境变量.
+\item 修改配置文件：$\$$HBASE\_HOME/conf/hbase-env.sh~和~$\$$HBASE\_HOME/conf/hbase-site.xml
+\item 启动HDFS，再通过start-hbase.sh脚本启动HBase，通过shell简单测试后，HBase正常运行，配置成功.
+\item 配置$\$$HADOOP\_HOME环境变量，使得依赖于HBase中jar包的MapReduce作业自动产生依赖，方便后续实验
 \end{enumerate}
-安装与配置成功后没，使用jps命令查看当前运行的所有java进程如下：
+
+使用jps命令查看当前运行的java进程如下：
 \begin{center}
 \includegraphics[width = 14cm]{22.png}
 \caption{jps命令查看java进程}
-可以看到，hadoop与hbase均成功启动。
 \end{center}
-\subsubsection*{Hive的安装与配置}
-\noindent
-本部分，我们主要参考了网上的教程[3]来进行安装与配置，具体过程如下：\\
+图1显示HDFS与HBase均成功启动。
+
+\subsubsection{Hive的安装与配置}
+
+根据教程[3]安装与配置，具体过程如下：
 本次使用的Hadoop版本是2.7.1，通过官方文档查询得知与之较好匹配的Hive版本是1.2.1，下载安装包后，按照如下步骤进行安装。
 \begin{enumerate}
-\item	首先用apt-get命令按照了SQL
-\item	与Hadoop安装一样，对/etc/profile文件进行修改，配置环境变量并使之生效
-\item	复制hive /conf/hive-default.xml为hive-site.xml，并修改hive-site.xml中的内容
-\item	下载mysql-connector-java-5.1.27-bin.jar文件，并放到\$HIVE\_HOME/lib目录下
-\item	启动Hadoop，并运行Hive，进行简单测试后，Hive正常运行，配置成功。
+\item 查找与Hadoop版本匹配的Hive版本，下载安装包.
+\item 使用apt-get命令安装SQL并设置环境变量
+\item 重命名 $\$$HIVE\_HOME/conf/hive-default.xml为hive-site.xml，并配置hive-site.xml
+\item 下载mysql-connector-java-5.1.27-bin.jar文件，并存储到\$HIVE\_HOME/lib目录
+\item 启动HDFS，再运行Hive，通过shell简单测试后，Hive正常运行，配置成功。
 \end{enumerate}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{实验设计思路}
-\subsection{在Reduce阶段将倒排索引结果的部分内容插入到HBase中}
-\noindent 
-为实现这个任务，我们选择使用HBase的JAVA API来实现对HBase数据库进行操作，将词语与平均出现次数插入到'Wuxia'表中。而除平均出现次数之外的倒排索引信息仍输出到HDFS中的输出文件中。在本任务中，我使用词语的名字作为HBase每一行的rowKey。完成本任务的具体过程如下：\\
-~\\首先在HBase中通过shell命令行建立"Wuxia"表：\\
+\subsection{倒排索引部分结果插入到HBase中}
+
+本部分使用HBase的JAVA API在MapReduce作业的Reduce阶段对HBase数据库进行操作：将词语与平均出现次数插入到'Wuxia'表中，除平均出现次数之外的倒排索引信息仍输出到HDFS中。在HBase中使用词语作为‘Wuxia’表每一行的rowKey，相应的平均出现次数属于列'content:fre'。具体设计思路如下：\\
+
+~\\首先在HBase中通过shell命令行建立"Wuxia"表：
+
 \textbf{hbase(main):xxx:x$>$create 'Wuxia', 'content'}\\
 
 \noindent 
-在实验2的基础上对Reducer类进行部分代码修改，从而实现将倒排索引结果的词语名与平均出现次数插入到HBase中的"Wuxia"表。为实现这一目标，我们在每个Reduce任务中将每个词语的平均出现次数和词语构造为一个Put类的实例，将这个实例插入到全局Put类型的List中，关键语句如下：
+在实验2的基础上对Reducer类部分代码进行修改：我们在每个Reduce任务中将每个词语的平均出现次数和词语构造为一个Put类的实例，将这个实例插入到全局Put类型的List中，关键语句如下：
 
 \textbf{static List$<$Put$>$ putList = new ArrayList$<$Put$>$();} //全局变量
 
 \textbf{...}
-\noindent
-//在reduce函数中，插入以下语句构造相应的Put变量：
+
+//在reduce方法中，插入以下语句构造相应的Put变量：
 
 \textbf{Put put = new Put(Bytes.toBytes(CurrentItem.toString()));}
 
 \textbf{put.add(Bytes.toBytes(new String("content")), Bytes.toBytes(new String("frequency")), Bytes.toBytes(Double.toString(fre)));}
 
-\textbf{putList.add(put);}
-\\
+\textbf{putList.add(put);}\\
+
+
 \noindent
-最后，在cleanup函数中，建立一个HBase Job，并通过zookeeper建立连接，调用HTable类的put函数将List中的内容插入到HBase中，关键语句如下：
+最后，在cleanup方法中，建立一个HBase Job，并通过zookeeper建立连接，调用HTable类的put方法将List中的内容插入到HBase中，关键语句如下：
 
 //在HBase类的构造函数中，建立HBase Job，并通过zookeeper建立连接
 
 \textbf{conf = HBaseConfiguration.create();}
+
 \textbf{conf.set("hbase.zookeeper.property.clientPort", "2181");}
 
 \textbf{...}
 
 //在cleanup阶段将结果一次性输入到HBase中
 
-\textbf{ HBase hbase = new HBase();}
+\textbf{HBase hbase = new HBase();}
+
 \textbf{hbase.addDatas("Wuxia",putList);}
 
-//addDatas函数是将PutList中的内容插入到'Wuxia'表中的函数，通过HTable类的put函数将Put实例依次插入到HBase的'Wuxia'表中。\\
-同时，保持实验二其他部分不变即可完成文件输出与HBase插入两部分过程。具体的实验过程与结果的截图将在第四节中展示。
 \subsection{把HBase中"Wuxia"表保存到本地}
-\noindent
-本任务中，我们编写了ReadHBase.java文件来实现这一任务。我们同样通过调用HBase的JAVA~API来实现对'Wuxia'表的遍历，然后将相应的内容按照~词语 TAB 平均出现次数~的格式输出到输出文件output中。\\
-~\\为完成这个任务，我们使用io.File类来进行文件的输出操作。实验的大体设计分为以下三部分：\\
-(1)建立一个HBase Job，进行设置并通过zookeeper建立连接，关键代码如下：\\
+
+本部分通过调用HBase的JAVA~API实现对'Wuxia'表的遍历，将"Wuxia"表中数据按照\textbf{$<$词语$>$ TAB $<$平均出现次数$>$}
+的格式输出到输出文件output中。
+
+我们使用io.File类完成文件的输出操作。实验的大体设计分为以下三部分：
+\begin{enumerate}
+\item 建立一个HBase Job，通过zookeeper建立连接，关键代码如下：\\
 	\textbf{conf = HBaseConfiguration.create();}\\
 	\textbf{conf.set("hbase.zookeeper.quo.rum", "localhost");}\\
 	\textbf{conf.set("hbase.zookeeper.property.clientPort", "2181");}\\
-(2)建立输出文件并通过HTable提供的getScanner方法来进行批量查询，创建Scan变量时使用默认空参数从而实现对整个表的遍历。本部分关键代码如下：\\
- 	\textbf{File writename = new File("output"); }\\
+\item 建立输出文件并通过HTable提供的getScanner方法来进行批量查询，创建Scan变量时使用默认空参数从而实现对整个表的遍历，关键代码如下：\\
+	\textbf{File writename = new File("output"); }\\
     \textbf{writename.createNewFile();}\\  
     \textbf{Table table = new HTable(conf,tableName);}\\
 	\textbf{Scan s = new Scan();}\\
 	\textbf{ResultScanner ss = table.getScanner(s);}\\
-(3)对批量查询结果进行遍历，将相应的词语名rowKey与平均出现次数frequency输出到output文件。本部分关键代码如下：\\
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%排版仍需优化
-\textbf{for(Result r : ss)}\\
-\textbf{\{}\\
-    ~~~~for(KeyValue kv : r.raw())\\
-    ~~~~\{\\
-    ~~~~~~~~out.write(...);\\
-    ~~~~\}\\
-    ~~~~out.flush();\\
-\textbf{\}}\\
-\subsection{将数据导入到Hive中并查询}
-\noindent
-本部分任务，我们通过Hive Shell来完成。首先创建Table~Wuxia，然后将上一任务中的输出文件output导入到Wuxia中，最后通过相应的查询指令进行查询。具体的过程在第四节中会详细叙述。
+\item 遍历批量查询结果，将相应的词语名rowKey与平均出现次数frequency输出到output文件，关键代码如下：\\
+	//对ResultScanner中每一个Result r的每一个KeyValue kv\\
+	\textbf{out.write(new String(kv.getRow()));}\\
+    \textbf{out.write(new String(kv.getValue()));}\\
+\end{enumerate}
 
+
+\subsection{将数据导入到Hive中并查询}
+
+本部分，我们通过Hive Shell来完成。首先创建Table~Wuxia，然后将上一任务中的输出文件output导入到Wuxia中，最后通过相应的查询指令进行查询。具体的过程在第四节中详细叙述。
+
+\subsection{从HBase中导入停词表并将倒排索引部分结果插入到HBase中}
+
+本部分任务分成两个阶段，一是将停词表导入HBase中，二是从HBase中读入停词表并执行倒排索引。
+
+\subsubsection{导入停词表}
+
+\begin{enumerate}
+\item 在HBase中通过shell命令行建立"StopWords"表：\\
+	\textbf{hbase(main):xxx:x$>$create 'StopWords', 'word'}\\
+\item 通过zookeeper建立连接，再通过InputStreamReader和BufferedReader读入停词表，以停词表中的词语作为RowKey插入到HBase中.
+\end{enumerate}
+
+\subsubsection{读入停词表并执行倒排索引}
+本部分在3.1的基础上，修改Map阶段的代码：在Map阶段的setup方法中，使用类似于3.2中的方法建立HBase连接并读入"StopWords"到全局停词表使得每个节点都能共享。同时在map方法中对于每个小说中读入的词语检查在停词表中是否存在匹配，若是则跳过这个词语并继续。关键语句如下：
+
+//在setup方法中建立停词表
+
+\textbf{stopwords = new TreeSet$<$String$>$();}
+
+//读入HBase中"StopWords"中内容并添加进停词表
+
+\textbf{stopwords.add(new String(kv.getRow()));}
+
+\textbf{...}
+
+//在map方法中检查是否存在匹配
+
+\textbf{if(!stopwords.contains(temp))}
 \section{实验测试与运行结果}
 
-\subsection{在Reduce阶段将倒排索引的结果输出到HBase中}
+\subsection{倒排索引部分结果插入到HBase中}
 \noindent
 本部分的测试与运行过程如下：\\
 (1)~将集群HDFS中的测试文件复制到本地，然后使用scp拷贝到我们的机器中。\\
@@ -333,7 +367,27 @@ Hive & 1.2\\
 \caption{平均次数前100的词语}
 \end{center}
 
+\subsection{从HBase中导入停词表并将倒排索引部分结果插入到HBase中}
+
+
 \section{实验总结}
+\subsection{实验内容总结}
+
+本次实验是大数据处理综合实验的第二次实验，在这次实验中我们完成了三个MapReduce任务的编写： (1)带词频属性的文档倒排算法. (2)根据每个词语的平均出现次数进行全局排序. (3)为每位作家、计算每个词语的TF-IDF。通过本次实验，加深了对MapReduce算法设计与编程的了解，同时进一步巩固了对Hadoop MapReduce基本构架的理解。
+
+本次实验各个任务中最主要的问题是确定不同阶段的键值对。为确定Map与Reduce的设计与各个过程中键值对的类型转换过程，我们根据教材中内容举一反三完成了选做内容。此外，在具体实现时，我们在java零基础的情况下学习了字符串相关的操作方法，灵活切割输入文本与文件名获得有关信息，例如作者名与小说名。
+
+本次实验是我们第一次较为深入地了解Hadoop MapReduce的算法设计与程序的编写和运行，整体完成较为顺利，为后面的实验打下了较好的基础。
+
+代码链接： \url{https://github.com/chenyueqi/BPLab/tree/master/Lab3/src}
+
+\subsection{团队合作总结}
+
+
+在本次实验中，我们小组采取的是“代码实现+实验报告”的分工模式，即两位同学合作实现代码并完成测试，另外两位同学合作完成实验报告。但是在合作过程中，我们发现这并不是最佳最高效的合作模式。主要表现在完成实验报告的同学仅仅通过与代码实现的同学交流并不能准确理解设计思路，最终还是要依赖阅读代码。而负责代码实现的同学最终还要修改实验报告使得报告中的表达更加准确。
+
+为了进一步提高效率，我们打算在下一次实验中尝试另外一种分工模式：“包产到户”。即在动手实验之前，通过集体交流确定实验内容和内容之间的依赖关系，然后将实验内容划分成不同部分，分别交由几个人完成。每位同学在完成自己的代码部分的同时完成对应的实验报告部分。这一分工模式强烈依赖先期交流的高效性和彻底性以及讨论结果的一致性，但是能让每位同学的参与度大大提高。同时也能让每位同学掌握更多技能，成为多面手。
+
 
 \vspace{6mm}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
