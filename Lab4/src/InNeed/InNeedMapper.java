@@ -1,9 +1,9 @@
 /*
- * Map class to translation directed graph to undirected graph
+ * Map class for counting the number of triangles of a undirected graph
  * Project Name: Lab4
  * Group Name: what the f**k
  * Created: Yueqi Chen (Yueqichen.0x0@gmail.com)
- * Time: 2016/5/20 11:06
+ * Time: 2016/5/20 13:30
  */
 
 import java.io.IOException;
@@ -31,7 +31,7 @@ public class InNeedMapper extends Mapper<Object, Text, Text, Text>
 	    Text existedge = new Text();
 	    existedge.set(vertex[0]+"#"+vertex[i]);
 	   
-	    context.write(existedge, new Text("#"));
+	    context.write(existedge, new Text("&"));
 	}
 
 	for(int i = 1 ; i < vertex.length ; i++)
@@ -46,7 +46,7 @@ public class InNeedMapper extends Mapper<Object, Text, Text, Text>
 		else
 		    inneededge.set(vertex[j]+"#"+vertex[i]);
 
-		context.write(inneededge, new Text("&"));
+		context.write(inneededge, new Text("#"));
 	    }
     }
 }

@@ -1,9 +1,9 @@
 /*
- * main class for figuring out the needed edge to make up a triangle
+ * main class for counting the number triangle of a undirected graph
  * Project Name: Lab4
  * Group Name: what the f**k
  * Created: Yueqi Chen (Yueqichen.0x0@gmail.com)
- * Time: 2016/5/20 14:22
+ * Time: 2016/5/20 13:30
  */
 
 import java.io.IOException;
@@ -32,7 +32,7 @@ public class InNeed
 			
 	job.setJarByClass(InNeed.class);
 	job.setMapperClass(InNeedMapper.class);
-//	job.setReducerClass(InNeedReducer.class);
+	job.setReducerClass(InNeedReducer.class);
 
 	job.setOutputKeyClass(Text.class);
 	job.setOutputValueClass(Text.class);

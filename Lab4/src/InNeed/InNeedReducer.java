@@ -1,5 +1,5 @@
 /*
- * Reducer class for translation directed graph to undirected graph
+ * Reducer class for 
  * Project Name: Lab4
  * Group Name: what the f**k
  * Created: Yueqi Chen (yueqichen.0x0@gmail.com)
@@ -15,17 +15,22 @@ import org.apache.hadoop.util.*;
 
 public class InNeedReducer extends Reducer<Text, Text, Text, Text>
 {
+    static long NumTrian = 0;
 
     public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException
     {
-	StringBuilder out = new StringBuilder();
-
-	for(Text value: values)
+	boolean exist = false;
+	for(Text val: values)
 	{
-	    if(out.indexOf(value.toString()) == -1)
-		out.append(value.toString());
-	    out.append("; ");
+	    if(val.toString().equals("&"))
+		exist = true;
+	    if(val.toString().equals("#") && exist)
+		NumTrian++;
 	}
-	context.write(key, new Text(out.toString()));
+    }
+
+    public void cleanup(Context context) throws IOException, InterruptedException
+    {
+	context.write(new Text("Number of triangles: ") , new Text(String.valueOf(NumTrian)));
     }
 }
