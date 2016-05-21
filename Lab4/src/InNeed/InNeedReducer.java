@@ -13,7 +13,7 @@ import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
 import org.apache.hadoop.util.*;
 
-public class DigraphToUngraphReducer extends Reducer<Text, Text, Text, Text>
+public class InNeedReducer extends Reducer<Text, Text, Text, Text>
 {
 
     public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException
@@ -22,11 +22,9 @@ public class DigraphToUngraphReducer extends Reducer<Text, Text, Text, Text>
 
 	for(Text value: values)
 	{
-	    if((out.indexOf(value.toString()) == -1))
-	    {
+	    if(out.indexOf(value.toString()) == -1)
 		out.append(value.toString());
-		out.append(",");
-	    }
+	    out.append("; ");
 	}
 	context.write(key, new Text(out.toString()));
     }

@@ -32,14 +32,15 @@ public class DigraphToUngraphMapper extends Mapper<Object, Text, Text, Text>
 	{
 	    a.set(vetex[0]);
 	    b.set(vetex[1]);
+	    context.write(a, b);
 	}
 	else if(second < first)
 	{
 	    a.set(vetex[1]);
 	    b.set(vetex[0]);
+	    context.write(a, b);
 	}
 
-	context.write(a, b);
     }
 
 }
