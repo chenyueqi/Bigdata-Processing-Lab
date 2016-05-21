@@ -15,40 +15,17 @@ import org.apache.hadoop.util.*;
 
 public class DigraphToUngraphReducer extends Reducer<Text, Text, Text, Text>
 {
-    static HashSet<String> postingList = new HashSet<String>();
-    static Text CurrentItem = new Text(" ");
 
-    public void reduce(Text key, Text value, Context context) throws IOException, InterruptedException
+    public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException
     {
-	if(!CurrentItem.equals(key) && (!CurrentItem.equals(" ")))
-	{
-	    int cnt = 0;
-	    StringBuffer out = new StringBuffer();
-	    for(String p:postingList)
-	    {
-		out.append(p);
-		out.append(";");
-		cnt++;
-	    }
-	    if(cnt > 0)
-		context.write(CurrentItem, new Text(out.toString()));
-	    postingList = new HashSet<String>();
-	}
-	CurrentItem = new Text(key);
-	postingList.add(value.toString());
-    }
+	StringBuilder out = new StringBuilder();
 
-    public void cleanup(Context context) throws IOException, InterruptedException
-    {
-	int cnt = 0;
-	StringBuffer out = new StringBuffer();
-	for(String p:postingList)
+	for(Text value: values)
 	{
-	    out.append(p);
-	    out.append(";");
-	    cnt++;
+	    if(out.indexOf(value.toString()) == -1)
+		out.append(value.toString());
+	    out.append("; ");
 	}
-	if(cnt > 0)
-	    context.write(CurrentItem, new Text(out.toString()));
+	context.write(key, new Text(out.toString()));
     }
 }
