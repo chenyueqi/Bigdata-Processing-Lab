@@ -1,0 +1,360 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                                                       %%
+%%     LaTeX + CTeX 《应用概率统计》论文模板, 只针对 A4 纸中文稿.        %%
+%%                                                                       %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%            中文稿 文章模板：A4 纸, 五号字, 单列              %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[a4paper,c1size,onecolumn,twoside,cap,Chinese]{APSart}
+\usepackage{listings} 
+\usepackage{enumitem}
+\usepackage{algorithm}
+\usepackage{amsmath} 
+\usepackage{algpseudocode}
+\graphicspath{{figs/}}
+\floatname{algorithm}{Class} 
+\begin{document}
+
+\setcounter{page}{1}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%------------------ 编辑部提供的信息 ------------------------%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\pubvol}{xx}         % 卷号
+\newcommand{\enpubvol}{xx}       % 卷号
+\newcommand{\pubno}{x}           % 期号
+\newcommand{\enpubno}{x}         % 期号
+\newcommand{\pubyear}{20xx}      % 出版年份
+\newcommand{\enpubyear}{20xx}    % 出版年份
+\newcommand{\pubmonth}{xx}       % 出版月份
+\newcommand{\enpubmonth}{xx}     % 出版月份
+\newcommand{\ksym}{xxx}          % 开始页码
+\newcommand{\jsym}{xxx}          % 结束页码
+\newcommand{\receivedate}{本文XXXX年XX月XX日收到} % 论文收到日期
+\newcommand{\modifydate}{XXXX年XX月XX日收到修改稿}% 论文修改日期
+\newcommand{\doino}{10.3969/j.issn.1001-4268.20xx.0x.0xx} % doi号
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%-------------------- 作者提供的信息 ------------------------%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\runcnauthors}{~} %超过两个作者的请用：第一作者姓名~等
+\newcommand{\cnfirstauthor}{陈越琦}
+\newcommand{\cnsecondauthor}{刘威}
+\newcommand{\cnthirdauthor}{杨杰才}
+\newcommand{\cnfirstinst}{121160005 ~~Yueqichen.0x0@gmail.com}
+\newcommand{\cnsecondinst}{131220085 ~~liuwei13cs@smail.nju.edu.cn}
+\newcommand{\cnthirdinst}{131220115 ~~mark\_grove@qq.com}
+\newcommand{\cntitle}{大数据实验4--图的三角形计数~实验报告}
+\newcommand{\cnkeywords}{Hadoop、有向图、社交网络、局部关系图}
+\newcommand{\cnclassno}{O212.xx} % 中图分类号
+%%
+\newcommand{\enfirstauthor}{FIRST Name}
+\newcommand{\ensecondauthor}{SECOND Name}
+\newcommand{\enfirstinst}{First Author's Working Unit $($Up to Department$)$, Province, 
+Zip Code, China}
+\newcommand{\ensecondinst}{Second Author's Working Unit $($Up to Department$)$, Province, 
+Zip Code, China}
+\newcommand{\entitle}{English Title}
+\newcommand{\enkeywords}{keyword 1; keyword 2; ......}
+\newcommand{\amsno}{62Nxx} % AMS Subject Claassification
+%%
+%% 中文摘要
+\newcommand{\cnabstract}{摘要内容.}
+%% 英文摘要
+\newcommand{\enabstract}{The abstract comes here.}
+\newcommand{\fundinfo}{XXXX基金资助(12345678).}
+\newcommand{\authorsinfo}{陈越琦：121160005 Yueqichen.0x0@gmail.com~~~~~刘威：131220085  liuwei13cs@smail.nju.edu.cn}
+\newcommand{\authorsinfoo}{杨杰才：121160005 mark\_grove@qq.com}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%        文章正文                                              %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\title{\zihao{3}\bf{\cntitle}
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 作者姓名与单位：三种形式中选一种
+% 后面英文摘要中的名字和单位同样处理
+% ---------------------
+% 第一种形式: 单一作者
+% ---------------------
+%\author{\zihao{4}\fangsong{\cnfirstauthor}\\[-1pt]
+%{\zihao{-5}(\cnfirstinst)}}
+
+% ---------------------
+% 第二种形式: 同一单位 多个作者 -- 名字左右并列,
+% ---------------------
+%\author{\zihao{4}\fangsong{\cnfirstauthor\hy\hy\hy\cnsecondauthor}\\[-1pt]
+%{\zihao{-5}(\cnfirstinst)}}
+
+% ---------------------
+% 第三种形式: 不同单位 多个作者 -- 名字与单位上下并列
+% ---------------------
+\author{\zihao{4}\fangsong{\cnfirstauthor}\\[-1pt]
+{\zihao{-5}(\cnfirstinst)}\and
+\zihao{4}\fangsong{\cnsecondauthor}\\[-1pt]
+{\zihao{-5}(\cnsecondinst)}\and
+\zihao{4}\fangsong{\cnthirdauthor}\\[-1pt]
+{\zihao{-5}(\cnthirdinst)}\and
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\date{} % 这一行用来去掉默认的日期显示
+\maketitle
+\vspace{-6mm}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  中文摘要
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{minipage}[c]{13.5cm}
+\zihao{-5}
+\textbf{摘~~~要:}\quad 本次实验我们小组通过课堂上所讲的Hadoop的网页排名图算法PageRank的相关内容的启发，完成了社交网络局部关系图的三角形计数任务。并在集群上使用Twitter数据集与Google +数据集分别进行三角形的数目统计任务。并完成了选作任务转换逻辑的替换工作，在集群上执行得到相应的结果。\\
+\\ \textbf{关键词:}\quad\cnkeywords
+\end{minipage}
+\footnote[1]{\scriptsize{\authorsinfo}}\vspace{2em}
+\footnote[0]{\scriptsize{\authorsinfoo}}\vspace{2em}
+\section{引\hy\hy\hy 言}
+\noindent
+一个社交网络可以看做是一张图。社交网络中的人对应于图的顶点；社交网络中的人际关系对应于图中的边。从而由一个社交网络转换所成的无向图上便肯定存在大量的三角形。本次实验我们小组通过课堂上所讲的Hadoop的网页排名图算法PageRank的相关内容的启发，完成了社交网络局部关系图的三角形计数任务。并在集群上使用Twitter数据集与Google +数据集分别进行三角形的数目统计任务。并完成了选作任务转换逻辑的替换工作，在集群上执行得到相应的结果。\\
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{实验环境与概述}
+\noindent
+本次实验的本地开发与测试环境如下：\\
+\begin{center}
+\includegraphics[height = 2.5cm]{2.png}
+\caption{开发与测试环境}
+\end{center}
+本次实验，对于每一种转换逻辑，我们完成了两个MapReduce任务的编写来进行图的三角形计数工作，分别为：(1) 读入输入文件根据转换逻辑构造无向边，并统计出每一个节点的相邻节点；(2) 统计图中已有的边与构造三角形所需边，根据所需边与已有边对应关系统计三角形数目并输出。最后我们编写一个Driver程序，将多趟MapReduce程序合并为一个程序来运行。\\下面几节我将详述实验的设计、测试与运行的结果。
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{实验具体设计}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{必做部分（有向到无向转换逻辑1）}
+\subsubsection{总体设计}
+\noindent
+为完成在第一种转换逻辑下的图的三角形计数，我们总共设计了两个MapReduce程序顺序执行来完成这一任务。\\两个Job各自的任务如下:
+\begin{itemize}
+\item DigraphToUngraph: 读入输入文件根据转换逻辑构造无向边，并统计出每一个节点的相邻节点并输出到HDFS
+\item InNeed: 统计图中已有的边与构造三角形所需边，根据所需边与已有边对应关系统计三角形数目并输出
+\end{itemize}
+~\\
+\textbf{DigraphToUngraph :}\\
+为完成DigraphToUngraph任务我们共设计了个3类： DigraphToUngraph, DigraphToUngraphMapper, DigraphToUngraphReducer.\\
+\\DigraphToUngraph是主类，负责启动配置作业，提交作业与获得完成结果的过程。\\~
+\\DigraphToUngraphMapper, DigraphToUngraphReducer分别为Map与Reduce类。
+\\下面我将叙述Map与Reduce的设计思路：
+\\1. Map过程： Map过程首先分析输入文件的每一行, 切割出两个顶点的ID, 选择小的ID作为key, 大的ID作为value。\\
+2. Reduce过程： 将key相同的ID所对应的value结合起来作为输出value, 获得该ID所代表的节点的所有相邻节点的ID,并输出到HDFS中。\\
+\\
+DigraphToUngraph的MapReduce各阶段的K,V类型见下表：
+\begin{center}
+\includegraphics[height=2.6cm]{0.png}
+\end{center}
+~\\
+~\\
+\noindent
+~\\
+\textbf{InNeed :}\\
+为完成InNeed任务我们共设计了个3类： InNeed, InNeedMapper, InNeedReducer.\\
+\\InNeed是主类，负责启动配置作业，提交作业与获得完成结果的过程。\\~
+\\InNeedMapper, InNeedReducer分别为Map与Reduce类。
+\\下面我将叙述Map与Reduce的设计思路：
+\\1. Map过程： Map过程首先分析上一任务的输出文件，获得节点ID与相邻节点ID的对应关系，统计出图中已有的无向边，以及要构成三角形需存在的边\textbf{（具体判断方法：假设key代表的ID为A，从上一步结果得知其有两个相邻节点B与C，则边BC就是构成三角形需要存在的边）}。将边的两个节点ID的组合作为key， value为边的类型标记\textbf{（这里我们使用'\&'作为已有边的标记，'\#'作为构成三角形所需边的标记。'\&'的ASCII码小于'\#'，因而Reduce时已有边均会排在前面，便于遍历查找三角形是否存在。）}\\
+2. Reduce过程： Reduce过程查询Map输出的边的序列，如果边是已存在边，则记录其存在状态。如果类型是构成三角形需存在的边，且该边已经被标记为存在，则说明三角形存在，三角形数目加1。最后在cleanup函数中输出最终的三角形数目统计结果。\\
+\\
+InNeed的MapReduce各阶段的K,V类型见下表：
+\begin{center}
+\includegraphics[height=2.6cm]{1.png}
+\end{center}
+\subsubsection{DigraphToUngraph任务的伪代码}
+\noindent
+\textbf{DigraphToUngraphMapper:}
+\begin{algorithm}[H]
+	{\bfseries Input :}~输入文件\\
+	{\bfseries Output :}~键值对（节点ID, 节点ID）
+	\caption{$class~Mapper$}
+	\begin{algorithmic}[1]
+    	\Procedure {Map}{Text t}
+    	\State vertex1\_ID $\leftarrow$ t.split
+    	\State vertex2\_ID $\leftarrow$ t.split
+    	\If   {vertex1\_ID$~<~$vertex2\_ID}
+    	\State Emit((vertex1\_ID, vertex2\_ID))
+    	\Else
+    	\State Emit((vertex2\_ID, vertex1\_ID))
+    	\EndIf
+    \EndProcedure
+  \end{algorithmic}
+\end{algorithm}
+\noindent
+\textbf{DigraphToUngraphReducer：}
+\begin{algorithm}[H]
+	{\bfseries Input :}~键值对（节点ID, 节点ID）\\
+	{\bfseries Output :}~节点a所代表ID~~节点a的相邻节点所代表ID的序列
+	\caption{$class~Reducer$}
+	\begin{algorithmic}[1]
+    	\Procedure {Reduce}{key: vertex\_smaller\_ID, value: vertex\_greater\_ID}
+    		\State out $\leftarrow$  $\varnothing$
+    		\For{value in values} 
+			\State out $\leftarrow$ out + value: vertex\_greater\_ID
+			\EndFor 
+			\State Write(key: vertex\_smaller\_ID, out)
+    	\EndProcedure
+  	\end{algorithmic}
+\end{algorithm}
+\subsubsection{InNeed任务的伪代码}
+\noindent
+\textbf{InNeedMapper:}
+\begin{algorithm}[H]
+	{\bfseries Input :}~输入文件: 节点ID~~~所有相邻节点ID\\
+	{\bfseries Output :}~键值对（边的ID序列， 边的种类标记）
+	\caption{$class~Mapper$}
+	\begin{algorithmic}[1]
+    	\Procedure {Map}{Key keyID， Value value\_IDS}
+    	\State IDs $\leftarrow$ value\_IDS.split
+    	\For{ID in IDs} 
+		\State Emit((keyID\#ID, \&))
+		\EndFor 
+		\For{ID1 in IDs} 
+		\For{ID2 in IDs} 
+		\State Emit((ID1\#ID2, \#))
+		\EndFor 
+		\EndFor 
+    \EndProcedure
+  \end{algorithmic}
+\end{algorithm}
+\noindent
+\textbf{InNeedReducer：}
+\begin{algorithm}[H]
+	{\bfseries Input :}~键值对（边的ID序列， 边的种类标记）\\
+	{\bfseries Output :}~键值对（边的ID序列， 边的种类标记）
+	\caption{$class~Reducer$}
+	\begin{algorithmic}[1]
+    	\Procedure {Reduce}{key: ID1\#ID2, values: \# or \&)}
+    		\State NumTran $\leftarrow$  0
+    		\State Exist $\leftarrow$  false
+    		\For{value in values} 
+			\If   {value~==~\&}
+    		\State Exist $\leftarrow$ true
+    	 	\EndIf
+    	 	\If   {value~==~\#~~\&\&~~Exist~==~true}
+    		\State NumTran $\leftarrow$ NumTran~+~1
+    	 	\EndIf
+			\EndFor
+    	\EndProcedure
+  	\end{algorithmic}
+\end{algorithm}
+
+\section{实验测试与运行结果}
+\noindent
+\subsection{JAR包执行方式说明}
+\noindent
+1. 使用IDE或者javac指令进行编译，导出各个jar文件\\
+2. 使用scp指令将jar包传送到服务器。\\
+3. 使用ssh登录到服务器\\
+4. 使用hadoop jar InvertedIndex.jar InvertedIndex /data/wuxia\_novels InvertedIndexoutput指令执行InvertedIndex.jar\\
+5. 使用hadoop jar ResultSort.jar ResultSort InvertedIndexoutput ResultSortoutput指令以上面的执行结果为输入数据来执行ResultSort.jar\\
+6. 使用hadoop jar TFIDF.jar TFIDF /data/wuxia\_novels TFIDFoutput指令执行TFIDF.jar
+\subsection{实验运行结果展示}
+\noindent
+我们的程序均首先在本地做了简单的测试后提交到集群进行运行。\\
+在集群上运行的结果如下：\\
+\begin{itemize}[leftmargin=*]
+\item 带词频属性的文档倒排算法InvertedIndex任务的运行结果：
+该任务的输出结果在HDFS上的存放路径为：hdfs://master01:9000/user/2016st21/Lab2/InvertedIndexoutput .\\
+该任务在集群上对全部数据集运行的结果的部分截图如下（输出格式为[词语] \\TAB 平均出现次数，小说1:词频；小说2:词频；小说3:词频；...；小说N:词频）：
+\begin{center}
+\includegraphics[height = 7cm]{4.png}
+\includegraphics[height = 7cm]{5.png}
+\end{center}
+
+\item 对词语的平均出现次数进行排序的ResultSort任务的运行结果：
+该任务的输出结果在HDFS上的存放路径为：hdfs://master01:9000/user/2016st21/Lab2/InvertedIndexoutput .\\
+该任务在集群上对全部数据集运行的结果的部分截图如下（输出格式为 平均出现次数 \\TAB 原纪录）：
+\begin{center}
+\includegraphics[height = 7.5cm]{6.png}\\
+~\\
+\includegraphics[height = 7.5cm]{7.png}
+\end{center}
+
+\item 为每位作家、每个词语计算TF-IDF值的任务的运行结果：
+该任务的输出结果在HDFS上的存放路径为：hdfs://master01:9000/user/2016st21/Lab2/TFIDFoutput .\\
+该任务在集群上对全部数据集运行的结果的部分截图如下（输出格式为:~[作家] TAB 词语,~~TF值,~~IDF值）：
+\begin{center}
+\includegraphics[height = 7cm]{19.png}
+\end{center}
+
+\item “江湖”、“风雪”两个词语的输出结果如下：
+\begin{center}
+\includegraphics[height = 10cm]{8.png}\\
+“江湖”的输出结果\\
+~\\ \includegraphics[height = 3.8cm]{9.png}\\
+“风雪”的输出结果
+\end{center}
+从上面的结果可以看到，不出意料地江湖基本出现在了所有的武侠小说之中，正所谓“人在江湖，身不由己”。
+\end{itemize}
+本实验在集群上执行MapReduce Job后获得的执行报告如下：
+\begin{itemize}[leftmargin=*]
+\item 在集群All Application（ http://114.212.190.91:8088/ ） 的WebUI页面中查看Job的执行状态的截图如下：\\
+\begin{center}
+\includegraphics[height = 9cm]{10.png}
+\includegraphics[height = 2.5cm]{16.png}
+\end{center}
+\item 在WebUI页面（http://114.212.190.91:19888/jobhistory）找到对应的job如下
+\begin{center}
+\includegraphics[height = 5cm]{11.png}
+\includegraphics[height = 2.2cm]{17.png}
+\end{center}
+\item 根据Job ID链接进入Job详细页面，几个job的详细信息如下所示。
+\begin{itemize}[leftmargin=*]
+\item InvertedIndexTable：\\
+\noindent
+\begin{flushleft}
+\includegraphics[height = 14cm]{12.png}
+\end{flushleft}
+\item ResultSort
+\begin{flushleft}
+\includegraphics[height = 14cm]{13.png}
+\end{flushleft}
+\item TFIDF
+\begin{flushleft}
+\includegraphics[height = 14cm]{18.png}
+\end{flushleft}
+\end{itemize}  
+\end{itemize}
+\subsection{查看实验结果后得出的一些结论}
+\noindent
+根据倒排索引得出来的结果，我们不难发现武侠小说中关于词频的一些规律：
+\begin{itemize}
+\item	纯阿拉伯数字类出现的较多，是最普遍的，这个毋庸置疑
+\item	时间和物质量词类因为小说的不同，自然出现频率低，具有独占性，对于搜索和定位来说是较优的关键字。
+\item	出现了一些英文字母和单词，按常理来说中国的武侠小说是不应该含西文的。不过考虑到这些小说是网上下载的资源，因为大部分应该都是下载的链接信息或者出处信息。
+\item	统计结果中出现的四字成语、古文俗语较多，频率大，这个不难看出小说行文的文采与流畅之处，毕竟都是大师作品，不是一些烂俗的网络小说。
+\item	人名、地名等唯一性的词语频率较低，正常现象。
+\item	的、地、得等助词出现的频率最高，符合汉语的表达习惯。
+\end{itemize}
+\section{实验总结}
+\noindent
+本次实验是大数据处理综合实验的第二次实验，在这次实验中我们完成了三个MapReduce任务的编写： (1)带词频属性的文档倒排算法. (2)对每个词语的平均出现次数进行全局排序. (3)为每位作家、计算每个词语的TF-IDF。通过本次实验，我们小组的人都对MapReduce算法设计与编程有了一定的了解，同时进一步加深了对前面所学的Hadoop MapReduce基本构架的理解。\\
+\\这次实验各个任务中最主要的问题就是Map与Reduce过程的设计与(key,value)键值对类型的确定。在实验中，为确定Map与Reduce的设计与各个过程中键值对的类型转换过程，我们查阅了课本课件等相关资料，也在一起进行了一些讨论。在较好的确定各个过程key与value的类型及转换过程后，整个编程任务的完成就变得比较容易了。此外，在具体实现时，我们更进一步的了解了java字符串相关的操作函数。灵活使用这些函数，我们也得以方便地从输入文本与文件名中分割出想要的信息，例如作者的姓名与各个文件名。\\
+\\本次实验是我们第一次较为深入地了解Hadoop MapReduce的算法设计与程序的编写和运行，整体完成较为顺利，也为后面的实验打下了较好的基础。
+\vspace{6mm}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  参考文献
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\zihao{-5}
+\begin{thebibliography}{99}
+%\setlength{\parskip}{0pt}  %段落之间的竖直距离
+\addtolength{\itemsep}{-0.8 em} % 缩小参考文献间的垂直间距
+  \bibitem{Book} 黄宜华. {\kaishu 深入理解大数据~大数据处理与编程实践}[M]. 北京: 机械工业出版社, 2014.7.
+  \bibitem{Book-part} 作者. {\kaishu 章节名}[M]// 编者. {\kaishu 书名}. 出版地: 出版社, 年份: 起始页码.
+  \bibitem{Conference} 作者. 文章题目[C]// 编者. {\kaishu 会议论文集名}. 出版地: 出版社, 年份: 起始页码.
+  \bibitem{Wangl2000} Reckdahl K. {\it Using Import graphics in \LaTeX2e}[M]. 王磊, 译. [出版地不详]: [出版社不详], 2000.
+  \bibitem{Huw2010} 胡伟. {\kaishu \LaTeX{}2$\varepsilon$完全学习手册}[M]. 北京: 清华大学出版社, 2011.
+  \bibitem{Lip04} 李平. {\kaishu \LaTeX{}2$\varepsilon$及常用宏包使用指南}[M], 北京: 清华大学出版社, 2004.
+  \bibitem{Sangdy01} 桑大勇, 王瑛. {\kaishu 科技文献排版系统: \LaTeX 入门与提高}[M]. 武汉: 武汉大学出版社, 2001.
+  \bibitem{Chenzj02} 陈志杰, 赵书钦, 万福永. {\kaishu \LaTeX{}入门与提高}[M]. 北京: 高等教育出版社, 2002.
+  \bibitem{Dengjs01} 邓建松, 彭冉冉, 陈长松. {\kaishu \LaTeX{}2$\varepsilon$科技排版指南}[M]. 北京: 科学出版社, 2001.
+\end{thebibliography}
+\clearpage
+\end{document}
