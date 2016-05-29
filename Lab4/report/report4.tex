@@ -15,6 +15,7 @@
 \usepackage{algpseudocode}
 \graphicspath{{figs/}}
 \floatname{algorithm}{Class} 
+
 \begin{document}
 
 \setcounter{page}{1}
@@ -115,9 +116,13 @@ Zip Code, China}
 \footnote[1]{\scriptsize{\authorsinfo}}\vspace{2em}
 \footnote[0]{\scriptsize{\authorsinfoo}}\vspace{2em}
 \section{引\hy\hy\hy 言}
-\noindent
-一个社交网络可以看做是一张图。社交网络中的人对应于图的顶点；社交网络中的人际关系对应于图中的边。从而由一个社交网络转换所成的无向图上便肯定存在大量的三角形。本次实验我们小组通过课堂上所讲的Hadoop的网页排名图算法PageRank的相关内容的启发，完成了社交网络局部关系图的三角形计数任务。并在集群上使用Twitter数据集与Google +数据集分别进行三角形的数目统计任务。并完成了选作任务转换逻辑的替换工作，在集群上执行得到相应的结果。\\
+
+一个社交网络可以看做是一张图。社交网络中的人对应于图的顶点；社交网络中的人际关系对应于图中的边。由一个社交网络抽象转换所成的无向图上便肯定存在大量的三角形。本次实验中，我们小组完成了社交网络局部关系图的三角形计数任务：根据不同的逻辑(OR / AND)将有向图转换为无向图，在无向图的基础上计算出三角形的个数；并在集群上使用Twitter数据集与Google +数据集分别进行三角形的数目统计任务。\\
+
+实验报告的第2节简要介绍实验环境和完成情况。第3节中将详细介绍实验各个部分的设计。测试与运行的结果留在第4节中展示。在第5节中总结实验内容和团队合作。
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\newpage
 \section{实验环境与概述}
 \noindent
 本次实验的本地开发与测试环境如下：\\
@@ -125,48 +130,55 @@ Zip Code, China}
 \includegraphics[height = 2.5cm]{2.png}
 \caption{开发与测试环境}
 \end{center}
-本次实验，对于每一种转换逻辑，我们完成了两个MapReduce任务的编写来进行图的三角形计数工作，分别为：(1) 读入输入文件根据转换逻辑构造无向边，并统计出每一个节点的相邻节点；(2) 统计图中已有的边与构造三角形所需边，根据所需边与已有边对应关系统计三角形数目并输出。最后我们编写一个Driver程序，将多趟MapReduce程序合并为一个程序来运行。\\下面几节我将详述实验的设计、测试与运行的结果。
+本次实验，我们分别完成了以下工作：
+\begin{enumerate}
+\item 分别根据OR 和 AND 逻辑将输入文件中的有向图转换为无向图.
+\item 统计图中已存在的边和构造三角形所需的边，并根据统计结果计算出无向图中存在的三角形个数.
+\item 使用Driver程序将多个job合并.
+\item 分别在Twitter 和Google+  数据集完成测试。
+\end{enumerate}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{实验具体设计}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{必做部分（有向到无向转换逻辑1）}
+\subsection{必做部分（OR逻辑转换）}
 \subsubsection{总体设计}
 \noindent
-为完成在第一种转换逻辑下的图的三角形计数，我们总共设计了两个MapReduce程序顺序执行来完成这一任务。\\两个Job各自的任务如下:
+为完成在OR逻辑转换下的图的三角形计数，我们总共设计了两个MapReduce程序顺序执行来完成这一任务：
 \begin{itemize}
-\item DigraphToUngraph: 读入输入文件根据转换逻辑构造无向边，并统计出每一个节点的相邻节点并输出到HDFS
-\item InNeed: 统计图中已有的边与构造三角形所需边，根据所需边与已有边对应关系统计三角形数目并输出
+\item DigraphToUngraph: 读入输入文件根据转换逻辑构造无向边，并统计出每一个节点的相邻节点并输出到HDFS.
+\item InNeed: 统计图中已有的边与构造三角形所需边，根据所需边与已有边对应关系统计三角形数目并输出.
 \end{itemize}
 ~\\
 \textbf{DigraphToUngraph :}\\
-为完成DigraphToUngraph任务我们共设计了个3类： DigraphToUngraph, DigraphToUngraphMapper, DigraphToUngraphReducer.\\
-\\DigraphToUngraph是主类，负责启动配置作业，提交作业与获得完成结果的过程。\\~
-\\DigraphToUngraphMapper, DigraphToUngraphReducer分别为Map与Reduce类。
-\\下面我将叙述Map与Reduce的设计思路：
-\\1. Map过程： Map过程首先分析输入文件的每一行, 切割出两个顶点的ID, 选择小的ID作为key, 大的ID作为value。\\
-2. Reduce过程： 将key相同的ID所对应的value结合起来作为输出value, 获得该ID所代表的节点的所有相邻节点的ID,并输出到HDFS中。\\
-\\
-DigraphToUngraph的MapReduce各阶段的K,V类型见下表：
+为完成DigraphToUngraph任务我们共设计了个3类： 
+\begin{enumerate}
+\item DigraphToUngraphMapper类：分析输入文件的每一行, 切割出两个顶点的ID, 选择小的ID作为key, 大的ID作为value.
+\item DigraphToUngraphReducer类：将key相同的ID所对应的value结合起来作为输出value, 获得该ID所代表的节点的所有相邻节点的ID,并输出到HDFS.
+\item DigraphToUngraph类:主类，负责启动配置作业，提交作业与获得完成结果的过程.
+\end{enumerate}
+
+DigraphToUngraph的MapReduce各阶段的K,V类型见图2：
 \begin{center}
 \includegraphics[height=2.6cm]{0.png}
+\caption{K,V类型表}
 \end{center}
-~\\
-~\\
-\noindent
 ~\\
 \textbf{InNeed :}\\
-为完成InNeed任务我们共设计了个3类： InNeed, InNeedMapper, InNeedReducer.\\
-\\InNeed是主类，负责启动配置作业，提交作业与获得完成结果的过程。\\~
-\\InNeedMapper, InNeedReducer分别为Map与Reduce类。
-\\下面我将叙述Map与Reduce的设计思路：
-\\1. Map过程： Map过程首先分析上一任务的输出文件，获得节点ID与相邻节点ID的对应关系，统计出图中已有的无向边，以及要构成三角形需存在的边\textbf{（具体判断方法：假设key代表的ID为A，从上一步结果得知其有两个相邻节点B与C，则边BC就是构成三角形需要存在的边）}。将边的两个节点ID的组合作为key， value为边的类型标记\textbf{（这里我们使用'\&'作为已有边的标记，'\#'作为构成三角形所需边的标记。'\&'的ASCII码小于'\#'，因而Reduce时已有边均会排在前面，便于遍历查找三角形是否存在。）}\\
-2. Reduce过程： Reduce过程查询Map输出的边的序列，如果边是已存在边，则记录其存在状态。如果类型是构成三角形需存在的边，且该边已经被标记为存在，则说明三角形存在，三角形数目加1。最后在cleanup函数中输出最终的三角形数目统计结果。\\
-\\
-InNeed的MapReduce各阶段的K,V类型见下表：
+为完成InNeed任务我们共设计了3个类：
+\begin{enumerate}
+\item InNeedMapper类：分析DigraphToUngraph任务的输出文件，获得节点ID与相邻节点ID的对应关系，统计出图中已有的无向边，以及要构成三角形需存在的边\textbf{（具体判断方法：假设key为点A，从上一步结果得知其有两个相邻节点B与C，则边BC就是构成三角形需要的边）}。将边的两个节点ID的组合作为key， value为边的类型标记，存在的边标记为$\&$，需要的边标记为$\#$。
+\item InNeedReducer类：查询Map的输出，如果边是已存在边，则记录其存在状态。如果类型是构成三角形需存在的边，且该边已经被标记为存在，则说明三角形存在，三角形数目加1。最后在cleanup函数中输出最终的三角形数目统计结果。
+\item InNeed类：主类，负责启动配置作业，提交作业与获得完成结果的过程.
+\end{enumerate}
+
+InNeed的MapReduce各阶段的K,V类型见图3：
 \begin{center}
 \includegraphics[height=2.6cm]{1.png}
+\caption{K,V类型表}
 \end{center}
+
 \subsubsection{DigraphToUngraph任务的伪代码}
 \noindent
 \textbf{DigraphToUngraphMapper:}
@@ -245,13 +257,14 @@ InNeed的MapReduce各阶段的K,V类型见下表：
   	\end{algorithmic}
 \end{algorithm}
 
+\newpage
 \section{实验测试与运行结果}
-\noindent
 \subsection{JAR包执行方式说明}
-\noindent
-1. 使用IDE或者javac指令进行编译，导出各个jar文件\\
-2. 使用scp指令将jar包传送到服务器。\\
-3. 使用ssh登录到服务器\\
+\begin{enumerate}
+\item 编译各个java文件并打包上传到集群.
+\item 使用命令 
+\end{enumerate}
+
 4. 使用hadoop jar InvertedIndex.jar InvertedIndex /data/wuxia\_novels InvertedIndexoutput指令执行InvertedIndex.jar\\
 5. 使用hadoop jar ResultSort.jar ResultSort InvertedIndexoutput ResultSortoutput指令以上面的执行结果为输入数据来执行ResultSort.jar\\
 6. 使用hadoop jar TFIDF.jar TFIDF /data/wuxia\_novels TFIDFoutput指令执行TFIDF.jar
@@ -335,9 +348,7 @@ InNeed的MapReduce各阶段的K,V类型见下表：
 \end{itemize}
 \section{实验总结}
 \noindent
-本次实验是大数据处理综合实验的第二次实验，在这次实验中我们完成了三个MapReduce任务的编写： (1)带词频属性的文档倒排算法. (2)对每个词语的平均出现次数进行全局排序. (3)为每位作家、计算每个词语的TF-IDF。通过本次实验，我们小组的人都对MapReduce算法设计与编程有了一定的了解，同时进一步加深了对前面所学的Hadoop MapReduce基本构架的理解。\\
-\\这次实验各个任务中最主要的问题就是Map与Reduce过程的设计与(key,value)键值对类型的确定。在实验中，为确定Map与Reduce的设计与各个过程中键值对的类型转换过程，我们查阅了课本课件等相关资料，也在一起进行了一些讨论。在较好的确定各个过程key与value的类型及转换过程后，整个编程任务的完成就变得比较容易了。此外，在具体实现时，我们更进一步的了解了java字符串相关的操作函数。灵活使用这些函数，我们也得以方便地从输入文本与文件名中分割出想要的信息，例如作者的姓名与各个文件名。\\
-\\本次实验是我们第一次较为深入地了解Hadoop MapReduce的算法设计与程序的编写和运行，整体完成较为顺利，也为后面的实验打下了较好的基础。
+
 \vspace{6mm}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %  参考文献
@@ -347,14 +358,6 @@ InNeed的MapReduce各阶段的K,V类型见下表：
 %\setlength{\parskip}{0pt}  %段落之间的竖直距离
 \addtolength{\itemsep}{-0.8 em} % 缩小参考文献间的垂直间距
   \bibitem{Book} 黄宜华. {\kaishu 深入理解大数据~大数据处理与编程实践}[M]. 北京: 机械工业出版社, 2014.7.
-  \bibitem{Book-part} 作者. {\kaishu 章节名}[M]// 编者. {\kaishu 书名}. 出版地: 出版社, 年份: 起始页码.
-  \bibitem{Conference} 作者. 文章题目[C]// 编者. {\kaishu 会议论文集名}. 出版地: 出版社, 年份: 起始页码.
-  \bibitem{Wangl2000} Reckdahl K. {\it Using Import graphics in \LaTeX2e}[M]. 王磊, 译. [出版地不详]: [出版社不详], 2000.
-  \bibitem{Huw2010} 胡伟. {\kaishu \LaTeX{}2$\varepsilon$完全学习手册}[M]. 北京: 清华大学出版社, 2011.
-  \bibitem{Lip04} 李平. {\kaishu \LaTeX{}2$\varepsilon$及常用宏包使用指南}[M], 北京: 清华大学出版社, 2004.
-  \bibitem{Sangdy01} 桑大勇, 王瑛. {\kaishu 科技文献排版系统: \LaTeX 入门与提高}[M]. 武汉: 武汉大学出版社, 2001.
-  \bibitem{Chenzj02} 陈志杰, 赵书钦, 万福永. {\kaishu \LaTeX{}入门与提高}[M]. 北京: 高等教育出版社, 2002.
-  \bibitem{Dengjs01} 邓建松, 彭冉冉, 陈长松. {\kaishu \LaTeX{}2$\varepsilon$科技排版指南}[M]. 北京: 科学出版社, 2001.
 \end{thebibliography}
 \clearpage
 \end{document}
