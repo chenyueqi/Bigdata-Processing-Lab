@@ -36,6 +36,6 @@ public class StrongCheck
 	job.setOutputKeyClass(Text.class);
 	job.setOutputValueClass(Text.class);
 
-	System.exit(job.waitForCompletion(true)?0:1);
+    job.waitForCompletion(true);
     }
 }

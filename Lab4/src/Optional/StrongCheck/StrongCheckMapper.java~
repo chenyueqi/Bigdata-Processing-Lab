@@ -19,21 +19,20 @@ public class StrongCheckMapper extends Mapper<Object, Text, Text, Text>
     @Override
     public void map(Object key, Text value, Context context) throws IOException, InterruptedException
     {
-	String line =value.toString();
-	String split[] = line.split(" ");
-			
-	Text outkey=new Text();
-	Text outvalue=new Text();
+	FileSplit fileSplit = (FileSplit) context.getInputSplit();
+    String[] vertex = value.toString().split(" ");
 
-	outkey.set(split[0] + "#" + split[1]);
-	outvalue.set("@");
+    long first = Long.parseLong(vertex[0]);
+    long second = Long.parseLong(vertex[1]);
 
-	context.write(outkey, outvalue);
 
-    outkey.set(split[1] + "#" + split[0]);
-	outvalue.set("*");
+    Text forwardedge = new Text();
+    Text backedge = new Text();
 
-	context.write(outkey, outvalue);
+	forwardedge.set(vertex[0]+"#"+vertex[1]);
+    context.write(forwardedge, new Text("&"));
+    backedge.set(vertex[1] + "#" + vertex[0]);
+    context.write(backedge, new Text("#"));
 
     }
 }

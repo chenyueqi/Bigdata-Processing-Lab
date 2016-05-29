@@ -20,7 +20,7 @@ public class DigraphToUngraphMapper extends Mapper<Object, Text, Text, Text>
     public void map(Object key, Text value, Context context) throws IOException, InterruptedException
     {
 	String line=value.toString();
-	String vertexs[]=line.split("\t");
+	String vertexs[]=line.split(" ");
 	//long a = Long.parseLong(vertexs[0]);
 	//long b = Long.parseLong(vertexs[1]);
 
