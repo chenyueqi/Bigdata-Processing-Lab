@@ -20,13 +20,16 @@ public class InNeedReducer extends Reducer<Text, Text, Text, Text>
     public void reduce(Text key, Iterable<Text> values, Context context) throws IOException, InterruptedException
     {
 	boolean exist = false;
+	long cnt = 0;
 	for(Text val: values)
 	{
 	    if(val.toString().equals("&"))
 		exist = true;
-	    if(val.toString().equals("#") && exist)
-		NumTrian++;
+	    if(val.toString().equals("#"))
+		cnt++;
 	}
+	if(exist)
+	    NumTrian += cnt;
     }
 
     public void cleanup(Context context) throws IOException, InterruptedException

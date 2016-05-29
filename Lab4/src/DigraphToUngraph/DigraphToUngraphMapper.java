@@ -21,27 +21,22 @@ public class DigraphToUngraphMapper extends Mapper<Object, Text, Text, Text>
     {
 	FileSplit fileSplit = (FileSplit) context.getInputSplit();
 
-	String[] vetex = value.toString().split(" ");
-	long first = Long.parseLong(vetex[0]);
-	long second = Long.parseLong(vetex[1]);
-
+	String[] vertex = value.toString().split(" ");
 	Text a = new Text();
 	Text b = new Text();
 
-	if(first < second)
+	if(vertex[0].compareTo(vertex[1]) > 0)
 	{
-	    a.set(vetex[0]);
-	    b.set(vetex[1]);
+	    a.set(vertex[1]);
+	    b.set(vertex[0]);
 	    context.write(a, b);
 	}
-	else if(second < first)
+	else if(vertex[0].compareTo(vertex[1]) < 0)
 	{
-	    a.set(vetex[1]);
-	    b.set(vetex[0]);
+	    a.set(vertex[0]);
+	    b.set(vertex[1]);
 	    context.write(a, b);
 	}
-
     }
-
 }
 

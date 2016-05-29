@@ -41,7 +41,7 @@ public class InNeedMapper extends Mapper<Object, Text, Text, Text>
 	    	long first = Long.parseLong(vertex[i]);
 		long second = Long.parseLong(vertex[j]);
 
-		if(first < second)
+		if(vertex[i].compareTo(vertex[j]) < 0)
 		    inneededge.set(vertex[i]+"#"+vertex[j]);
 		else
 		    inneededge.set(vertex[j]+"#"+vertex[i]);
