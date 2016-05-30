@@ -29,8 +29,8 @@ public class InNeed
 	FileInputFormat.addInputPath(job, new Path(args[0]));
 	FileOutputFormat.setOutputPath(job, new Path(args[1]));
 
-			
 	job.setJarByClass(InNeed.class);
+	job.setNumReduceTasks(16);
 	job.setMapperClass(InNeedMapper.class);
 	job.setReducerClass(InNeedReducer.class);
 
