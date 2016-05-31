@@ -31,6 +31,7 @@ public class DigraphToUngraph
 
 			
 	job.setJarByClass(DigraphToUngraph.class);
+	job.setNumReduceTasks(16);
 	job.setMapperClass(DigraphToUngraphMapper.class);
 	job.setReducerClass(DigraphToUngraphReducer.class);
 
