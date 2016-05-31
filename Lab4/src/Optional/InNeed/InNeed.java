@@ -31,7 +31,6 @@ public class InNeed
 
 			
 	job.setJarByClass(InNeed.class);
-	job.setNumReduceTasks(16);
 	job.setMapperClass(InNeedMapper.class);
 	job.setReducerClass(InNeedReducer.class);
 
