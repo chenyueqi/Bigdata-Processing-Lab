@@ -30,7 +30,7 @@ public class InNeed
 	FileOutputFormat.setOutputPath(job, new Path(args[1]));
 
 	job.setJarByClass(InNeed.class);
-	job.setNumReduceTasks(16);
+	job.setNumReduceTasks(8);
 	job.setMapperClass(InNeedMapper.class);
 	job.setReducerClass(InNeedReducer.class);
 

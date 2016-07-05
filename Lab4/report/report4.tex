@@ -147,7 +147,7 @@ Zip Code, China}
 \noindent
 为完成在OR逻辑转换下的图的三角形计数，我们总共设计了两个MapReduce程序顺序执行来完成这一任务：
 \begin{itemize}
-\item DigraphToUngraph: 读入输入文件根据转换逻辑构造无向边，并统计出每一个节点的相邻节点并输出到HDFS.
+\item DigraphToUngraph: 读入输入文件根据转换逻辑构造无向边，并统计出每一个顶点的相邻顶点并输出到HDFS.
 \item InNeed: 统计图中已有的边与构造三角形所需边，根据所需边与已有边对应关系统计三角形数目并输出.
 \end{itemize}
 ~\\
@@ -155,7 +155,7 @@ Zip Code, China}
 为完成DigraphToUngraph任务我们共设计了个3类： 
 \begin{enumerate}
 \item DigraphToUngraphMapper类：分析输入文件的每一行, 切割出两个顶点的ID, 选择小的ID作为key, 大的ID作为value.
-\item DigraphToUngraphReducer类：将key相同的ID所对应的value结合起来作为输出value, 获得该ID所代表的节点的所有相邻节点的ID,并输出到HDFS.
+\item DigraphToUngraphReducer类：将key相同的ID所对应的value结合起来作为输出value, 获得该ID所代表的顶点的所有相邻顶点的ID,并输出到HDFS.
 \item DigraphToUngraph类:主类，负责启动配置作业，提交作业与获得完成结果的过程.
 \end{enumerate}
 
@@ -168,7 +168,7 @@ DigraphToUngraph的MapReduce各阶段的K,V类型见图2：
 \textbf{InNeed :}\\
 为完成InNeed任务我们共设计了3个类：
 \begin{enumerate}
-\item InNeedMapper类：分析DigraphToUngraph任务的输出文件，获得节点ID与相邻节点ID的对应关系，统计出图中已有的无向边，以及要构成三角形需存在的边\textbf{（具体判断方法：假设key为点A，从上一步结果得知其有两个相邻节点B与C，则边BC就是构成三角形需要的边）}。将边的两个节点ID的组合作为key， value为边的类型标记，存在的边标记为$\&$，需要的边标记为$\#$。
+\item InNeedMapper类：分析DigraphToUngraph任务的输出文件，获得顶点ID与相邻顶点ID的对应关系，统计出图中已有的无向边，以及要构成三角形需存在的边\textbf{（具体判断方法：假设key为点A，从上一步结果得知其有两个相邻顶点B与C，则边BC就是构成三角形需要的边）}。将边的两个顶点ID的组合作为key， value为边的类型标记，存在的边标记为$\&$，需要的边标记为$\#$。
 \item InNeedReducer类：查询Map的输出，如果边是已存在边，则记录其存在状态。如果类型是构成三角形需存在的边，且该边已经被标记为存在，则说明三角形存在，三角形数目加1。最后在cleanup函数中输出最终的三角形数目统计结果。
 \item InNeed类：主类，负责启动配置作业，提交作业与获得完成结果的过程.
 \end{enumerate}
@@ -184,7 +184,7 @@ InNeed的MapReduce各阶段的K,V类型见图3：
 \textbf{DigraphToUngraphMapper:}
 \begin{algorithm}[H]
 	{\bfseries Input :}~输入文件\\
-	{\bfseries Output :}~键值对（节点ID, 节点ID）
+	{\bfseries Output :}~键值对（顶点ID, 顶点ID）
 	\caption{$class~Mapper$}
 	\begin{algorithmic}[1]
     	\Procedure {Map}{Text t}
@@ -201,8 +201,8 @@ InNeed的MapReduce各阶段的K,V类型见图3：
 \noindent
 \textbf{DigraphToUngraphReducer：}
 \begin{algorithm}[H]
-	{\bfseries Input :}~键值对（节点ID, 节点ID）\\
-	{\bfseries Output :}~节点a所代表ID~~节点a的相邻节点所代表ID的序列
+	{\bfseries Input :}~键值对（顶点ID, 顶点ID）\\
+	{\bfseries Output :}~顶点a所代表ID~~顶点a的相邻顶点所代表ID的序列
 	\caption{$class~Reducer$}
 	\begin{algorithmic}[1]
     	\Procedure {Reduce}{key: vertex\_smaller\_ID, value: vertex\_greater\_ID}
@@ -218,7 +218,7 @@ InNeed的MapReduce各阶段的K,V类型见图3：
 \noindent
 \textbf{InNeedMapper:}
 \begin{algorithm}[H]
-	{\bfseries Input :}~输入文件: 节点ID~~~所有相邻节点ID\\
+	{\bfseries Input :}~输入文件: 顶点ID~~~所有相邻顶点ID\\
 	{\bfseries Output :}~键值对（边的ID序列， 边的种类标记）
 	\caption{$class~Mapper$}
 	\begin{algorithmic}[1]
@@ -239,113 +239,179 @@ InNeed的MapReduce各阶段的K,V类型见图3：
 \textbf{InNeedReducer：}
 \begin{algorithm}[H]
 	{\bfseries Input :}~键值对（边的ID序列， 边的种类标记）\\
-	{\bfseries Output :}~键值对（边的ID序列， 边的种类标记）
+	{\bfseries Output :}~该Reduce统计出的三角形数目
 	\caption{$class~Reducer$}
 	\begin{algorithmic}[1]
     	\Procedure {Reduce}{key: ID1\#ID2, values: \# or \&)}
     		\State NumTran $\leftarrow$  0
+    		\State count $\leftarrow$  0
     		\State Exist $\leftarrow$  false
     		\For{value in values} 
 			\If   {value~==~\&}
     		\State Exist $\leftarrow$ true
     	 	\EndIf
-    	 	\If   {value~==~\#~~\&\&~~Exist~==~true}
-    		\State NumTran $\leftarrow$ NumTran~+~1
+    	 	\If   {value~==~\#}
+    		\State count $\leftarrow$ count~+~1
     	 	\EndIf
 			\EndFor
+			\If   {Exist == true}
+			\State NumTran $\leftarrow$ NumTran~+~count	
+			\EndIf
     	\EndProcedure
   	\end{algorithmic}
 \end{algorithm}
+\subsection{选做部分（AND逻辑转换）}
+\subsubsection{总体设计}
+当逻辑变为IF~~$(A\rightarrow B)$~AND~$(B\rightarrow A)$~~THEN~A-B时，我们考虑首先对图的边进行检查，若两个方向的边均存在，则说明该边存在。为做到这一点，我们考虑首先从输入数据中去除只有一个方向的边，经过这一处理后，便可以用必做部分的两个任务依次执行来完成这一任务。因而我们编写了StrongCheck这一任务，该任务读取输入数据，输出两个方向均存在边的顶点ID对的编号（按照顶点ID从小到大的顺序）。为实现该任务，我们采用了类似于前面InNeed任务的思路，读入一对顶点ID (A,B)，将顶点ID对 (A,B)设为存在，其反向(B,A)设为需要，从而在Reduce时检查(B,A)是否存在。通过以上方法即可将单方向的边去除。最后，将StrongCheck的输出文件作为输入依次执行必做部分所述的两个任务，即可完成欲执行的任务。\\~\\StrongCheck任务的具体设计如下：\\
+为完成StrongCheck任务我们共设计了3个类：
+\begin{enumerate}
+\item StrongCheckMapper类：分析输入的txt文件，依次读取一对顶点ID，将两个顶点ID的组合作为key， 正向组合作为存在边，反向组合作为需求边。value为边的类型标记，存在的边标记为$\&$，需要的边标记为$\#$。
+\item StrongCheckReducer类：查询Map的输出，如果边是已存在边，则记录其存在状态。如果边是需求边，则记录其需求状态。若一条边既是存在边也是需求边，则说明这一条边是双向的，应该转换为无向边，此时按照从小大顺序输出这一对顶点ID。
+\item StrongCheck类：主类，负责启动配置作业，提交作业与获得完成结果的过程.
+\end{enumerate}
 
+StrongCheck的MapReduce各阶段的K,V类型见图3：
+\begin{center}
+\includegraphics[height=2.6cm]{3.png}
+\caption{K,V类型表}
+\end{center}
+
+\subsubsection{StrongCheck任务的伪代码}
+\noindent
+\textbf{InNeedMapper:}
+\begin{algorithm}[H]
+	{\bfseries Input :}~输入文件: 顶点ID对\\
+	{\bfseries Output :}~键值对（边的ID序列， 边的种类标记）
+	\caption{$class~Mapper$}
+	\begin{algorithmic}[1]
+    	\Procedure {Map}{Key ID1，ID2}
+		\State Emit((ID1\#ID2, \#))
+		\State Emit((ID2\#ID1, \&))
+    \EndProcedure
+  \end{algorithmic}
+\end{algorithm}
+\noindent
+\textbf{InNeedReducer：}
+\begin{algorithm}[H]
+	{\bfseries Input :}~键值对（边的ID序列， 边的种类标记）\\
+	{\bfseries Output :}~键值对（较小顶点ID， 较大顶点ID）
+	\caption{$class~Reducer$}
+	\begin{algorithmic}[1]
+    	\Procedure {Reduce}{key: ID1\#ID2, values: \# or \&)}
+    		\State Need $\leftarrow$  false
+    		\State Exist $\leftarrow$  false
+    		\For{value in values} 
+			\If   {value~==~\&}
+    		\State Exist $\leftarrow$ true
+    	 	\EndIf
+    	 	\If   {value~==~\#}
+    		\State Need $\leftarrow$ true
+    	 	\EndIf
+			\EndFor
+			\If   {Exist == true~\textbf{AND}~Need == true}
+			\State vertex\_smaller\_ID,~vertex\_greater\_ID $\leftarrow$ key.split	
+			\State Emit((vertex\_smaller\_ID, vertex\_greater\_ID))
+			\EndIf
+    	\EndProcedure
+  	\end{algorithmic}
+\end{algorithm}
+\subsection{对于Google+数据集所做的改进}
+在Twitter数据集上运行时，我们采用了long来记录顶点的ID，这样也可以直接比较顶点ID的大小。而对于Google+数据集，很多顶点ID非常长，转换成数字远超long所能表示的范围，因而我们选择了采用String直接记录顶点ID对应的字符串，而不是转换为响应的整数表示。为了比较两个顶点ID，我们使用java的compareto方法来比较两个顶点ID字符串，这时比较的不是数字大小，而是依次比较各个字符的ASCII码的值。\\
+此外，对于OR逻辑的程序在Google+数据集上运行，生成无向图的边非常多，使得运行时间大幅增加。在这里为了提升速度，我们给InNeed任务设置了8个Reduce任务，这样在Reduce过程中速度可以明显提升。不过此时，三角形数目将分成八个部分统计，最后需要将这八个数据加在一起获得总的三角形数目。
 \newpage
 \section{实验测试与运行结果}
 \subsection{JAR包执行方式说明}
+本次实验我们共编译并提交了三个JAR包： Driver1.jar~Driver\_op.jar~Driver\_G.jar。Driver1.jar用于在Twitter数据集上运行OR逻辑转换的程序，Driver\_G.jar用于在Google+数据集上运行OR逻辑转换的程序，Driver\_op.jar可用于运行Twitter与Google+两个数据集上AND逻辑转换的程序。这三个jar包的执行方式如下：
 \begin{enumerate}
-\item 编译各个java文件并打包上传到集群.
-\item 使用命令 
+\item 	首先使用scp指令将jar包传送到服务器并使用SSH登录到服务器
+\item	使用以下指令执行OR逻辑程序在Twitter数据集上运行的Driver： hadoop jar Driver1.jar Driver hdfs://master01:9000/data/graphTriangleCount/twitter\_graph\_v2.txt ./Lab4/output1 ./Lab4/output2
+\item	使用以下指令执行OR逻辑程序在Google+数据集上运行的Driver： hadoop jar Driver\_G.jar Driver hdfs://master01:9000/data/graphTriangleCount/gplus\_combined.unique.txt ./Lab4/gp\_output1 ./Lab4/gp\_output2
+\item	使用以下指令执行AND逻辑程序在Twitter数据集上运行的Driver：hadoop jar Driver\_op.jar Driver hdfs://master01:9000/data/graphTriangleCount/twitter\_graph\_v2.txt ./Lab4/op\_output1 ./Lab4/op\_output2 ./Lab4/op\_output3
+\item	使用以下指令执行执行AND逻辑程序在Google+数据集上运行的Driver：hadoop jar Driver\_op.jar Driver hdfs://master01:9000/data/graphTriangleCount/gplus\_combined.unique.txt ./Lab4/op\_gpoutput1 ./Lab4/op\_gpoutput2 ./Lab4/op\_gpoutput3
 \end{enumerate}
-
-4. 使用hadoop jar InvertedIndex.jar InvertedIndex /data/wuxia\_novels InvertedIndexoutput指令执行InvertedIndex.jar\\
-5. 使用hadoop jar ResultSort.jar ResultSort InvertedIndexoutput ResultSortoutput指令以上面的执行结果为输入数据来执行ResultSort.jar\\
-6. 使用hadoop jar TFIDF.jar TFIDF /data/wuxia\_novels TFIDFoutput指令执行TFIDF.jar
 \subsection{实验运行结果展示}
 \noindent
 我们的程序均首先在本地做了简单的测试后提交到集群进行运行。\\
 在集群上运行的结果如下：\\
+各个任务统计出的三角形个数与运行时间见下面两表：
+\begin{center}
+\includegraphics[height = 2cm]{18.png}
+\caption{OR逻辑程序}~\\
+\includegraphics[height = 2cm]{19.png}
+\caption{AND逻辑程序}
+\end{center}
+~\\各个人物具体的输出文件的截图如下：
 \begin{itemize}[leftmargin=*]
-\item 带词频属性的文档倒排算法InvertedIndex任务的运行结果：
-该任务的输出结果在HDFS上的存放路径为：hdfs://master01:9000/user/2016st21/Lab2/InvertedIndexoutput .\\
-该任务在集群上对全部数据集运行的结果的部分截图如下（输出格式为[词语] \\TAB 平均出现次数，小说1:词频；小说2:词频；小说3:词频；...；小说N:词频）：
+\item OR逻辑程序在Twitter数据集上运行的的运行结果：
+该任务的输出结果分为两部分，分别为DigraphToUngraph与InNeed的运行结果，其在HDFS上的存放路径分别为：hdfs://master01:9000/user/2016st21/Lab4/output1 与 hdfs://master01:9000/user/2016st21/Lab4/output1 . 其中后者存放最后统计的三角形的结果\\
+该任务在集群上运行的结果的部分截图如下
 \begin{center}
 \includegraphics[height = 7cm]{4.png}
-\includegraphics[height = 7cm]{5.png}
+\includegraphics[height = 4cm]{5.png}
 \end{center}
+可以看到，最后统计出的三角形数目为13082506.
 
-\item 对词语的平均出现次数进行排序的ResultSort任务的运行结果：
-该任务的输出结果在HDFS上的存放路径为：hdfs://master01:9000/user/2016st21/Lab2/InvertedIndexoutput .\\
-该任务在集群上对全部数据集运行的结果的部分截图如下（输出格式为 平均出现次数 \\TAB 原纪录）：
+\item AND逻辑程序在Twitter数据集上运行的的运行结果：
+该任务的输出结果分为三部分，分别为StrongCheck，DigraphToUngraph与InNeed的运行结果，其在HDFS上的存放路径分别为：hdfs://master01:9000/user/2016st21/Lab4/op\_output1， hdfs://master01:9000/user/2016st21/Lab4/op\_output2 与 hdfs://master01:9000/user/2016st21/Lab4/op\_output3 . 其中最后一个存放最后统计的三角形的结果\\
+该任务在集群上运行的结果的部分截图如下
 \begin{center}
-\includegraphics[height = 7.5cm]{6.png}\\
-~\\
-\includegraphics[height = 7.5cm]{7.png}
+\includegraphics[width = 14cm]{6.png}
+\includegraphics[width = 14cm]{7.png}
+\includegraphics[width = 14cm]{8.png}
 \end{center}
+可以看到，最后统计出的三角形数目为1818304，明显少于上一结果.
 
-\item 为每位作家、每个词语计算TF-IDF值的任务的运行结果：
-该任务的输出结果在HDFS上的存放路径为：hdfs://master01:9000/user/2016st21/Lab2/TFIDFoutput .\\
-该任务在集群上对全部数据集运行的结果的部分截图如下（输出格式为:~[作家] TAB 词语,~~TF值,~~IDF值）：
-\begin{center}
-\includegraphics[height = 7cm]{19.png}
-\end{center}
 
-\item “江湖”、“风雪”两个词语的输出结果如下：
+\item OR逻辑程序在Google+数据集上运行的的运行结果：
+该任务的输出结果分为两部分，分别为DigraphToUngraph与InNeed的运行结果，其在HDFS上的存放路径分别为：hdfs://master01:9000/user/2016st21/Lab4/output1 与 hdfs://master01:9000/user/2016st21/Lab4/output2 . 其中后者存放最后统计的三角形的结果\\
+该任务在集群上运行的结果的部分截图如下
 \begin{center}
-\includegraphics[height = 10cm]{8.png}\\
-“江湖”的输出结果\\
-~\\ \includegraphics[height = 3.8cm]{9.png}\\
-“风雪”的输出结果
+\includegraphics[width = 14cm]{16.png}
+\includegraphics[width = 14cm]{17.png}
 \end{center}
-从上面的结果可以看到，不出意料地江湖基本出现在了所有的武侠小说之中，正所谓“人在江湖，身不由己”。
+为加速Reduce过程，我们为InNeed作业设置了8个Reduce任务，将8个任务各自统计出的三角形数目相加，统计出总的三角形数目为13082506.
+
+\item AND逻辑程序在Google+数据集上运行的的运行结果：
+该任务的输出结果分为三部分，分别为StrongCheck，DigraphToUngraph与InNeed的运行结果，其在HDFS上的存放路径分别为：hdfs://master01:9000/user/2016st21/Lab4/op\_gpoutput1， hdfs://master01:9000/user/2016st21/Lab4/op\_gpoutput2 与 hdfs://master01:9000/user/2016st21/Lab4/op\_gpoutput3 . 其中最后一个存放最后统计的三角形的结果\\
+该任务在集群上运行的结果的部分截图如下
+\begin{center}
+\includegraphics[width = 14cm]{9.png}
+\includegraphics[width = 14cm]{10.png}
+\includegraphics[width = 14cm]{11.png}
+\end{center}
+可以看到，最后统计出的三角形数目为27018510. 同样，该结果也明显少于上一个统计结果。
 \end{itemize}
-本实验在集群上执行MapReduce Job后获得的执行报告如下：
+本实验在集群上执行MapReduce Job后获得的执行报告如下（由于本实验任务较多，我们只在文档中贴出OR逻辑程序在Twitter数据集上运行的任务的执行报告，其余Job的截图可在执行报告文件夹中查看）：
 \begin{itemize}[leftmargin=*]
 \item 在集群All Application（ http://114.212.190.91:8088/ ） 的WebUI页面中查看Job的执行状态的截图如下：\\
 \begin{center}
-\includegraphics[height = 9cm]{10.png}
-\includegraphics[height = 2.5cm]{16.png}
+\includegraphics[width = 14cm]{12.png}
 \end{center}
 \item 在WebUI页面（http://114.212.190.91:19888/jobhistory）找到对应的job如下
 \begin{center}
-\includegraphics[height = 5cm]{11.png}
-\includegraphics[height = 2.2cm]{17.png}
+\includegraphics[width = 14cm]{13.png}
 \end{center}
 \item 根据Job ID链接进入Job详细页面，几个job的详细信息如下所示。
 \begin{itemize}[leftmargin=*]
-\item InvertedIndexTable：\\
+\item Translation Di$->$Un：\\
 \noindent
 \begin{flushleft}
-\includegraphics[height = 14cm]{12.png}
+\includegraphics[width = 14cm]{14.png}
 \end{flushleft}
-\item ResultSort
+\item needed edge
 \begin{flushleft}
-\includegraphics[height = 14cm]{13.png}
-\end{flushleft}
-\item TFIDF
-\begin{flushleft}
-\includegraphics[height = 14cm]{18.png}
+\includegraphics[width = 14cm]{15.png}
 \end{flushleft}
 \end{itemize}  
 \end{itemize}
-\subsection{查看实验结果后得出的一些结论}
-\noindent
-根据倒排索引得出来的结果，我们不难发现武侠小说中关于词频的一些规律：
-\begin{itemize}
-\item	纯阿拉伯数字类出现的较多，是最普遍的，这个毋庸置疑
-\item	时间和物质量词类因为小说的不同，自然出现频率低，具有独占性，对于搜索和定位来说是较优的关键字。
-\item	出现了一些英文字母和单词，按常理来说中国的武侠小说是不应该含西文的。不过考虑到这些小说是网上下载的资源，因为大部分应该都是下载的链接信息或者出处信息。
-\item	统计结果中出现的四字成语、古文俗语较多，频率大，这个不难看出小说行文的文采与流畅之处，毕竟都是大师作品，不是一些烂俗的网络小说。
-\item	人名、地名等唯一性的词语频率较低，正常现象。
-\item	的、地、得等助词出现的频率最高，符合汉语的表达习惯。
-\end{itemize}
+\subsection{程序性能及扩展性分析}
+本次实验中，为了提高程序并行度，设置第一个作业的reducer任务的数量，使得第一个作业输出文件数量与reducer任务数相同。这样在第二个作业中就可以提高mapper任务的数量，使得两次作业的并行度都能够得到提高。但是由此带来了扩展性问题：如果reducer任务的数量过多，最后得到统计结果的文件也会相应增加，要获得真正的三角形数量必须要人工将这写文件中的统计结果相加，由此程序扩展性就存在问题。
+
+此外，在作业执行过程中，我们发现存在作业执行严重的长尾延迟(Long Tail Latency)，被分配到slave3和slave7上的任务执行明显落后于其他任务的执行，导致作业的执行被严重拖后。我们认为长尾延迟存在的原因可能是中间数据划分不均匀，或者是因为其他作业的存在导致集群负载不均衡。
+
+
+
+\newpage
 \section{实验总结}
 \subsection{实验内容总结}
 本次实验是大数据处理综合实验平时实验的最后一次，在这次实验中我们完成了社交网络局部关系图的三角形计数任务：(1)根据不同的逻辑(OR / AND)将有向图转换为无向图，(2)在无向图的基础上计算出三角形的个数，(3)并在集群上使用Twitter数据集与Google +数据集分别进行三角形的数目统计任务。在实验中为了保持一致，图中所有的边都是以编号较小的点为key，编号较大的点(集)为value。
