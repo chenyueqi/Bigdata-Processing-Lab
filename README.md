@@ -5,14 +5,15 @@ This repository serves as a series of labs in the course Big Data Processing: Co
     Yueqi Chen (Yueqichen.0x0@gmail.com)
     Wei Liu (liuwei13cs@smail.nju.edu.cn)
     Zibo Zhou (441842096@qq.com)
-
-## local environment
-    hadoop 0.20.205
-    java 1.7
+    Jiecai Yang
 
 ## cluster environment
     hadoop 2.7.1 (yarn)
     java 1.6.0_17
+    CPU: Xeon (R) E5-2620
+    Memory: 64GB
+    Disk: 6TB
+    Network: 1 Gbps Ethernet
 
 ## Lab content
     Lab2: InvertedIndex Table
@@ -30,6 +31,10 @@ This repository serves as a series of labs in the course Big Data Processing: Co
 	    ./Lab3/src/ReadHBase ............ read data from HBase
 	    ./Lab3/src/Optional ............. Optional job for Lab3
 	./Lab3/report ............... lab report fot Lab3
-    ./note .......................... note for hadoop 0.20.205
-    ./note-yarn ..................... note for hadoop 2.7.1 (yarn)
+    ./Lab4 .......................... directory for Lab3
+	./Lab4/src .................. source directory for Lab4
+	    ./Lab4/src/Driver ............... directory for triangles counting with OR logic
+	    ./Lab4/src/Optional ............. directory for triangles counting with AND logic
+	./Lab4/report ............... lab report fot Lab4
+
 
