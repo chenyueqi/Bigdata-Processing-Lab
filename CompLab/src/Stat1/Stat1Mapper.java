@@ -32,6 +32,6 @@ public class Stat1Mapper extends Mapper<Object, Text, Text, IntWritable>
     	
     	
     	context.write(new Text("0#"+state),new IntWritable(1));
-    	context.write(new Text("1#"+times[1]+":00@"+state),new IntWritable(1));
+    	context.write(new Text("1#"+times[1]+"@"+state),new IntWritable(1));
     }
 }

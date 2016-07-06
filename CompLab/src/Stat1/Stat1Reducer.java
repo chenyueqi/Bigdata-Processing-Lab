@@ -38,9 +38,9 @@ public class Stat1Reducer extends Reducer<Text, IntWritable, Text, Text>
     		int sum = 0;
     		Text word1 = new Text();
     		Text word2 = new Text();
-    		word1.set(word.toString().split("@")[1]);
+    		word1.set(word.toString().split("@")[0]);
     		String temp = new String();
-    		temp = key.toString().split("@")[0];
+    		temp = key.toString().split("@")[1];
 
     		for(IntWritable val : values)
     			sum += val.get();

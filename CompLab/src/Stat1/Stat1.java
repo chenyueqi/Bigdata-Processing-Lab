@@ -12,6 +12,7 @@ import java.util.*;
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.io.Text;
+import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
@@ -36,6 +37,7 @@ public class Stat1
     	job.setPartitionerClass(NewPartitioner.class);
 
     	job.setOutputKeyClass(Text.class);
+	job.setMapOutputValueClass(IntWritable.class);
     	job.setOutputValueClass(Text.class);
 
     	job.waitForCompletion(true);
