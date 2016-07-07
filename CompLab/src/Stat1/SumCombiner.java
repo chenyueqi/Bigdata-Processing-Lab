@@ -25,6 +25,5 @@ public class SumCombiner extends Reducer<Text, IntWritable, Text, IntWritable>
     	result.set(sum);
     	context.write(key, result);
 
-	/*OutputFormat: <word#filename, wordnumber>*/
     }
 }

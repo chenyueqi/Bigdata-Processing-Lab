@@ -31,7 +31,10 @@ public class Stat1Mapper extends Mapper<Object, Text, Text, IntWritable>
     	String[] times = time.split(":");
     	
     	
-    	context.write(new Text("0#"+state),new IntWritable(1));
-    	context.write(new Text("1#"+times[1]+"@"+state),new IntWritable(1));
+	if(logs[0].compareTo("-") != 0)
+	{
+	    context.write(new Text("0#"+state),new IntWritable(1));		
+	    context.write(new Text("1#"+times[1]+"@"+state),new IntWritable(1));
+	}
     }
 }
