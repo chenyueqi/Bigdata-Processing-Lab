@@ -30,7 +30,7 @@ public class Stat1Reducer extends Reducer<Text, IntWritable, Text, Text>
     		}
     		Text result = new Text();
     		result.set(key.toString()+":"+sum);
-    		context.write(result, new Text(""));
+    		context.write(result, new Text(" "));
     		
     }
     	/*
