@@ -20,10 +20,10 @@ public class Stat1Reducer extends Reducer<Text, IntWritable, Text, Text>
 
     public void reduce(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
     {
-    	/*
+    	
     	if(key.toString().split("#")[0].equals("0"))
     	{
-    	*/
+    	
     		int sum =0;
     		for (IntWritable val : values) {
     			sum += val.get();
@@ -32,8 +32,8 @@ public class Stat1Reducer extends Reducer<Text, IntWritable, Text, Text>
     		result.set(key.toString()+":"+sum);
     		context.write(result, new Text(" "));
     		
-    }
-    	/*
+        }
+    	
     	if(key.toString().split("#")[0].equals("1"))
     	{
     		Text word = new Text();
@@ -92,9 +92,7 @@ public class Stat1Reducer extends Reducer<Text, IntWritable, Text, Text>
 	    cnt_word += num;
 	}
 
-	if(cnt_file > 0)
-	    out.insert(0, (double)(cnt_word)/(double)cnt_file + ", ");
 	if(cnt_word > 0)
 	    context.write(CurrentItem, new Text(out.toString()));
-    }*/
+    }
 }

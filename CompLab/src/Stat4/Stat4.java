@@ -20,29 +20,28 @@ import org.apache.hadoop.mapreduce.lib.output.MultipleOutputs;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.*;
 
-public class Stat2
+public class Stat4
 {
     public static void main(String[] args) throws Exception
     {
     	System.out.println("input = " + args[0] + ", output = " + args[1]);
 
     	Configuration conf = new Configuration();
-    	Job job = new Job(conf , "Stat2");
+    	Job job = new Job(conf , "Stat3");
 
     	FileInputFormat.addInputPath(job, new Path(args[0]));
     	FileOutputFormat.setOutputPath(job, new Path(args[1]));
 
-    	job.setJarByClass(Stat2.class);
-    	job.setMapperClass(Stat2Mapper.class);
-    	job.setReducerClass(Stat2Reducer.class);
-    	job.setCombinerClass(SumCombiner.class);
+    	job.setJarByClass(Stat4.class);
+    	job.setMapperClass(Stat4Mapper.class);
+    	job.setReducerClass(Stat4Reducer.class);
     	job.setPartitionerClass(NewPartitioner.class);
 
         job.setMapOutputValueClass(IntWritable.class);
         job.setOutputValueClass(Text.class);
         job.setOutputKeyClass(Text.class);
 
-        MultipleOutputs.addNamedOutput(job,"IPResult",TextOutputFormat.class,Text.class,Text.class);
+        MultipleOutputs.addNamedOutput(job,"Interface",TextOutputFormat.class,Text.class,Text.class);
 
     	job.waitForCompletion(true);
     }
