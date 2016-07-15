@@ -20,7 +20,7 @@ import org.apache.hadoop.mapreduce.lib.output.MultipleOutputs;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.*;
 
-public class Stat3
+public class Step1
 {
     public static void main(String[] args) throws Exception
     {
@@ -32,9 +32,10 @@ public class Stat3
     	FileInputFormat.addInputPath(job, new Path(args[0]));
     	FileOutputFormat.setOutputPath(job, new Path(args[1]));
 
-    	job.setJarByClass(Stat3.class);
-    	job.setMapperClass(Stat3Mapper.class);
-    	job.setReducerClass(Stat3Reducer.class);
+    	job.setJarByClass(Step1.class);
+	job.setNumReduceTasks(8);
+    	job.setMapperClass(Step1Mapper.class);
+    	job.setReducerClass(Step1Reducer.class);
     	job.setCombinerClass(SumCombiner.class);
     	job.setPartitionerClass(NewPartitioner.class);
 
@@ -42,8 +43,6 @@ public class Stat3
         job.setOutputValueClass(Text.class);
         job.setOutputKeyClass(Text.class);
 
-        MultipleOutputs.addNamedOutput(job,"Interface",TextOutputFormat.class,Text.class,Text.class);
-
-    	job.waitForCompletion(true);
+	System.exit(job.waitForCompletion(true)?0:1);
     }
 }
