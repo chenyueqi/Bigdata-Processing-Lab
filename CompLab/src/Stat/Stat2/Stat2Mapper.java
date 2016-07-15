@@ -1,6 +1,6 @@
 /*
- * Map class for Stat1
- * Project Name: 
+ * Map class for Stat2 - ip
+ * Project Name: Comprehensive Lab
  * Group Name: What the f**k
  * Created: Wei Liu (lw_nju@outlook.com)
  * Time: 2016/7/5 15:50
@@ -18,23 +18,18 @@ import org.apache.hadoop.mapreduce.Mapper;
 import org.apache.hadoop.mapreduce.lib.input.FileSplit;
 import org.apache.hadoop.util.*;
 
-public class Stat1Mapper extends Mapper<Object, Text, Text, IntWritable>
+public class Stat2Mapper extends Mapper<Object, Text, Text, IntWritable>
 {
     @Override
     public void map(Object key, Text value, Context context) throws IOException, InterruptedException
     {
     	String[] logs = value.toString().split(" ");
 
-    	String state = logs[7];
-    	String time = logs[1];
+    	String IP = logs[0]; //ip 
+    	String time = logs[1]; //timestamp in grain of hour
     	
     	String[] times = time.split(":");
-    	
-    	
-	if(logs[0].compareTo("-") != 0)
-	{
-	    context.write(new Text("0#"+state),new IntWritable(1));		
-	    context.write(new Text("1#"+times[1]+"@"+state),new IntWritable(1));
-	}
+    	context.write(new Text("0#"+IP),new IntWritable(1));
+    	context.write(new Text("1#"+times[1]+"@"+IP),new IntWritable(1));
     }
 }

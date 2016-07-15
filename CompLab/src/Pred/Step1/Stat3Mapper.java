@@ -1,6 +1,6 @@
 /*
- * Map class for Stat1
- * Project Name: 
+ * Map class for Stat3 - URL
+ * Project Name: Comprehensive Lab
  * Group Name: What the f**k
  * Created: Wei Liu (lw_nju@outlook.com)
  * Time: 2016/7/5 15:50
@@ -25,8 +25,8 @@ public class Stat3Mapper extends Mapper<Object, Text, Text, IntWritable>
     {
     	String[] logs = value.toString().split(" ");
 
-    	String interfaces = logs[4];
-    	String time = logs[1];
+    	String interfaces = logs[4]; // URL
+    	String time = logs[1]; //timestamp in grain of second
     	
     	String[] times = time.split(":");
     	context.write(new Text("0#"+interfaces),new IntWritable(1));

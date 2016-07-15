@@ -1,6 +1,6 @@
 /*
  * main class for Stat1
- * Project Name: 
+ * Project Name: Comprehensive Lab
  * Group Name: what the f**k
  * Created: Wei Liu (lw_nju@outlook.com)
  * Time: 2016/7/5 15:43

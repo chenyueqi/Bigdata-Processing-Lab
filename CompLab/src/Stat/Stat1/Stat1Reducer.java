@@ -1,6 +1,6 @@
 /*
- * Reducer class for InvertedIndex Table
- * Project Name: Inverted Index Table for Hadoop (Lab2)
+ * Reducer class for Stat1 - state code
+ * Project Name: Comprehensive Lab
  * Group Name: What the f**k
  * Created by: Yueqi Chen (Yueqichen.0x0@gmail.com)
  * Time: 2016/4/22 21:59
