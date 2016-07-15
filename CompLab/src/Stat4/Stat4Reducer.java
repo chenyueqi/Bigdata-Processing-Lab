@@ -21,7 +21,7 @@ import org.apache.hadoop.mapreduce.lib.output.MultipleOutputs;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.*;
 
-public class Stat2Reducer extends Reducer<Text, IntWritable, Text, Text>
+public class Stat4Reducer extends Reducer<Text, IntWritable, Text, Text>
 {
     private MultipleOutputs out;
     
@@ -30,22 +30,38 @@ public class Stat2Reducer extends Reducer<Text, IntWritable, Text, Text>
         out = new MultipleOutputs<Text,Text>(context);
     }
 
+    private String getfilename(String str)
+    {
+        String[] names = str.split("/");
+        String ret = new String("");
+        for(int i=0;i<names.length;i++)
+        {
+            if(i < 2)
+                ret = ret + names[i];
+            else
+                ret = ret + "-" + names[i];
+        }
+        return ret;
+    }
+
     public void reduce(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
     {
-        String IP = new String();
+        String interfaces = new String();
         if(key.toString().contains("@"))
-            IP = key.toString().split("#")[1].split("@")[1];
+            interfaces = key.toString().split("@")[1];
         else
-            IP = key.toString().split("#")[1];
+            interfaces = key.toString().split("#")[1];
 
 		int sum =0;
+        int time = 0;
 		for (IntWritable val : values) {
-			sum += val.get();
+			time += val.get();
+            sum += 1; 
 		}
 
 		Text result = new Text();
-		result.set(key.toString()+":"+sum);
-		out.write("IPResult",result, new Text(""),IP+".txt");
+		result.set(key.toString()+":"+(double)time/(double)sum);
+		out.write("Interface",result, new Text(""),getfilename(interfaces)+".txt");
     }
     protected void cleanup(Context context) throws IOException, InterruptedException
     {
