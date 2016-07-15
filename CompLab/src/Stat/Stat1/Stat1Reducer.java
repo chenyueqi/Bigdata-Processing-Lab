@@ -1,6 +1,6 @@
 /*
- * Reducer class for Stat1 - state code
- * Project Name: Comprehensive Lab
+ * Reducer class for InvertedIndex Table
+ * Project Name: Inverted Index Table for Hadoop (Lab2)
  * Group Name: What the f**k
  * Created by: Yueqi Chen (Yueqichen.0x0@gmail.com)
  * Time: 2016/4/22 21:59
@@ -18,6 +18,13 @@ public class Stat1Reducer extends Reducer<Text, IntWritable, Text, Text>
     static List<String> postingList = new ArrayList<String>();
     static Text CurrentItem = new Text(" ");
 
+    private String get_time(String time)
+    {
+        int time1 = Integer.parseInt(time);
+        int time2 = time1 + 1;
+        return new String(time1+":00-"+time2+":00");
+    }
+
     public void reduce(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
     {
     	
@@ -29,7 +36,7 @@ public class Stat1Reducer extends Reducer<Text, IntWritable, Text, Text>
     			sum += val.get();
     		}
     		Text result = new Text();
-    		result.set(key.toString()+":"+sum);
+    		result.set(key.toString().split("#")[1]+":"+sum);
     		context.write(result, new Text(" "));
     		
         }
@@ -41,7 +48,7 @@ public class Stat1Reducer extends Reducer<Text, IntWritable, Text, Text>
     		int sum = 0;
     		Text word1 = new Text();
     		Text word2 = new Text();
-    		word1.set(word.toString().split("@")[0]);
+    		word1.set(get_time(word.toString().split("@")[0]));
     		String temp = new String();
     		temp = key.toString().split("@")[1];
 
@@ -64,9 +71,6 @@ public class Stat1Reducer extends Reducer<Text, IntWritable, Text, Text>
     					cnt_file++;
     				cnt_word += num;
     			}
-
-    			if(cnt_file > 0)
-    				out.insert(0, (double)(cnt_word)/(double)cnt_file + ", ");
 
     			if(cnt_word > 0)
     				context.write(CurrentItem, new Text(out.toString()));

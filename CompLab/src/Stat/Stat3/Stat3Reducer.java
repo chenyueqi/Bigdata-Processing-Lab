@@ -30,6 +30,22 @@ public class Stat3Reducer extends Reducer<Text, IntWritable, Text, Text>
         out = new MultipleOutputs<Text,Text>(context);
     }
 
+    private String get_time(Text text)
+    {
+        if(text.toString().contains("@"))
+        {
+            String time = text.toString().split("#")[1].split("@")[0];
+            String interfaces = text.toString().split("#")[1].split("@")[1];
+
+            return new String(time+"\t"+interfaces);
+        }
+        else
+        {
+            String interfaces = text.toString().split("#")[1];
+            return new String(interfaces);
+        }
+    }
+
     private String getfilename(String str)
     {
         String[] names = str.split("/");
@@ -58,7 +74,7 @@ public class Stat3Reducer extends Reducer<Text, IntWritable, Text, Text>
 		}
 
 		Text result = new Text();
-		result.set(key.toString()+":"+sum);
+		result.set(get_time(key)+":"+sum);
 		out.write("Interface",result, new Text(""),getfilename(interfaces)+".txt");
     }
     protected void cleanup(Context context) throws IOException, InterruptedException

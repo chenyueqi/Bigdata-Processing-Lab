@@ -1,6 +1,6 @@
 /*
  * partitioner class
- * Project Name: Comprehensive Lab
+ * Project Name:
  * Group Name: What the f**k
  * Created: Wei Liu (lw_nju@outlook.com)
  * Time: 2016/7/6 14:18

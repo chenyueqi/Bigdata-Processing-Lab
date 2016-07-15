@@ -1,6 +1,6 @@
 /*
- * Map class for Stat1 - state code
- * Project Name: Comprehensive Lab
+ * Map class for Stat1
+ * Project Name: 
  * Group Name: What the f**k
  * Created: Wei Liu (lw_nju@outlook.com)
  * Time: 2016/7/5 15:50
@@ -25,8 +25,8 @@ public class Stat1Mapper extends Mapper<Object, Text, Text, IntWritable>
     {
     	String[] logs = value.toString().split(" ");
 
-    	String state = logs[7]; //state code
-    	String time = logs[1]; // timestamp in grain of hour
+    	String state = logs[7];
+    	String time = logs[1];
     	
     	String[] times = time.split(":");
     	

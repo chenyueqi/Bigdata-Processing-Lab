@@ -1,6 +1,6 @@
 /*
- * Reducer class for Stat2 - ip
- * Project Name: Comprehensive Lab
+ * Reducer class for InvertedIndex Table
+ * Project Name: Inverted Index Table for Hadoop (Lab2)
  * Group Name: What the f**k
  * Created by: Yueqi Chen (Yueqichen.0x0@gmail.com)
  * Time: 2016/4/22 21:59
@@ -30,6 +30,23 @@ public class Stat2Reducer extends Reducer<Text, IntWritable, Text, Text>
         out = new MultipleOutputs<Text,Text>(context);
     }
 
+    private String get_time(Text text)
+    {
+        if(text.toString().contains("@"))
+        {
+            int time1 = Integer.parseInt(text.toString().split("#")[1].split("@")[0]);
+            int time2 = time1 + 1;
+            String IP = text.toString().split("#")[1].split("@")[1];
+
+            return new String(time1+":00-"+time2+":00\t"+IP);
+        }
+        else
+        {
+            String IP = text.toString().split("#")[1];
+            return new String(IP);
+        }
+    }
+
     public void reduce(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
     {
         String IP = new String();
@@ -44,8 +61,8 @@ public class Stat2Reducer extends Reducer<Text, IntWritable, Text, Text>
 		}
 
 		Text result = new Text();
-		result.set(key.toString()+":"+sum);
-		out.write("IPResult", result, new Text(""),IP+".txt");
+		result.set(get_time(key)+":"+sum);
+		out.write("IPResult",result, new Text(""),IP+".txt");
     }
     protected void cleanup(Context context) throws IOException, InterruptedException
     {

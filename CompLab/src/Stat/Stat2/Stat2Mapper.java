@@ -1,6 +1,6 @@
 /*
- * Map class for Stat2 - ip
- * Project Name: Comprehensive Lab
+ * Map class for Stat1
+ * Project Name: 
  * Group Name: What the f**k
  * Created: Wei Liu (lw_nju@outlook.com)
  * Time: 2016/7/5 15:50
@@ -25,8 +25,8 @@ public class Stat2Mapper extends Mapper<Object, Text, Text, IntWritable>
     {
     	String[] logs = value.toString().split(" ");
 
-    	String IP = logs[0]; //ip 
-    	String time = logs[1]; //timestamp in grain of hour
+    	String IP = logs[0];
+    	String time = logs[1];
     	
     	String[] times = time.split(":");
     	context.write(new Text("0#"+IP),new IntWritable(1));

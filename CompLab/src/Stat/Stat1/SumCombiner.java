@@ -1,6 +1,6 @@
 /*
  * Combiner class
- * Project Name: Comprehensive Lab
+ * Project Name: 
  * Group Name: What the f**k
  * Created: Wei Liu (lw_nju@outlook.com)
  * Time: 2016/4/22/21:36
