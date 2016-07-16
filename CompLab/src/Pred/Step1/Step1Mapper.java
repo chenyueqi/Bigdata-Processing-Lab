@@ -26,17 +26,22 @@ public class Step1Mapper extends Mapper<Object, Text, Text, IntWritable>
     {
     	String[] logs = value.toString().split(" ");
 
+	if(logs.length < 5)
+	    return ;
+
     	String interfaces = logs[4]; // URL
     	String time = logs[1]; //timestamp in grain of hour
     	
     	String[] times = time.split(":");
-	String dateIn = times[0].split("/")[0]; // the date of record
+	String temp = times[0].split("/")[0];
+	String dateIn = temp.substring(1, temp.length());// the date of record
 
 	FileSplit fileSplit = (FileSplit) context.getInputSplit();
 	String fileName = fileSplit.getPath().getName();
-	String dateOut = fileName.split(".")[0].split("-")[2]; // the date of file
+	temp = fileName.split(".log")[0];
+	String dateOut = temp.split("-")[2]; // the date of file
 
-	if(dateOut.equals(dateIn) && !dateOut.equals("22")) //check if date of file = date of record
+	if(dateOut.equals(dateIn) && !dateOut.equals("22") && !interfaces.equals("null")) //check if date of file = date of record
 	{
 	    context.write(new Text(interfaces + "#" + times[1] + "#" + dateIn),new IntWritable(1));
 	}

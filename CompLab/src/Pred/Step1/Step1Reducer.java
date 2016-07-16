@@ -24,7 +24,7 @@ import org.apache.hadoop.util.*;
 public class Step1Reducer extends Reducer<Text, IntWritable, Text, Text>
 {
     static Text CurrentItem = new Text(" ");
-    static ArrayList<String> pastList = new ArrayList<String>();
+    static List<String> pastList = new ArrayList<String>();
 
     public void reduce(Text key, Iterable<IntWritable> values, Context context) throws IOException, InterruptedException
     {
@@ -33,71 +33,99 @@ public class Step1Reducer extends Reducer<Text, IntWritable, Text, Text>
 	for(IntWritable val : values)
 	    sum += val.get();
 
-	Text urlTime = new Text();
-	Text valueDate = new Text();
-	
-	String url = key.toString().split("#")[0];
-	String time = key.toString().split("#")[1];
-	String date = key.toString().split("#")[2];
+	Text urlHour = new Text();
 
-	urlTime.set(url + "#" + time);
+	String[] temp = key.toString().split("#");
 
 
-	if(!CurrentItem.equals(urlTime) && (!CurrentItem.equals(" ")))
+	String url = temp[0];
+	String hour = temp[1];
+	String date = temp[2];
+
+	urlHour.set(url + "#" + hour);
+
+
+	if(!CurrentItem.equals(urlHour) && (!CurrentItem.equals(" ")))
 	{
-	    int size = pastList.size();
-	    double result = 0;
-
-	    for(int i = 0 ; i < size ; i++)
+	    /*
+	    StringBuffer out = new StringBuffer();
+	    for(String p : pastList)
 	    {
-		int dayi = Integer.parseInt(pastList.get(i).split("#")[1]);
-		double value = (double)Integer.parseInt(pastList.get(i).split("#")[0]);
-
-		double baseFun = 1;
-		for(int j = 0 ; j < size ; j++)
-		{
-		    if(i != j)
-		    {
-			int day = Integer.parseInt(pastList.get(j).split("#")[1]);
-			baseFun *= ((double)(22-day)/(double)(dayi - day));
-		    }
-		}
-		result += baseFun * value;
+		out.append(p);
+		out.append("; ");
 	    }
 
-	    context.write(new Text(CurrentItem.toString().split("#")[0]), new Text((int)(result) + ""));
+	    context.write(CurrentItem, new Text(out.toString()));
+	    pastList = new ArrayList<String>();
+*/
+	    double result = 0;
+
+	    for(String p1: pastList)
+	    {
+		int day1 = Integer.parseInt(p1.split("#")[0]);
+		long value = Long.parseLong(p1.split("#")[1]);
+
+		double baseFunUp = 1;
+		double baseFunDown = 1;
+
+		for(String p2: pastList)
+		{
+		    int day2 = Integer.parseInt(p2.split("#")[0]);
+
+		    if(day1 == day2)
+			continue;
+
+		    baseFunUp *= (double)(15.5 - day2);
+		    baseFunDown *= (double)(day1 - day2);
+		}
+		
+		result += (baseFunUp/baseFunDown * (double)value);
+	    }
+
+	    context.write(CurrentItem, new Text(result + ""));
 	    pastList = new ArrayList<String>();
 	}
 
-	CurrentItem = new Text(urlTime);
-	pastList.add(sum + "#" + date);
+	CurrentItem = new Text(urlHour);
+	pastList.add(date + "#" + sum);
     }
 
     public void cleanup(Context context) throws IOException, InterruptedException
     {
-	    int size = pastList.size();
-	    double result = 0;
-
-	    for(int i = 0 ; i < size ; i++)
+	/*
+	    StringBuffer out = new StringBuffer();
+	    for(String p : pastList)
 	    {
-		int dayi = Integer.parseInt(pastList.get(i).split("#")[1]);
-		double value = (double)Integer.parseInt(pastList.get(i).split("#")[0]);
-
-		double baseFun = 1;
-		for(int j = 0 ; j < size ; j++)
-		{
-		    if(i != j)
-		    {
-			int day = Integer.parseInt(pastList.get(j).split("#")[1]);
-
-			baseFun *= ((double)(22-day)/(double)(dayi - day));
-		    }
-
-		}
-
-		result += baseFun * value;
+		out.append(p);
+		out.append("; ");
 	    }
 
-	    context.write(new Text(CurrentItem.toString().split("#")[0]), new Text((int)(result) + ""));
+	    context.write(CurrentItem, new Text(out.toString()));
+	    */
+	    double result = 0;
+
+	    for(String p1: pastList)
+	    {
+		int day1 = Integer.parseInt(p1.split("#")[0]);
+		long value = Long.parseLong(p1.split("#")[1]);
+
+		double baseFunUp = 1;
+		double baseFunDown = 1;
+
+		for(String p2: pastList)
+		{
+		    int day2 = Integer.parseInt(p2.split("#")[0]);
+
+		    if(day1 == day2)
+			continue;
+
+		    baseFunUp *= (double)(22 - day2);
+		    baseFunDown *= (double)(day1 - day2);
+		}
+		
+		result += (baseFunUp/baseFunDown * (double)value);
+	    }
+
+	    context.write(CurrentItem, new Text(result + ""));
     }
 }
