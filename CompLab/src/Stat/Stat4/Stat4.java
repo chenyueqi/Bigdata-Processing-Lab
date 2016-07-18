@@ -27,7 +27,7 @@ public class Stat4
     	System.out.println("input = " + args[0] + ", output = " + args[1]);
 
     	Configuration conf = new Configuration();
-    	Job job = new Job(conf , "Stat3");
+    	Job job = new Job(conf , "Stat4");
 
     	FileInputFormat.addInputPath(job, new Path(args[0]));
     	FileOutputFormat.setOutputPath(job, new Path(args[1]));
@@ -35,7 +35,9 @@ public class Stat4
     	job.setJarByClass(Stat4.class);
     	job.setMapperClass(Stat4Mapper.class);
     	job.setReducerClass(Stat4Reducer.class);
-    	job.setPartitionerClass(NewPartitioner.class);
+    	job.setPartitionerClass(NewPartitioner4.class);
+
+        job.setNumReduceTasks(8);
 
         job.setMapOutputValueClass(IntWritable.class);
         job.setOutputValueClass(Text.class);

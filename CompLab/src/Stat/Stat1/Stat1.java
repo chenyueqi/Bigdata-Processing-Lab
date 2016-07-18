@@ -33,8 +33,8 @@ public class Stat1
     	job.setJarByClass(Stat1.class);
     	job.setMapperClass(Stat1Mapper.class);
     	job.setReducerClass(Stat1Reducer.class);
-    	job.setCombinerClass(SumCombiner.class);
-    	job.setPartitionerClass(NewPartitioner.class);
+    	job.setCombinerClass(SumCombiner1.class);
+    	job.setPartitionerClass(NewPartitioner1.class);
 
     	job.setOutputKeyClass(Text.class);
 	job.setMapOutputValueClass(IntWritable.class);

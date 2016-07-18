@@ -35,12 +35,14 @@ public class Stat2
     	job.setJarByClass(Stat2.class);
     	job.setMapperClass(Stat2Mapper.class);
     	job.setReducerClass(Stat2Reducer.class);
-    	job.setCombinerClass(SumCombiner.class);
-    	job.setPartitionerClass(NewPartitioner.class);
+    	job.setCombinerClass(SumCombiner2.class);
+    	job.setPartitionerClass(NewPartitioner2.class);
 
         job.setMapOutputValueClass(IntWritable.class);
         job.setOutputValueClass(Text.class);
         job.setOutputKeyClass(Text.class);
+
+        job.setNumReduceTasks(8);
 
         MultipleOutputs.addNamedOutput(job,"IPResult",TextOutputFormat.class,Text.class,Text.class);
 
