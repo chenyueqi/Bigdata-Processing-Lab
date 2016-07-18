@@ -41,9 +41,7 @@ public class Step1Mapper extends Mapper<Object, Text, Text, IntWritable>
 	temp = fileName.split(".log")[0];
 	String dateOut = temp.split("-")[2]; // the date of file
 
-	if(dateOut.equals(dateIn) && !dateOut.equals("22") && !interfaces.equals("null")) //check if date of file = date of record
-	{
+	if(dateOut.equals(dateIn)  && !interfaces.equals("null")) //check if date of file = date of record
 	    context.write(new Text(interfaces + "#" + times[1] + "#" + dateIn),new IntWritable(1));
-	}
     }
 }
