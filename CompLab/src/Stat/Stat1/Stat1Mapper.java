@@ -24,17 +24,14 @@ public class Stat1Mapper extends Mapper<Object, Text, Text, IntWritable>
     public void map(Object key, Text value, Context context) throws IOException, InterruptedException
     {
     	String[] logs = value.toString().split(" ");
+        int len = logs.length;
 
-    	String state = logs[7];
+    	String state = logs[len-3];
     	String time = logs[1];
     	
     	String[] times = time.split(":");
     	
-    	
-	if(logs[0].compareTo("-") != 0)
-	{
 	    context.write(new Text("0#"+state),new IntWritable(1));		
 	    context.write(new Text("1#"+times[1]+"@"+state),new IntWritable(1));
-	}
     }
 }

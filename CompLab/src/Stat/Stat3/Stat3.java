@@ -35,12 +35,14 @@ public class Stat3
     	job.setJarByClass(Stat3.class);
     	job.setMapperClass(Stat3Mapper.class);
     	job.setReducerClass(Stat3Reducer.class);
-    	job.setCombinerClass(SumCombiner.class);
-    	job.setPartitionerClass(NewPartitioner.class);
+    	job.setCombinerClass(SumCombiner3.class);
+    	job.setPartitionerClass(NewPartitioner3.class);
 
         job.setMapOutputValueClass(IntWritable.class);
         job.setOutputValueClass(Text.class);
         job.setOutputKeyClass(Text.class);
+
+        job.setNumReduceTasks(8);
 
         MultipleOutputs.addNamedOutput(job,"Interface",TextOutputFormat.class,Text.class,Text.class);
 
