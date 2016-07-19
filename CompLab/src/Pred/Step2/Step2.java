@@ -27,7 +27,7 @@ public class Step2
     	System.out.println("input = " + args[0] + ", output = " + args[1]);
 
     	Configuration conf = new Configuration();
-    	Job job = new Job(conf , "Stat3");
+    	Job job = new Job(conf , "Prediction Step2");
 
     	FileInputFormat.addInputPath(job, new Path(args[0]));
     	FileOutputFormat.setOutputPath(job, new Path(args[1]));

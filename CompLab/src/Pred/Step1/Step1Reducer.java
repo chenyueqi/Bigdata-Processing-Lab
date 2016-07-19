@@ -82,7 +82,7 @@ public class Step1Reducer extends Reducer<Text, IntWritable, Text, Text>
 	}
 
 	CurrentItem = new Text(urlHour);
-	if(Integer.parseInt(date) > 18)
+	if(Integer.parseInt(date) > 20)
 	{
 	    if(Integer.parseInt(date) == 22)
 		out.append(sum+"#");

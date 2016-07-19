@@ -5,9 +5,9 @@ public class Driver1
 {
 	public static void main(String[] args) throws Exception
 	{
-		String[] step1 ={args[0],args[1]};
+		String[] step1 ={"/data/task1/JN1_LOG", "./Pred/Step1"};
 		Step1.main(step1);
-		String[] step2 ={args[1],args[2]};
+		String[] step2 ={"./Pred/Step1", "./Pred/Step2"};
 		Step2.main(step2);
 	}
 }
