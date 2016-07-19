@@ -1,0 +1,202 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage{ctex}
+\usepackage{CJK}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{graphicx}
+\usepackage{picinpar}
+\usepackage{textcomp}
+\usepackage{faktor}
+\usepackage{multirow}
+\usepackage{subfigure}
+\usepackage{float}
+\addtolength{\topmargin}{-54pt}
+\setlength{\oddsidemargin}{0cm} % 3.17cm - 1 inch
+\setlength{\evensidemargin}{\oddsidemargin}
+\setlength{\textwidth}{17cm}
+\setlength{\textheight}{25cm} % 24.62
+
+\usepackage{bm}
+\usepackage{algorithm}
+\usepackage{algpseudocode}
+\graphicspath{{figs/}}
+\usepackage{fancyhdr}
+\usepackage{lastpage}
+\usepackage{hyperref}
+ 
+\pagestyle{fancy}
+\fancyhf{}
+ 
+\cfoot{Page \thepage \hspace{1pt} of \pageref{LastPage}}
+ 
+
+
+\begin{document}
+
+%\title{作业1} 
+%\author{121160005 陈越琦}
+%\date{}\maketitle
+
+\textbf{本文档为13级大数据综合实验1：日志分析的文档}
+
+\textbf{文档的所有权和解释权归“什么鬼”组}
+
+\textbf{小组成员：}
+\begin{itemize}
+\item 陈越琦 (121160005  \url{Yueqichen.0x0@gmail.com})
+\item 刘威 (\url{liuwei13cs@smail.nju.edu.cn})
+\item 杨杰才
+\item 周子博 (\url{441842096@qq.com})
+\end{itemize}
+
+\hypersetup{CJKbookmarks=true}
+\section{日志分析任务分类}
+根据实验要求将任务分成统计型和预测型两类。
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|}
+\hline
+任务类型 & 具体任务   \\
+\hline
+\multirow{4}*{统计型} & 状态码出现频次总计和分时间窗（小时）统计 \\
+& IP访问频次总计和分时间窗（小时）统计\\
+& URL访问频次统计和分时间窗（秒）统计\\
+& URL响应时间分时间窗（小时）统计\\
+\hline
+\multirow{1}*{预测型} & URL访问频次预测（每个小时每个接口） \\
+\hline
+\end{tabular}
+\end{table}
+
+文档将在第2节详细阐述统计型任务的设计，在第3节中详细阐述预测型任务的设计。
+
+\section{统计型}
+四个统计型任务的设计方法是一致的。根据具体任务需求得到相应的信息单元 (information unit)和对应的时间粒度 (time)。Table1是其对应关系。
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+具体任务 & 信息单元 (IU) & 时间粒度 (Time)  \\
+\hline
+状态码出现频次总计和分时间窗（小时）统计 & 状态码 & 小时\\
+IP访问频次总计和分时间窗（小时）统计 & IP & 小时\\
+URL访问频次统计和分时间窗（秒）统计 & URL & 秒\\
+URL响应时间分时间窗（小时）统计 & 响应时间 & 小时\\
+\hline
+\end{tabular}
+\caption{\textbf{具体任务与信息单元，时间粒度对应关系}}
+\end{table}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 14cm]{1.png}
+\caption{\textbf{日志格式\cite{1}}}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 14cm]{2.png}
+\caption{\textbf{日志记录中各个部分的具体意义\cite{1}}}
+\end{figure}
+
+考虑到要求先输出总体的统计结果再输出具体的分时间窗口的统计信息，因此设计键值对转换过程如下 (Figure  3)；
+
+\begin{figure}[H]
+\centering
+\includegraphics[width = 14cm]{3.png}
+\caption{\textbf{统计型任务键值对转换过程}}
+\end{figure}
+
+\begin{enumerate}
+\item \textbf{Map} 读入每条日志记录，判断是否是常规日志(即访问正常生成的日志，有完整的组成)，切割记录得到相应粒度的时间和信息单元，输出“0\#信息单元”方便在Reduce阶段进行总的统计，输出“0\#时间粒度\#信息单元”方便在Reducer阶段得到相应时间窗口中的统计结果。
+\item \textbf{Combine} 对有相同键的Map输出，将其频次相加汇总，较少中间数据传输。
+\item \textbf{Partition} 根据信息单元进行分区，将拥有不同的IP，URL，或者状态码记录分到不同的Reduce节点。
+\item \textbf{Reduce} 因为MapReduce框架会对key进行排序，所以所有"0"开始的键值对在所有"1"开始的键值对的前面。因此可以在所有"0"开始的键值对上进行总的统计工作，在"1"开始的键值对上进行分时间窗口的统计工作。
+\end{enumerate}
+
+\noindent
+\textbf{Mapper:}
+\begin{algorithm}[H]
+	{\bfseries Input :}~日志记录\\
+	{\bfseries Output :}~键值对（0\#信息单元，1\#时间粒度\#信息单元）
+	\caption{$class~Mapper$}
+	\begin{algorithmic}[1]
+    	\Procedure {MAP}{Object key, Text line}
+    	\State 获得文件名为fileName
+    	\For{$\bm{all}$ term $t$ $\bm{in}$ line $l$}
+    	\State Emit($t\#fileName, one$)
+    	\EndFor
+    \EndProcedure
+  \end{algorithmic}
+\end{algorithm}
+
+
+\noindent
+\textbf{Combiner:}
+\begin{algorithm}[H]
+	{\bfseries Input :}~键值对（词语\#文档名, 词频）\\
+	{\bfseries Output :}~键值对（词语\#文档名, 词频）
+	\caption{$class~Combiner$}
+	\begin{algorithmic}[1]
+    	\Procedure {Combine}{Text key, Iterable$<$IntWritable$>$ value}
+    	\State $Sum = 0$
+    	\For{$\bm{all}$  $val$ $\bm{in}$ value do}
+    	\State $Sum \leftarrow Sum + val$
+    	\EndFor
+    	\State Emit$(key, Sum)$
+    \EndProcedure
+  \end{algorithmic}
+\end{algorithm}
+
+\newpage
+\noindent
+\textbf{NewPartitioner:}
+\begin{algorithm}[H]
+	\caption{$class~NewPartitioner$}
+	\begin{algorithmic}[1]
+    	\Procedure {getPartition}{Text key, IntWritable value, int NumReduceTasks}
+    	\State ~$term \leftarrow key.split("\#")[0]$\\
+    	~~~~~~~\Return super.getPartition(term, value, NumReduceTasks)
+    \EndProcedure
+  \end{algorithmic}
+\end{algorithm}
+
+\noindent
+\textbf{Reducer：}
+\begin{algorithm}[H]
+	{\bfseries Input :}~Combiner的结果$<$Text key, Iterable$<$IntWritable$>$ $>$\\
+	{\bfseries Output :}~词语~平均出现次数~ [小说名: 词频]
+	\caption{$class~Reducer$}
+	\begin{algorithmic}[1]
+    	\Procedure {Setup}{~}
+    		\State $t_{prev} \leftarrow \emptyset$
+    		\State $P \leftarrow new PostingsList$
+    	\EndProcedure
+    	\Procedure {Reduce}{tuple$<t,n>, tf [f]$}
+    		\State if $t \neq t_{prev}$ \&\& $t_{prev} \neq \emptyset$ then
+    		\State ~~~~~计算平均出现次数并插入到$P$的头部
+    		\State ~~~~~Emit($t_{prev},P$)
+    		\State ~~~~~$P$.Reset()
+    		\State $P$.Add($<n,f>$)
+    		\State $t_{prev} \leftarrow t$
+    	\EndProcedure
+    	\Procedure {Close}{~}
+	    	\State 计算平均出现次数并插入到$P$的头部
+    		\State Emit$(t,P)$
+    	\EndProcedure
+  	\end{algorithmic}
+\end{algorithm}
+
+
+\section{预测型} 
+
+\newpage
+
+\begin{thebibliography}{99}
+
+\bibitem{1} MapReduce课程设计1-日志分析.pdf
+
+\end{thebibliography}
+\end{document}
