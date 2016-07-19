@@ -43,6 +43,7 @@ public class Step2Reducer extends Reducer<Text, LongWritable, Text, Text>
 		sum += (long)Math.sqrt(localsum/N);
 
 	    M = M + 1;
+
 	    N = 0;
 	    localsum = 0;
 	}

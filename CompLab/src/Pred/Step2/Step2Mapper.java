@@ -48,7 +48,7 @@ public class Step2Mapper extends Mapper<Object, Text, Text, LongWritable>
 	else
 	{
 	    long val1 = Long.parseLong(fre);
-	    out = val1* val1;
+	    out = val1 * val1;
 	}
 
 	context.write(new Text(hour + "#" +url),  new LongWritable(out));
