@@ -2,8 +2,7 @@
  * Reducer class for InvertedIndex Table
  * Project Name: Inverted Index Table for Hadoop (Lab2)
  * Group Name: What the f**k
- * Created by: Yueqi Chen (Yueqichen.0x0@gmail.com)
- * Time: 2016/4/22 21:59
+ * Created by: Wei Liu
 */
 
 import java.io.IOException;
@@ -12,10 +11,18 @@ import java.util.*;
 import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Reducer;
+import org.apache.hadoop.mapreduce.lib.output.MultipleOutputs;
 
 public class Stat1Reducer extends Reducer<Text, IntWritable, Text, Text>
 {
     static List<String> postingList = new ArrayList<String>();
+    private MultipleOutputs Out;
+
+    protected void setup(Context context) throws IOException,InterruptedException
+    {
+        Out = new MultipleOutputs<Text,Text>(context);
+    }
+
     static Text CurrentItem = new Text(" ");
 
     private String get_time(String time)
@@ -37,7 +44,7 @@ public class Stat1Reducer extends Reducer<Text, IntWritable, Text, Text>
     		}
     		Text result = new Text();
     		result.set(key.toString().split("#")[1]+":"+sum);
-    		context.write(result, new Text(" "));
+    		Out.write("out",result,new Text(""),"1.txt");
     		
         }
     	
@@ -73,7 +80,7 @@ public class Stat1Reducer extends Reducer<Text, IntWritable, Text, Text>
     			}
 
     			if(cnt_word > 0)
-    				context.write(CurrentItem, new Text(out.toString()));
+    				Out.write("out", CurrentItem, new Text(out.toString()),"1.txt");
     			postingList = new ArrayList<String>();
     		}
     		CurrentItem = new Text(word1);
@@ -97,6 +104,8 @@ public class Stat1Reducer extends Reducer<Text, IntWritable, Text, Text>
 	}
 
 	if(cnt_word > 0)
-	    context.write(CurrentItem, new Text(out.toString()));
+	    Out.write("out",CurrentItem, new Text(out.toString()),"1.txt");
+
+    Out.close();
     }
 }

@@ -16,6 +16,8 @@ import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
+import org.apache.hadoop.mapreduce.lib.output.MultipleOutputs;
+import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
 import org.apache.hadoop.util.*;
 
 public class Stat1
@@ -37,9 +39,10 @@ public class Stat1
     	job.setPartitionerClass(NewPartitioner1.class);
 
     	job.setOutputKeyClass(Text.class);
-	job.setMapOutputValueClass(IntWritable.class);
+	    job.setMapOutputValueClass(IntWritable.class);
     	job.setOutputValueClass(Text.class);
 
+        MultipleOutputs.addNamedOutput(job,"out",TextOutputFormat.class,Text.class,Text.class);
     	job.waitForCompletion(true);
     }
 }
