@@ -35,8 +35,8 @@ public class Step2
     	job.setJarByClass(Step2.class);
     	job.setMapperClass(Step2Mapper.class);
     	job.setReducerClass(Step2Reducer.class);
-    	job.setCombinerClass(SumCombiner.class);
-    	job.setPartitionerClass(NewPartitioner.class);
+//    	job.setCombinerClass(SumCombiner.class);
+//    	job.setPartitionerClass(NewPartitioner.class);
 
         job.setMapOutputValueClass(LongWritable.class);
         job.setOutputValueClass(Text.class);

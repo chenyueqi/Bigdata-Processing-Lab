@@ -51,7 +51,7 @@ public class Step2Mapper extends Mapper<Object, Text, Text, LongWritable>
 	    out = val1 * val1;
 	}
 
-	context.write(new Text(hour + "#" +url),  new LongWritable(out));
+	context.write(new Text(hour),  new LongWritable(out));
 
     }
 }

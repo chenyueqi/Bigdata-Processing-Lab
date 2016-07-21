@@ -25,42 +25,25 @@ import org.apache.hadoop.util.*;
 public class Step2Reducer extends Reducer<Text, LongWritable, Text, Text>
 {
     static int M = 0;
-    static int N = 0;
-    static long localsum = 0;
     static long sum = 0;
     static Text CurrentItem = new Text(" ");
 
     public void reduce(Text key, Iterable<LongWritable> values, Context context) throws IOException, InterruptedException
     {
+	int N = 0;
+	long localsum = 0;
 	for(LongWritable val: values)
-	    localsum += val.get();
-
-	String hour = key.toString().split("#")[0];
-
-	if(!CurrentItem.equals(hour) && (!CurrentItem.equals(" ")))
 	{
-	    if(N != 0)
-	    {
-		sum += (long)Math.sqrt(localsum/N);
-		M = M + 1;
-	    }
-
-	    N = 0;
-	    localsum = 0;
+	    localsum += val.get();
+	    N = N + 1;
 	}
 
-	CurrentItem = new Text(hour);
-	N = N + 1;
+	sum += Math.sqrt(localsum/N);
+
     }
 
     public void cleanup(Context context) throws IOException, InterruptedException
     {
-	if(N != 0)	
-	{
-	    sum += Math.sqrt(localsum/N);
-	    M = M + 1;
-	}
-
-	context.write(new Text("RMSE"), new Text(sum + " " + M + ""));
+	context.write(new Text("RMSE"), new Text(sum/24 + ""));
     }
 }
