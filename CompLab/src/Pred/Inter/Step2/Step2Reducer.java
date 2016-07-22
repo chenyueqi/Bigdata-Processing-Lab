@@ -25,13 +25,13 @@ import org.apache.hadoop.util.*;
 public class Step2Reducer extends Reducer<Text, LongWritable, Text, Text>
 {
     static int M = 0;
-    static long sum = 0;
+    static double sum = 0;
     static Text CurrentItem = new Text(" ");
 
     public void reduce(Text key, Iterable<LongWritable> values, Context context) throws IOException, InterruptedException
     {
 	int N = 0;
-	long localsum = 0;
+	double localsum = 0;
 	for(LongWritable val: values)
 	{
 	    localsum += val.get();

@@ -33,16 +33,16 @@ public class Step1
     	FileOutputFormat.setOutputPath(job, new Path(args[1]));
 
     	job.setJarByClass(Step1.class);
-	job.setNumReduceTasks(8);
+	    job.setNumReduceTasks(8);
     	job.setMapperClass(Step1Mapper.class);
     	job.setReducerClass(Step1Reducer.class);
-    	job.setCombinerClass(SumCombiner.class);
-    	job.setPartitionerClass(NewPartitioner.class);
+    	job.setCombinerClass(SumCombiner1.class);
+    	job.setPartitionerClass(NewPartitioner1.class);
 
         job.setMapOutputValueClass(IntWritable.class);
         job.setOutputValueClass(Text.class);
         job.setOutputKeyClass(Text.class);
 
-	System.exit(job.waitForCompletion(true)?0:1);
+	    job.waitForCompletion(true);
     }
 }

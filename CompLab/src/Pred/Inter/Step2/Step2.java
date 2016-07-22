@@ -42,6 +42,6 @@ public class Step2
         job.setOutputValueClass(Text.class);
         job.setOutputKeyClass(Text.class);
 
-	System.exit(job.waitForCompletion(true)?0:1);
+	    job.waitForCompletion(true);
     }
 }
