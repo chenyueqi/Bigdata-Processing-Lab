@@ -1,0 +1,1066 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%                                                                       %%
+%%     LaTeX + CTeX 《应用概率统计》论文模板, 只针对 A4 纸中文稿.        %%
+%%                                                                       %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%            中文稿 文章模板：A4 纸, 五号字, 单列              %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\documentclass[a4paper,c1size,onecolumn,twoside,cap,Chinese]{APSart}
+\usepackage{listings} 
+\usepackage{enumitem}
+\usepackage{algorithm}
+\usepackage{multirow}
+\usepackage{amsmath} 
+\usepackage{algpseudocode}
+\newcommand{\tabincell}[2]{\begin{tabular}{@{}#1@{}}#2\end{tabular}}  
+\graphicspath{{figs/}}
+\floatname{algorithm}{Class} 
+\begin{document}
+
+\setcounter{page}{1}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%------------------ 编辑部提供的信息 ------------------------%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\pubvol}{xx}         % 卷号
+\newcommand{\enpubvol}{xx}       % 卷号
+\newcommand{\pubno}{x}           % 期号
+\newcommand{\enpubno}{x}         % 期号
+\newcommand{\pubyear}{20xx}      % 出版年份
+\newcommand{\enpubyear}{20xx}    % 出版年份
+\newcommand{\pubmonth}{xx}       % 出版月份
+\newcommand{\enpubmonth}{xx}     % 出版月份
+\newcommand{\ksym}{xxx}          % 开始页码
+\newcommand{\jsym}{xxx}          % 结束页码
+\newcommand{\receivedate}{本文XXXX年XX月XX日收到} % 论文收到日期
+\newcommand{\modifydate}{XXXX年XX月XX日收到修改稿}% 论文修改日期
+\newcommand{\doino}{10.3969/j.issn.1001-4268.20xx.0x.0xx} % doi号
+%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%-------------------- 作者提供的信息 ------------------------%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\newcommand{\runcnauthors}{~} %超过两个作者的请用：第一作者姓名~等
+\newcommand{\cnfirstauthor}{陈越琦}
+\newcommand{\cnsecondauthor}{刘威}
+\newcommand{\cnthirdauthor}{杨杰才}
+\newcommand{\cnfourthauthor}{周子博}
+\newcommand{\cnfirstinst}{121160005 ~~Yueqichen.0x0@gmail.com}
+\newcommand{\cnsecondinst}{131220085 ~~liuwei13cs@smail.nju.edu.cn}
+\newcommand{\cnthirdinst}{131220115 ~~mark\_grove@qq.com}
+\newcommand{\cnfourthinst}{121250229 ~~441842096@qq.com}
+\newcommand{\cntitle}{课程设计1 -- 日志统计分析~实验报告}
+\newcommand{\cnkeywords}{Hadoop、海量日志、统计、预测}
+\newcommand{\cnclassno}{O212.xx} % 中图分类号
+%%
+\newcommand{\enfirstauthor}{FIRST Name}
+\newcommand{\ensecondauthor}{SECOND Name}
+\newcommand{\enfirstinst}{First Author's Working Unit $($Up to Department$)$, Province, 
+Zip Code, China}
+\newcommand{\ensecondinst}{Second Author's Working Unit $($Up to Department$)$, Province, 
+Zip Code, China}
+\newcommand{\entitle}{English Title}
+\newcommand{\enkeywords}{keyword 1; keyword 2; ......}
+\newcommand{\amsno}{62Nxx} % AMS Subject Claassification
+%%
+%% 中文摘要
+\newcommand{\cnabstract}{摘要内容.}
+%% 英文摘要
+\newcommand{\enabstract}{The abstract comes here.}
+\newcommand{\fundinfo}{XXXX基金资助(12345678).}
+\newcommand{\authorsinfo}{陈越琦：121160005 Yueqichen.0x0@gmail.com~~~~~刘威：131220085  liuwei13cs@smail.nju.edu.cn}
+\newcommand{\authorsinfoo}{杨杰才：121160005 mark\_grove@qq.com~~~~~周子博：121250229  441842096@qq.com}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%        文章正文                                              %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\title{\zihao{3}\bf{\cntitle}
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% 作者姓名与单位：三种形式中选一种
+% 后面英文摘要中的名字和单位同样处理
+% ---------------------
+% 第一种形式: 单一作者
+% ---------------------
+%\author{\zihao{4}\fangsong{\cnfirstauthor}\\[-1pt]
+%{\zihao{-5}(\cnfirstinst)}}
+
+% ---------------------
+% 第二种形式: 同一单位 多个作者 -- 名字左右并列,
+% ---------------------
+%\author{\zihao{4}\fangsong{\cnfirstauthor\hy\hy\hy\cnsecondauthor}\\[-1pt]
+%{\zihao{-5}(\cnfirstinst)}}
+
+% ---------------------
+% 第三种形式: 不同单位 多个作者 -- 名字与单位上下并列
+% ---------------------
+\author{\zihao{4}\fangsong{\cnfirstauthor}\\[-1pt]
+{\zihao{-5}(\cnfirstinst)}\and
+\zihao{4}\fangsong{\cnsecondauthor}\\[-1pt]
+{\zihao{-5}(\cnsecondinst)}\and
+\zihao{4}\fangsong{\cnthirdauthor}\\[-1pt]
+{\zihao{-5}(\cnthirdinst)}\and
+\zihao{4}\fangsong{\cnfourthauthor}\\[-1pt]
+{\zihao{-5}(\cnfourthinst)}\and
+}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\date{} % 这一行用来去掉默认的日期显示
+\maketitle
+\vspace{-6mm}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  中文摘要
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{minipage}[c]{13.5cm}
+\zihao{-5}
+\textbf{摘~~~要:}\quad 本次实验是本课程的最后的综合实验。本次实验，我们小组通过使用 MapReduce 来实现日志分析。在本次实验中，我们主要了解、掌握并使用了以下两点 MapReduce 编程技能：~1、海量日志数据的统计分析~~2、基于 MapReduce 的预测模型设计，通过对历史日志数据的分析建立预测模型。日志分析在互联网企业应用很广，通过完成本次课程设计，我们也进一步了解 MapReduce 技术在工业界的应用。\\
+\\ \textbf{关键词:}\quad\cnkeywords
+\end{minipage}
+\footnote[1]{\scriptsize{\authorsinfo}}\vspace{2em}
+\footnote[0]{\scriptsize{\authorsinfoo}}\vspace{2em}
+
+\newpage
+\tableofcontents
+\newpage
+
+\section{引\hy\hy\hy 言}
+\noindent
+本次实验，我们小组通过使用 ~MapReduce 来实现日志分析。\\
+~\\根据实验要求我们可以将任务分成统计型和预测型两类。
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|}
+\hline
+任务类型 & 具体任务   \\
+\hline
+\multirow{4}*{统计型} & 状态码出现频次总计和分时间窗（小时）统计 \\
+& IP访问频次总计和分时间窗（小时）统计\\
+& URL访问频次统计和分时间窗（秒）统计\\
+& URL响应时间分时间窗（小时）统计\\
+\hline
+\multirow{1}*{预测型} & URL访问频次预测（每个小时每个接口） \\
+\hline
+\end{tabular}
+\end{table}
+\noindent
+~\\由上面的分析结合实际的实验过程中的一些想法与探索，在本次实验中，我们主要完成了以下几个方面的实验内容：1. 对日志数据进行统计分析； 2. 使用历史数据对接口访问频次进行预测； 3.对日志分析进行一定扩展，从所给日志中分析一些有用信息。日志分析在互联网企业应用很广，通过完成本次课程设计，我们也进一步了解 MapReduce 技术在工业界的应用。 \\
+下面的章节，我将分别叙述程序设计的主要流程、程序采用的主要算法、进行的优化工作、优化取得的效果、程序的性能分析以及程序运行截图等。
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{实验环境与概述}
+\noindent
+本次实验的本地开发与测试环境如下：\\
+\begin{center}
+\includegraphics[height = 2.5cm]{0.jpg}
+\caption{开发与测试环境}
+\end{center}
+对于各个任务，我们使用随机抽取生成的小数据集来调试程序的正确性，再用大数据集进行性能调优与最终结果测试。在RMSE计算部分，我们在初始时没有考虑验证计算结果的正确性，导致后面对方法好坏比较部分走了一定的弯路，经过修改后才获得了正确的结果。
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{实验所用算法与设计流程}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{统计部分}
+\noindent
+本部分对应实验要求中的任务1 - 任务4。本部分所用算法基本来自于课本专利文献分析算法部分，本部分采用的主要算法与技术有：MapReduce用于计数和统计，复合键的使用，自定义的~Partitioner 与~Combiner，多文件输出与文件名的定义。
+\subsubsection{总体设计}
+\noindent
+四个统计型任务的设计方法大体是一致的。根据具体任务需求得到相应的信息单元 (information unit)和对应的时间粒度 (time)。Table1是其对应关系。
+
+\begin{table}[H]
+\centering
+\begin{tabular}{|c|c|c|}
+\hline
+具体任务 & 信息单元 (IU) & 时间粒度 (Time)  \\
+\hline
+状态码出现频次总计和分时间窗（小时）统计 & 状态码 & 小时\\
+IP访问频次总计和分时间窗（小时）统计 & IP & 小时\\
+URL访问频次统计和分时间窗（秒）统计 & URL & 秒\\
+URL响应时间分时间窗（小时）统计 & 响应时间 & 小时\\
+\hline
+\end{tabular}
+\caption{\textbf{具体任务与信息单元，时间粒度对应关系}}
+\end{table}
+\noindent
+对于信息单元的切割问题，通过查看日志文件我们可以看到：对日志文件以空格进行切分得到的字符串子串的数目是不一致的。因而在具体的切割时要考虑到这一点，才能得到正确的信息单元。我们在初始时，没有考虑全部情况，导致在状态码统计时出现了较大的偏差。\\
+~\\
+将这四个任务根据~Reduce~操作的不同进行进一步细分，可分为两部分(任务1与任务2-4)：对第一个任务，所有的结果要全部输出在一个文件中，因而需要关注的重点（即最终输出的键）分别为信息单元和时间。前一部分，我们关注的是每个信息单元的统计结果；而在后一部分，我们关注的是每个时间窗对应的各个信息单元的统计信息。由上分析，我们在Reduce部分采用了 wordcount + 倒排索引的设计方法。而对后三个任务，每个信息单元对应一个输出文件，我们只需关注信息单元及其统计信息即可，因而不需要使用特殊的设计。\\
+\textbf{因而，对于前四个任务，我将分为~任务1 与~任务2-4 两部分分别进行深入阐述。}
+
+\subsubsection{任务~1}
+\noindent
+由上面的分析，我们在任务1中采用了wordcount + 倒排索引的思路来完成整个设计过程。使用~\textbf{wordcount} 的思路统计日志中各个状态码（200, 404，500）出现总的频次，使用\textbf{倒排索引}的思路按照小时时间窗输出各个时间段各状态码的统计情况。\\~\\
+任务1的具体 MapReduce 设计，Map/Reduce键值对与伪代码如下：\\
+考虑到要求先输出总体的统计结果再输出具体的分时间窗口的统计信息，因此设计键值对转换过程如下 (Figure  2)；
+\begin{figure}[H]
+\centering
+\includegraphics[width = 14cm]{3.png}
+\caption{\textbf{任务1 键值对转换过程}}
+\end{figure}
+\noindent
+可以看到，在 Map 阶段，我们输出了两种键，一种以 "0\#" 开头，一种以 "1\#"开头。它们分别对应了统计各个状态码出现的总频次与按照小时时间窗输出各个时间段各状态码的统计结果（即~wordcount~与倒排索引部分）。由于在Reduce之前键值对会按照key进行排序，这样便保证了输出结果与顺序的正确性。而在Reduce阶段，通过判断键的第一部分，便可以确定进行何种处理（wordcount 或 倒排索引）。\\
+同时，使用这种方法也可以确保在按照时间窗进行统计时，最终的输出结果是正确的，并且按照时间递增的顺序显示。\\
+~\\具体的~Map 与~Reduce 各阶段的设计如下：
+\begin{enumerate}
+\item \textbf{Map} 读入每条日志记录，切割记录得到相应粒度的时间和信息单元，输出“0\#信息单元”方便在Reduce阶段进行总的统计，输出“1\#时间粒度\#信息单元”方便在Reducer阶段得到相应时间窗口中的统计结果。
+\item \textbf{Combine} 对有相同键的Map输出，将其频次相加汇总，较少中间数据传输。
+\item \textbf{Partition} 根据信息单元进行分区，将拥有不同的IP，URL，或者状态码记录分到不同的Reduce节点。
+\item \textbf{Reduce} 因为MapReduce框架会对key进行排序，所以所有"0"开始的键值对在所有"1"开始的键值对的前面。因此可以在所有"0"开始的键值对上进行总的统计工作，从而输出总次数。在"1"开始的键值对上进行倒排索引统计，统计过程类似于实验二，代码也由实验二相应的~reducer 部分修改而来。
+\end{enumerate}
+~\\
+相对应的各部分的伪代码如下：
+\noindent
+\\ \textbf{Mapper:}
+\begin{algorithm}[H]
+	{\bfseries Input :}~日志记录\\
+	{\bfseries Output :}~键值对（0\#信息单元，1\#时间粒度\#信息单元）
+	\caption{$class~Mapper$}
+	\begin{algorithmic}[1]
+    	\Procedure {MAP}{Object key, Text line}
+    	\State Logs[] (切割出的子串组成数组)   $\leftarrow$ line
+    	\State IU(信息单元),time(时间)   $\leftarrow$ Logs[]
+    	\State Emit($0\#IU, one$)
+    	\State Emit($1\#time\#IU, one$)
+    \EndProcedure
+  \end{algorithmic}
+\end{algorithm}
+
+
+\noindent
+\textbf{Combiner:}
+\begin{algorithm}[H]
+	{\bfseries Input :}~键值对（0/1\#信息单元, 出现次数）\\
+	{\bfseries Output :}~键值对（0/1\#时间\#信息单元, 出现次数）
+	\caption{$class~Combiner$}
+	\begin{algorithmic}[1]
+    	\Procedure {Combine}{Text key, Iterable$<$IntWritable$>$ value}
+    	\State $Sum = 0$
+    	\For{$\bm{all}$  $val$ $\bm{in}$ value do}
+    	\State $Sum \leftarrow Sum + val$
+    	\EndFor
+    	\State Emit$(key, Sum)$
+    \EndProcedure
+  \end{algorithmic}
+\end{algorithm}
+
+\noindent
+\textbf{NewPartitioner:}
+\begin{algorithm}[H]
+	\caption{$class~NewPartitioner$}
+	\begin{algorithmic}[1]
+    	\Procedure {getPartition}{Text key, IntWritable value, int NumReduceTasks}
+    	\State ~$term \leftarrow key.split("\#")[1]$\\
+    	~~~~~~~\Return super.getPartition(term, value, NumReduceTasks)
+    \EndProcedure
+  \end{algorithmic}
+\end{algorithm}
+
+\noindent
+\textbf{Reducer：}
+\begin{algorithm}[H]
+	{\bfseries Input :}~Combiner的结果$<$Text key, Iterable$<$IntWritable$>$ $>$\\
+	{\bfseries Output :}~~1. state(状态码):总频次\\
+	{\bfseries Output :}~~2. 时间窗~~~~~state(状态码):总频次
+	\caption{$class~Reducer$}
+	\begin{algorithmic}[1]
+    	\Procedure {Setup}{~}
+    		\State $t_{prev} \leftarrow \emptyset$
+    		\State $P \leftarrow new PostingsList$
+    	\EndProcedure
+    	\Procedure {Reduce}{Text key(tuple$<0/1,t,n>$), IntWritable values}
+    		\If    {key.startwith("0")}
+    		\State 0~~$\leftarrow$~~$sum$
+    		\For   {val $\bm{in}$ values}
+    		\State $sum$~~$\leftarrow$~~$sum+val$
+    		\EndFor
+    		\State Emit(t:sum);
+    		\EndIf
+    		\If    {key.startwith("1")}
+    		\State 0~~$\leftarrow$~~$sum$
+    		\For   {val $\bm{in}$ values}
+    		\State $sum$~~$\leftarrow$~~$sum+val$
+    		\EndFor
+    		\State if $t \neq t_{prev}$ \&\& $t_{prev} \neq \emptyset$ then
+    		\State ~~~~~Emit($t_{prev},P$)
+    		\State ~~~~~$P$.Reset()
+    		\State $P$.Add($<n,sum>$)
+    		\State $t_{prev} \leftarrow t$
+    		\EndIf
+    	\EndProcedure
+    	\Procedure {Cleanup}{~}
+    		\State Emit$(t,P)$
+    	\EndProcedure
+  	\end{algorithmic}
+\end{algorithm}
+
+\subsubsection{任务~2-4}
+\noindent
+任务 2-4 本质上大体相同，均是进行较为简单的求和处理。在这三个任务中，最关键的一点便是按照要求进行多文件输出。在多文件输出部分，我使用了MultipleOutputs 类来实现根据信息单元的不同，将结果输出到相应的文件中。MultipleOutputs 的具体使用方法如下图：
+\begin{center}
+\includegraphics[width = 14cm]{m1.jpg}
+\includegraphics[width = 10cm]{m2.jpg}
+\includegraphics[width = 14cm]{m3.jpg}
+\caption{MulitpleOutputs 示例}
+\end{center}
+\noindent
+由上所示，通过~MultipleOutputs~类的~write~函数，我们便可以根据信息单元来将内容输出到合适的文件之中。\\
+~\\由前面的分析可知，任务2-4与任务1中各个部分键值对的类型与内容构成完全一致（见图2）.\\具体的~Map 与~Reduce 各阶段的设计如下：
+\begin{enumerate}
+\item \textbf{Map} 读入每条日志记录，切割记录得到相应粒度的时间和信息单元，输出“0\#信息单元”方便在Reduce阶段进行总的统计，输出“1\#时间粒度\#信息单元”方便在Reducer阶段得到相应时间窗口中的统计结果。
+\item \textbf{Combine} 对有相同键的Map输出，将其频次相加汇总，较少中间数据传输。
+\item \textbf{Partition} 根据信息单元进行分区，将拥有不同的IP，URL，或者状态码记录分到不同的Reduce节点。
+\item \textbf{Reduce} 因为MapReduce框架会对key进行排序，所以所有"0"开始的键值对在所有"1"开始的键值对的前面。因此可以在所有"0"开始的键值对上进行总的统计工作，在"1"开始的键值对进行各个时间窗上的统计，并根据信息单元的内容输出到相应的文件之中。在任务4中，总次数代表总的响应时间，最终输出时除以访问次数，得到平均响应时间。
+\end{enumerate}
+\noindent\\~\\
+任务2-4的~Map,~Combine~与~Partition~部分与任务1完全一致，主要的差别体现在Reduce部分，因而此处不再重复给出伪代码。下面是任务 2-4 的的 Reduce 伪代码(\textbf{括号内是~任务4~添加的部分}):\\
+~\\
+\textbf{Reducer：}
+\begin{algorithm}[H]
+	{\bfseries Input :}~Combiner的结果$<$Text key, Iterable$<$IntWritable$>$ $>$\\
+	{\bfseries Output :}~~1. IU(信息单元):总频次\\
+	{\bfseries Output :}~~2. 时间窗~~~~~IU(信息单元):总频次
+	\caption{$class~Reducer$}
+	\begin{algorithmic}[1]
+    	\Procedure {Setup}{~}
+    		\State out~~$\leftarrow$~~MultipleOutputs(context)
+    	\EndProcedure
+    	\Procedure {Reduce}{Text key(tuple$<0/1,t,n>$), IntWritable values}
+    		\If    {key.startwith("0")}
+    		\State 0~~$\leftarrow$~~$sum$~~~(0~~$\leftarrow$~~$num$)
+    		\For   {val $\bm{in}$ values}
+    		\State $sum$~~$\leftarrow$~~$sum+val$~~~($num$~~$\leftarrow$~~$num+1$)
+    		\EndFor
+    		\State out.write(t:sum/(t:sum/num),t+".txt");
+    		\EndIf
+    		\If    {key.startwith("1")}
+    		\State 0~~$\leftarrow$~~$sum$
+    		\For   {val $\bm{in}$ values}
+    		\State $sum$~~$\leftarrow$~~$sum+val$
+    		\EndFor
+    		\State out.write(t,n:sum/(n:sum/num),n+".txt");
+    		\EndIf
+    	\EndProcedure
+    	\Procedure {Cleanup}{~}
+    		\State out.close()
+    	\EndProcedure
+  	\end{algorithmic}
+\end{algorithm}
+
+\subsection{预测部分}
+\noindent
+本部分总体上可分为两个部分：
+\begin{itemize}
+\item Step1: 预测接口访问次数并输出预测结果和真实结果。
+\item Step2: 从Step1的输出结果中计算RMSE。
+\end{itemize}
+下面我们将分别叙述~Step1 与~Step2 所采用的算法与设计流程：
+\subsubsection{Step1 概述}
+\noindent
+如果要使用22号之前各个url在不同时间窗的访问量来预测22各个url在相应时间窗的访问量，主要是通过观察22号之前的访问数据的情况是否具有某种规律 —— 递增，递减，周期性或者其他规律。因此我们\textbf{对22号之前的访问情况进行了统计，并统计出各时间窗下接口访问量变化的情况}。（\textbf{为了提高预测的精度，对于部分存在问题的记录与日期出现错误的记录，我们直接将其忽略。}）下面是几个时间窗下示例接口的随时间变化而访问次数变化的图像(图中红点是22日访问次数的真实值)：
+\begin{center}
+\includegraphics[width = 13cm]{Pred1.PNG}
+\includegraphics[width = 13cm]{Pred2.PNG}
+\includegraphics[width = 13cm]{Pred3.PNG}
+\caption{接口访问次数变化曲线图示例}
+\end{center}
+通过对上图所示及其他接口的访问次数的统计与变化结果进行分析，我们发现数据中并不存在简单明显的规律，因此我们根据一些接口的变化情况，确定了三种基本的预测手段：(1) 使用访问次数的平均值进行预测； (2) 使用代数多项式插值 —— 拉格朗日插值方法进行预测 (3) 使用线性回归进行预测。在后面我们将分别叙述三种方法的原理与实现，并在后面的章节比较他们的效果，确定最终采用的方法。
+\subsubsection{Step1-1: 平均值}
+\noindent
+面对这样的预测问题，我们首先想到的方法便是以前14天对应时间窗的访问次数的\textbf{平均值}来作为22日访问次数的预测值。这是最简单的方法，也可以作为其他方法比较的baseline。将其他方法与此方法所得~RMSE~值进行比较，可以更好地体现预测结果的好坏。\\
+~\\
+本方法的基本思路便是将每个接口在每日每个时间窗的访问次数进行统计，求出每个接口在每个时间窗的前14天的访问次数的平均值并将其与22日的真实值一起输出，作为计算~RMSE~值的输入。\\
+~\\
+本部分的 MapReduce 设计如下：\\
+键值对的转换过程如下图：
+\begin{figure}[H]
+\centering
+\includegraphics[width = 14cm]{C5.png}
+\caption{\textbf{本部分的键值对转换}}
+\end{figure}
+~\\由上面的叙述，我们可以得到本部分如下的伪代码设计：
+\\
+\noindent
+\textbf{Mapper:}
+\begin{algorithm}[H]
+	{\bfseries Input :}~日志记录\\
+	{\bfseries Output :}~键值对（url\#小时\#日期）
+	\caption{$class~Mapper$}
+	\begin{algorithmic}[1]
+    	\Procedure {MAP}{Object key, Text line}
+    	\If {记录为完整并且正常的记录} //如果记录有效，即记录完整并且日志一致
+    		\State url = getUrl(line); //切割得到URL
+    		\State hour = getHour(line); //切割得到小时为单位的时间窗
+    		\State date = getDate(line); //切割得到记录日期
+    		\State Emit(url\#hour\#date, 1);
+    	\EndIf
+    \EndProcedure
+  \end{algorithmic}
+\end{algorithm}
+
+
+\noindent
+\textbf{Combiner:}
+\begin{algorithm}[H]
+	{\bfseries Input :}~键值对（url\#小时\#日期, 1）\\
+	{\bfseries Output :}~键值对（url\#小时\#日期, 频率汇总）
+	\caption{$class~Combiner$}
+	\begin{algorithmic}[1]
+    	\Procedure {Combine}{Text key, Iterable$<$IntWritable$>$ value}
+    	\State $Sum = 0$
+    	\For{$\bm{all}$  $val$ $\bm{in}$ value do}
+    	\State $Sum \leftarrow Sum + val$
+    	\EndFor
+    	\State Emit$(key, Sum)$
+    \EndProcedure
+  \end{algorithmic}
+\end{algorithm}
+
+\noindent
+\textbf{NewPartitioner:}
+\begin{algorithm}[H]
+	\caption{$class~NewPartitioner$}
+	\begin{algorithmic}[1]
+    	\Procedure {getPartition}{Text key, IntWritable value, int NumReduceTasks}
+    	\State ~$term \leftarrow key.split("\#")[0]$\\
+    	~~~~~~~\Return super.getPartition(term, value, NumReduceTasks) //根据URL划分数据
+    \EndProcedure
+  \end{algorithmic}
+\end{algorithm}
+
+\noindent
+\textbf{Reducer：}
+\begin{algorithm}[H]
+	{\bfseries Input :}~Combiner的结果$<$Text key, Iterable$<$IntWritable$>$ $>$\\
+	{\bfseries Output :}~ [url\#小时\#日期, 预测值\#真实值]
+	\caption{$class~Reducer$}
+	\begin{algorithmic}[1]
+    	\Procedure {Setup}{~}
+    		\State $t_{prev} \leftarrow \emptyset$
+    		\State $P \leftarrow new PostingsList$
+    	\EndProcedure
+    	\Procedure {Reduce}{$key, value$}
+    		\If $t \neq t_{prev}$ \&\& $t_{prev} \neq \emptyset$ then
+    			\State sum = 0;
+    			\For {$each~record~r~in~P$}
+    				\State sum += r.getValue();
+    			\EndFor
+    			\State pred = sum/14;    			
+    			\State Emit($t_{prev},pred\#realValue$)
+    			\State $P$.Reset()
+    		\EndIf
+    		\If{getHour(key) == 22}
+    			\State realValue = value; //获得真实值
+    		\Else
+    			\State $P$.Add($<n,f>$); // 记录22号之前的访问频率
+    		\EndIf
+    		\State $t_{prev} \leftarrow getUrl(key)+ "\#" +getHour(key)$ 
+    	\EndProcedure
+    	\Procedure {Close}{~}
+	    	\State sum = 0;
+    		\For {$each~record~r~in~P$}
+    			\State sum += r.getValue();
+    		\EndFor
+    		\State pred = sum/14;    			
+    		\State Emit($t_{prev},pred\#realValue$)
+    	\EndProcedure
+  	\end{algorithmic}
+\end{algorithm}
+
+\subsubsection{Step1-2: 插值}
+在前面的基础上，我们假设存在一个多项式函数表示了各个接口访问次数随时间变化而变化的情况。而确定这一函数在某点取值的一种重要方法便是插值法。插值法是利用已有的训练数据作为f(x)在某区间中已知的若干点的函数值，作出适当的特定函数，在区间的其他点上用这特定函数的值作为函数f(x)的近似值的方法。使用这种方法便可以实现对未知数据的预测。因而，我们使用了多项式插值中常用的拉格朗日插值法来进行预测。\\
+
+拉格朗日插值法基本原理如下：
+假设有$n+1$个互异点$(x_{i}, y_{i}), i = 0, \cdots, n$，构造拉格朗日插值多项式为
+\begin{equation}
+L_{n}(x) = y_{0}l_{0}(x) + y_{1}l_{1}(x)+ \cdots + y_{n}l_{n}(x) = \sum\limits_{i = 0}^{n} y_{i}l_{i}(x)
+\end{equation}
+
+其中$n$次多项式
+\begin{equation}
+l_{i}(x) = \frac{(x-x_{0})\cdots (x-x_{i-1}) (x-x_{i+1}) \cdots (x - x_{n})}{(x_{i} - x_{0})\cdots (x_{i}-x_{i-1}) (x_{i}-x_{i+1}) \cdots (x_{i} - x_{n})}
+\end{equation}
+为拉格朗日基函数。
+
+根据插值多项式唯一性， 拉格朗日插值多项式即为所求插值函数。对于插值余项，即截断误差$R_{n}(x) = f(x) - L(x)$，有拉格朗日余项定理如下： 设$f(x)$在区间$[a,b]$上存在$n+1$阶导数， $x_{i} \in [a,b] (i = 0,1, \cdots , n)$为$n+1$个互异节点，则对任何$x \in [a,b]$有
+\begin{equation}
+R_{n}(x) = f(x) - L_{n}(x)  = \frac{f^{(n+1)}(\xi)}{(n+1)!} w_{n+1}(x)
+\end{equation}
+
+其中$w_{n+1}(x) = \prod\limits_{i = 0}^{n} (x-x_{i})$， $\xi \in (a,b)$
+
+一般来说外推的效果要比内插的效果差，此外并不是插值多项式的次数越高，插值效果越好，精度也不一定是随着次数的提高而升高，这种现象在上个世纪由Runge发现，称为Runge现象。一般使用\textbf{分段插值}的方法缓解。
+\begin{figure}[H]
+\centering
+\includegraphics[width = 12cm]{C4.png}
+\caption{\textbf{Runge现象}}
+\end{figure}
+在本任务中，要求预测22号的url访问情况，因此只要使用22号前几天的数据即可，而\textbf{不需要使用完整}的14天的数据。 \\
+~\\
+\textbf{使用该算法的具体MapReduce设计如下：}\\
+本部分的键值对转换如下：
+\begin{figure}[H]
+\centering
+\includegraphics[width = 14cm]{C5.png}
+\caption{\textbf{插值过称中键值对转换}}
+\end{figure}
+
+值得注意的是，Map阶段的输出键为“url\#小时\#日期”组合，因为在Reduce之前会对分配到同一个Reducer节点的键进行排序，因此能够保证具有相同url和相同时间窗的键值对被分配到一起，并且按照日期从前到后排序（事实上插值方法只要求互异而不要求有序）.\\
+~\\~\\
+本方法出~Reducer 外的设计与~Step 1-1 完全一致，因而我们在这只列出新的~Reducer 的伪代码：\\
+\noindent
+\textbf{Reducer：}
+\begin{algorithm}[H]
+	{\bfseries Input :}~Combiner的结果$<$Text key, Iterable$<$IntWritable$>$ $>$\\
+	{\bfseries Output :}~ [url\#小时\#日期, 预测值\#真实值]
+	\caption{$class~Reducer$}
+	\begin{algorithmic}[1]
+    	\Procedure {Setup}{~}
+    		\State $t_{prev} \leftarrow \emptyset$
+    		\State $P \leftarrow new PostingsList$
+    	\EndProcedure
+    	\Procedure {Reduce}{$key, value$}
+    		\State if $t \neq t_{prev}$ \&\& $t_{prev} \neq \emptyset$ then
+    		\State ~~~~~利用P中记录根据式1,2计算得到预测值 $pred$
+    		\State ~~~~~Emit($t_{prev},pred\#real-value$)
+    		\State ~~~~~$P$.Reset()
+    		\If{getHour(key) == 22}
+    			\State real-value = value; //获得真实值
+    		\Else
+    			\State $P$.Add($<n,f>$); // 记录22号之前的访问频率
+    		\EndIf
+    		\State $t_{prev} \leftarrow getUrl(key)+ "\#" +getHour(key)$ 
+    	\EndProcedure
+    	\Procedure {Close}{~}
+	    	\State 利用P中记录根据式1,2计算得到预测值 $pred$
+    		\State Emit($t_{prev},pred\#true$)
+    	\EndProcedure
+  	\end{algorithmic}
+\end{algorithm}
+\subsubsection{Step1-3: 线性回归}
+\noindent
+而对于预测连续值得任务，使用机器学习中的回归算法也是一个经常被使用的方法。因而，在本部分，我们还尝试了使用线性回归来进行预测。\\~\\
+线性回归，是利用数理统计中回归分析，来确定两种或两种以上变量间相互依赖的定量关系的一种统计分析方法，运用十分广泛。在线性回归模型中，最简单的是一元一次线性模型。对该模型进行扩充主要有两种方向。一种方向是多元模型，一种方向是多次模型。多元适用于多个参数条件的情况.而由于受到前面插值所得结果的影响，对于本任务，较复杂的模型不一定能获得更好的效果。因而，我们最终还是选择较为简单的\textbf{一次线性回归模型}。\\
+~\\此时，该模型可以表示为： $y = x0 + x1 * t$。要求解这个模型以进行预测，即是使用已有的数据求出 $x0$ 与 $x1$ 的值，并使用新的$t$值来进行预测。而求解模型的最常用的方法便是最小二乘法：最小二乘法是一种数学优化技术。它通过最小化误差的平方和寻找数据的最佳函数匹配。利用最小二乘法可以简便地求得未知的数据，并使得这些求得的数据与实际数据之间误差的平方和为最小。\\
+~\\使用最小二乘法来求解这一模型即是求解如下的优化问题：
+\begin{center}
+\includegraphics[width = 7cm]{model.jpg}
+\end{center}
+进行微分求最值可以得到该问题的闭式解如下：
+\begin{equation}
+x_1 = \frac{\sum\limits_{i=1}^n(t_i-\frac{1}{n}\sum\limits_{j=1}^nt_j)(y_i-\frac{1}{n}\sum\limits_{j=1}^ny_j)}{\sum\limits_{i=1}^n(t_i-\frac{1}{n}\sum\limits_{j=1}^nt_j)^2}
+\end{equation}
+\begin{equation}
+x_0 = \frac{1}{n}\sum\limits_{i=1}^ny_i-x_1\frac{1}{n}\sum\limits_{i=1}^nt_i
+\end{equation}
+通过上面的解，我们便可以得到使用训练数据来进行模型参数的求解方法，从而进行预测。因而，我们可以得到如下的MapReduce设计方式：首先，统计出各个接口在各个时间窗内15天每天的访问次数，通过闭式解计算参数模型并预测第十五天的访问频次，将其与真实值组合，作为复合键值一起输出。
+\newpage
+\noindent
+本部分如下的伪代码如下：
+\\
+\noindent
+\textbf{Mapper:}
+\begin{algorithm}[H]
+	{\bfseries Input :}~日志记录\\
+	{\bfseries Output :}~键值对（url\#小时   每天的访问次数统计）
+	\caption{$class~Mapper$}
+	\begin{algorithmic}[1]
+    	\Procedure {MAP}{Object key, Text line}
+    	\If {记录为完整并且正常的记录} //如果记录有效，即记录完整并且日志一致
+    		\State 初始化数组 In[15] 并初始化为0
+    		\State url = getUrl(line); //切割得到URL
+    		\State hour = getHour(line); //切割得到小时为单位的时间窗
+    		\State date = getDate(line); //切割得到记录日期
+    		\State In[date] = 1;
+    		\State Emit(url\#hour, In[0]+In[1]+...+In[14]);
+    	\EndIf
+    \EndProcedure
+  \end{algorithmic}
+\end{algorithm}
+
+
+\noindent
+\textbf{Combiner:}
+\begin{algorithm}[H]
+	{\bfseries Input :}~键值对（url\#小时   每天的访问次数统计）\\
+	{\bfseries Output :}~键值对（url\#小时   每天的访问次数统计）
+	\caption{$class~Combiner$}
+	\begin{algorithmic}[1]
+    	\Procedure {Combine}{Text key, Iterable$<$Text$>$ value}
+    	\State 初始化数组 In[15] 并初始化为0
+    	\For{$\bm{all}$  $val$ $\bm{in}$ value do}
+    	\State Ins[] $\leftarrow$ val进行切割 //Ins数组存储键中所存储的每天的访问次数统计
+    	\For{i = 0...14}
+    	\State In[i] $\leftarrow$  $In[i] + Ins[i]$
+    	\EndFor
+    	\EndFor
+    	\State Emit$(url\#hour, In[0]+In[1]+...+In[14])$
+    \EndProcedure
+  \end{algorithmic}
+\end{algorithm}
+
+\noindent
+\textbf{NewPartitioner:}
+\begin{algorithm}[H]
+	\caption{$class~NewPartitioner$}
+	\begin{algorithmic}[1]
+    	\Procedure {getPartition}{Text key, Text value, int NumReduceTasks}
+    	\State ~$term \leftarrow key.split("\#")[0]$\\
+    	~~~~~~~\Return super.getPartition(term, value, NumReduceTasks) //根据URL划分数据
+    \EndProcedure
+  \end{algorithmic}
+\end{algorithm}
+
+\noindent
+\textbf{Reducer：}
+\begin{algorithm}[H]
+	{\bfseries Input :}~Combiner的结果$<$Text key, Iterable$<$Text$>$ $>$\\
+	{\bfseries Output :}~ [url\#小时, 真实值\#预测值]
+	\caption{$class~Reducer$}
+	\begin{algorithmic}[1]
+    	\Procedure {Reduce}{$key, value$}
+    		\State 初始化数组 In[15] 并初始化为0
+    		\For{$\bm{all}$  $val$ $\bm{in}$ value do}
+    		\State Ins[] $\leftarrow$ val进行切割 //Ins数组存储键中所存储的每天的访问次数统计
+    		\For{i = 0...14}
+    		\State In[i] $\leftarrow$  $In[i] + Ins[i]$
+    		\EndFor
+    		\EndFor
+    		\State 根据前面的闭式解，通过每天的统计数据计算出平均值，x0~与~x1~的值
+			\State res $\leftarrow$ In[13] + x1;   // 获得预测值
+			\State Emit$(url\#hour, $真实值\#预测值$)$
+    	\EndProcedure
+  	\end{algorithmic}
+\end{algorithm}
+\subsubsection{Step2: 计算RMSE}
+\noindent
+RMSE的计算可以分为计算差值与求和开方两个部分。在计算过程中，前者由~Map~过程完成，计算每个预测值与真实值的差值的平方；后者由~Reduce~过程来完成，进行求和，开方以及除法运算得到最终的RMSE的计算结果。\\
+~\\
+\textbf{本部分的具体~MapReduce 设计流程如下：}\\
+RMSE计算部分的键值对转换为
+\begin{figure}[H]
+\centering
+\includegraphics[width = 14cm]{C6.png}
+\caption{\textbf{RMSE计算过称中键值对转换}}
+\end{figure}
+
+~\\
+\noindent
+本任务各个过程的伪代码如下：\\
+\textbf{Mapper:}
+\begin{algorithm}[H]
+	{\bfseries Input :}~插值结果\\
+	{\bfseries Output :}~键值对（url\#小时\#日期, (预测值-真实值)$^2$）
+	\caption{$class~Mapper$}
+	\begin{algorithmic}[1]
+    	\Procedure {MAP}{Object key, Text value}
+    	\State hour = getHour(value); //获得所属小时
+    	\State pred = getPred(value); //得到预测值
+    	\State real = getReal(value); //得到真实值
+    	\State Emit(hour, $(pred - real)^2$);
+    \EndProcedure
+  \end{algorithmic}
+\end{algorithm}
+
+\noindent
+\textbf{Reducer：}
+\begin{algorithm}[H]
+	{\bfseries Input :}~Mapper的结果$<$Text key, Iterable$<$LongWritable$>$ values $>$\\
+	{\bfseries Output :}~ RMSE
+	\caption{$class~Reducer$}
+	\begin{algorithmic}[1]
+    	\Procedure {Setup}{~}
+    		\State $M = 0$
+    		\State $total = 0$
+    	\EndProcedure
+    	\Procedure {Reduce}{$key, Iterable<LongWritable> values$ }
+    	\State M = M + 1;
+    	\State sum = 0;
+    	\State N = 0;
+    	\For{each vl in values} //对属于同一个小时窗口的(预测值-准确值)$^2$
+    	\State sum += vl;
+    	\State N = N + 1;
+    	\EndFor 
+    	\State total += sqrt (sum / N); //将所有小时窗口的计算结果相加
+    	\EndProcedure
+    	\Procedure {Close}{~}
+	    	\State Emit(total / M); //最后计算出RMSE并输出
+    	\EndProcedure
+  	\end{algorithmic}
+\end{algorithm}
+
+\subsection{拓展分析部分}
+\noindent
+在拓展部分，我们受到了课本上单词共现的启发，考虑到对某IP与某接口共同出现的次数进行统计，从而确定出某个IP在某段时间内对各个接口的访问频次。通过这种统计过程，我们可以分析出每个IP对于接口的访问的偏好，从而可以进行相应的访问优化。同时，这种数据也可以对IP的异常访问进行判断（例如 DDos攻击）并及时作出处理。具体的分析可以查看下一章节。\\~\\
+本部分的实现较为简单，思想上与其他普通的统计任务类似。具体的 MapReduce 设计为：读取每一条记录，切割出IP与访问接口，将其作为复合键，统计每个键的输出次数再输出。最终的输出结果进行进一步的分析即可得到更多信息。\\
+~\\本部分的具体伪代码如下：\\
+\textbf{Mapper:}
+\begin{algorithm}[H]
+	{\bfseries Input :}~日志记录\\
+	{\bfseries Output :}~键值对（IP\#URL    访问频次）
+	\caption{$class~Mapper$}
+	\begin{algorithmic}[1]
+    	\Procedure {MAP}{Object key, Text line}
+    	\State Logs[] (切割出的子串组成数组)   $\leftarrow$ line
+    	\State IP, URL   $\leftarrow$ Logs[]
+    	\State Emit($IP\#URL, one$)
+    \EndProcedure
+  \end{algorithmic}
+\end{algorithm}
+
+
+\noindent
+\textbf{Combiner:}
+\begin{algorithm}[H]
+	{\bfseries Input :}~键值对（IP\#URL    访问频次）\\
+	{\bfseries Output :}~键值对（IP\#URL    访问频次）
+	\caption{$class~Combiner$}
+	\begin{algorithmic}[1]
+    	\Procedure {Combine}{Text key, Iterable$<$IntWritable$>$ value}
+    	\State $Sum = 0$
+    	\For{$\bm{all}$  $val$ $\bm{in}$ value do}
+    	\State $Sum \leftarrow Sum + val$
+    	\EndFor
+    	\State Emit$(key, Sum)$
+    \EndProcedure
+  \end{algorithmic}
+\end{algorithm}
+
+\noindent
+\textbf{Reducer:}
+\begin{algorithm}[H]
+	{\bfseries Input :}~键值对（IP\#URL    访问频次）\\
+	{\bfseries Output :}~键值对（IP\#URL    访问频次）
+	\caption{$class~Reducer$}
+	\begin{algorithmic}[1]
+    	\Procedure {Reduce}{Text key, Iterable$<$IntWritable$>$ value}
+    	\State $Sum = 0$
+    	\For{$\bm{all}$  $val$ $\bm{in}$ value do}
+    	\State $Sum \leftarrow Sum + val$
+    	\EndFor
+    	\State Emit$(key, Sum)$
+    \EndProcedure
+  \end{algorithmic}
+\end{algorithm}
+\noindent
+可以看到，这个任务就是一个较为简单的统计过程。但其中蕴含了很多信息，对于这部分的分析，请查看4.3节。
+\section{实验编译运行与结果展示分析}
+\subsection{源代码编译说明}
+\noindent
+本次实验的源代码主要分为三个部分(分别对应第三章下的三个子部分)：
+\begin{itemize}
+\item Stat
+\item Pred
+\item Ana
+\end{itemize}
+每一部分各有一个 Driver 将各个job组合在一起。编译时将各个部分对应的文件夹下与其子文件夹下所有的.java文件同时进行编译，然后将得到的所有.class文件置于同一目录之下打包得到最终的jar包（打包时指定主类为~Driver）。
+\subsection{JAR包执行方式说明}
+\noindent
+1. 对Stat 部分按照如上所述的方式编译得到jar包，并上传至集群。本jar包对应任务1 - 任务4。\\
+2. 使用 hadoop~jar~Stat.jar~/data/task1/JN1\_LOG/2015-09-08.log~~outputPath1~~outputPath2~~outputPath3~~outputPath4~指令执行Stat.jar。后面四个参数分别为任务1、任务2、任务3、任务4的输出目录。\\
+3. 对Pred 中的一个预测方式的对应部分(即Pred文件夹下的一个子文件夹)按照如上所述的方式编译得到jar包，并上传至集群。本jar包对应任务5。\\
+4. 使用 hadoop~jar~Pred.jar~/data/task1/JN1\_LOG~~outputPath1~~outputPath2~指令执行Pred.jar。后面两个参数分别为预测结果与预测结果与真实结果比较计算所得RMSE值的输出目录。\\
+5. 对~Ana 下的~Ana1 文件夹的对应部分按照如上所述的方式编译得到jar包，并上传至集群。本jar包对应拓展分析部分。\\
+6. 使用 hadoop~jar~Ana1.jar~/data/task1/JN1\_LOG~~outputPath1~指令执行Ana1.jar。第二个参数为统计结果的输出路径。
+\subsection{实验结果截图与分析}
+\noindent
+我们的程序均首先在本地做了简单的测试后提交到集群进行运行。(\textbf{各个任务执行报告的截图见最后的附录。})\\
+~\\
+\textbf{各个任务的实验结果与相应的分析如下：}\\
+1.~统计日志中各个状态码（200, 404，500）出现总的频次，并且按照小时时间窗，输出各个时间段各状态码的统计情况。\\
+本部分结果在HDFS上的存储路径为：~hdfs://master01:9000/user/2016st21/Stat/Out1~。按照要求输出结果1.txt的截图如下：
+\begin{center}
+\includegraphics[width = 12cm]{Stat1.jpg}
+\end{center}
+\newpage
+\noindent
+根据统计结果，我们绘制出了不同状态码在2015-09-08当天24小时内的变化情况：
+\begin{center}
+\includegraphics[width = 10cm]{./graph/Stat1.png}
+\end{center}
+\begin{center}
+\includegraphics[width = 10cm]{./graph/Stat1-2.png}
+\end{center}
+\begin{center}
+\includegraphics[width = 10cm]{./graph/Stat1-3.png}
+\end{center}
+由上面的图可以看出：200状态码在一整天过程中除了凌晨时间的小幅激增外，基本都处于相对平稳的状态。而在大部分时间内都没有出现太多400的状态，但在23:00-24:00这个时间内剧增，说明可能存在DNS解析错误的问题，此时日志分析的作用就显现出来了，工程师可以根据日志反应的状态及时进行调整。同时，出现404的次数并不是很多，在20以内变化，说明服务器整体运行稳定正常。\\~
+\\2.~统计每个IP访问总的频次，并且按照小时时间窗，输出各个时间段各个IP 访问的情况。每个IP的统计信息是一个文件，并且以IP为文件名。\\
+本部分结果在HDFS上的存储路径为：~hdfs://master01:9000/user/2016st21/Stat/Out2~。按照要求，每个IP的统计信息输出到相应的txt文件中（\textbf{前面为总频次，后面为分时间窗频次输出}），下面我们将展示几个txt文件的截图，其余的可在HDFS或者集群用户文件夹内查看：\\
+(1)~10.10.0.101
+\begin{center}
+\includegraphics[width = 14cm]{Stat2-2.jpg}
+\end{center}
+(2)~172.22.50.25
+\begin{center}
+\includegraphics[width = 14cm]{Stat2-3.jpg}
+\end{center}
+(3)~172.30.53.140
+\begin{center}
+\includegraphics[width = 14cm]{Stat2-4.jpg}
+\end{center}
+我们挑选了172.22.50.25这个IP的访问情况，按照时间窗绘制出其活动图如下：
+\begin{center}
+\includegraphics[width = 10cm]{./graph/Stat2.png}
+\end{center}
+从这里可以看出，某个IP的访问趋势图可以作为用户分类的特征，从而进一步挖掘出用户习惯和用户需求，为精准数据营销和个性化推荐奠定基础。比如类似上图IP的用户，可能更习惯在早上或者下午来访问网站、在中午时间段相对不活跃，通过分析大量的访问行为，就可以建立更加清晰的用户画像，这是目前日志分析在互联网中尤其是电商类网站的重要意义之处。\\~
+\\3.~统计每个接口(请求的URL)访问总的频次，并且以接口为文件，按照秒为单位的时间窗，输出各个时间段各接口的访问情况。每个接口的统计信息是一个文件，如接/tour/category/query的统计文件命名为：our-category-query.txt，每个文件的输出内容同上。\\
+本部分结果在HDFS上的存储路径为：~hdfs://master01:9000/user/2016st21/Stat/Out3~。按照要求，每个接口的统计信息输出到相应的txt文件中（\textbf{前面为总频次，后面为分时间窗频次输出}），下面我们将展示几个txt文件的截图（由于本任务以秒为时间窗，因而输出文件较前面的任务更大），其余的可在HDFS或者集群用户文件夹内查看：\\
+\newpage
+\noindent
+(1)~tour-category-ids-query
+\begin{center}
+\includegraphics[width = 10cm]{Stat3-3.jpg}
+\end{center}
+\newpage
+\noindent
+(2)~tour-guide-query
+\begin{center}
+\includegraphics[width = 10cm]{Stat3-4.jpg}
+\end{center}
+\newpage
+\noindent
+(3)~tour-producet-query
+\begin{center}
+\includegraphics[width = 10cm]{Stat3-5.jpg}
+\end{center}
+4.~统计每个接口(请求的URL)的平均响应时间，并且以接口为分组，按照小时时间窗，输出各个时间段各个接口平均的响应时间。每个接口的统计信息是一个文件，如接/tour/category/query的统计文件命名为：our-category-query.txt，每个文件的输出内容同上。\\
+本部分结果在HDFS上的存储路径为：~hdfs://master01:9000/user/2016st21/Stat/Out4~。按照要求，每个接口的统计信息输出到相应的txt文件中（\textbf{前面为总的平均响应时间，后面为分时间窗的平均响应时间}），下面我们将展示几个txt文件的截图，其余的可在HDFS或者集群用户文件夹内查看：\\
+(1)~tour-category-ids-query
+\begin{center}
+\includegraphics[width = 10cm]{Stat4-3.jpg}
+\end{center}
+(2)~tour-guide-query
+\begin{center}
+\includegraphics[width = 10cm]{Stat4-4.jpg}
+\includegraphics[width = 10cm]{Stat4-5.jpg}
+\end{center}
+(3)~tour-poi-query
+\begin{center}
+\includegraphics[width = 10cm]{Stat4-6.jpg}
+\end{center}
+选取访问量较大的tour-guide-query接口，我们绘制出其24小时内响应时间的变化图了：
+\begin{center}
+\includegraphics[width = 10cm]{./graph/Stat4.png}
+\end{center}
+接口的响应时间与访问流量息息相关，也直接影响到了用户体验。故可以从响应时间趋势中挖掘出访问人数较多的时间，适当增加服务器资源和优化调控策略，提高网站的稳定性。\\~\\
+5.~设计预测算法来预测下一天 （2015-09-22） 每个小时窗内每个接口（请求的URL）的访问总频次。由前面一章可以看到，本任务可以分为(1)预测接口访问次数并输出预测结果和真实结果与(2)RMSE计算两个部分。两部分的结果分别为(以结果较好的线性回归为例做展示)：\\
+(1)~Step1~的部分输出结果（\textbf{输出格式为：  接口\#小时   真实值\#预测值(若此部分只有一个数字则表示真实值为0)}）的截图如下：(本部分结果在HDFS上的存储路径为：(~hdfs://master01:9000/user/2016st21/Pred/avgout1~hdfs://master01:9000/user/2016st21/Pred/inter1out1~hdfs://master01:9000/user/2016st21/Pred/fitout1)
+\begin{center}
+\includegraphics[width = 10cm]{fit-exam1.png}
+\includegraphics[width = 10cm]{fit-exam2.png}
+\end{center}
+(2)~Step2: 从Step1的输出结果中计算RMSE的结果如下：(本部分结果在HDFS上的存储路径为：~hdfs://master01:9000/user/2016st21/Pred/avgout2\\hdfs://master01:9000/user/2016st21/Pred/inter1out2~hdfs://master01:9000/user/2016st21/Pred/fitout2)\\
+~\\平均值预测的RMSE结果为：
+\begin{center}
+\includegraphics[width = 9cm]{RMSE-avg.png}
+\end{center}
+插值预测的RMSE结果为：
+\begin{center}
+\includegraphics[width = 9cm]{RMSE-inter1.png}
+\end{center}
+线性回归的RMSE结果为：
+\begin{center}
+\includegraphics[width = 9cm]{RMSE-fit.png}
+\end{center}
+\textbf{对于预测结果的分析与讨论，请查看下一章节。}\\~\\
+6.~扩展预测分析任务：在本部分，我们统计了 2015-09-08 一天内各个IP对于各个接口的访问总次数，从而可以进行进一步的分析来产生作用（对于其他时间的分析可通过程序输入参数而改变）。\\
+本任务的输出结果的部分截图如下：(本部分结果在HDFS上的存储路径为：\\hdfs://master01:9000/user/2016st21/Ana/Ana1)\\
+输出格式为（IP：接口    访问次数）
+\begin{center}
+\includegraphics[width = 11cm]{Ana1-1.png}
+\end{center}
+\begin{center}
+\includegraphics[width = 11cm]{Ana1-2.png}
+\end{center}
+通过上面的输出结果，我们可以进行以下的一些分析：\\
+我们随机选取了10.10.0.101这个IP绘制出其在 2015-09-08 一天内访问不同接口的饼状图如下：
+\begin{center}
+\includegraphics[width = 10cm]{./graph/Ana1.png}
+\end{center}
+从图中我们可以看出，该IP的用户对于哪些接口的访问占比较多，这也可以从侧面折射出用户的某种偏好。如果说第二个任务是通过对日志中IP的访问次数行为分析得出用户的活跃时间和时间维度方面的数据，那本任务则是通过分析IP获得用户兴趣和消费倾向。两者结合起来，用户的画像就更加清晰了。因此对日志中的IP记录进行追踪，对于优化用户体验、增加用户停留时间和刺激消费行为等方面都有重大的意义，这也正是大数据的精华和魅力所在。\\~\\
+	当然，除了针对用户的数据挖掘方面的应用。分析日志中IP对接口的访问情况也可以应用于网站安全和稳定性维护中。比如若某个IP平时对一个接口访问极少，但在某个时间内突然出现反常的爆发的大量访问行为，这可能导致网站运行异常甚至崩溃，那这时极有可能发生了针对服务器的DDOS攻击。通过日志分析，可以将对某些接口的一些异常的访问IP进行过滤或者限定其单位时间内的访问请求次数，这也是一个防DDOS攻击的安全软件可以采用的策略。
+
+\section{实验优化与性能分析}
+\subsection{实验优化与优化效果展示}
+\noindent
+在本次实验的中我们尝试的优化可以主要分为以下三种手段：(1) 通用的优化手段；(2) 统计型任务的优化；(3) 预测型任务的优化。
+\subsubsection{通用优化手段}
+\noindent
+在本次实验中，我们采用的通用优化方式有：\\
+~\\1.~~在实验设计过程中，所有任务都尽量能够在 1 个 JOB 中即可完成任务，避免了执行多个JOB。具体体现在预测型任务中将预测值与真实值组合为同一个键值输出。从而在计算RMSE时操作更为简单，也可以很大程度上减少计算时间。\\
+~\\2.~~在每个 JOB 中尽可能的实现了 combiner 类从而提高计算效率与减少传输带宽。\\
+尤其在第一个任务中，设置了~combiner~类可以在很大程度上减少网络数据传输量，提高了系统效率。使得程序运行时间有了较为明显的减少，见下图：
+\begin{center}
+\includegraphics[width = 10cm]{COM.png}
+\end{center}
+此外，在后面的线性回归过程中，使用 Combiner 也避免了在 Reduce 阶段的大量重复的计算，包括对字符串与数组的操作。
+\subsubsection{统计型任务的优化}
+\noindent
+统计型任务均为类似于~wordcount~的方法进行统计，因而其算法优化空间很小。因而本部分，我们的优化主要在以下两个部分：\\
+~\\1.~~\textbf{设置~Reduce~任务的数目：}~由于第一个任务只有一个输出文件，因而本方法无效。对于其他几个任务，通过设置较多的~Reduce~数目可以让每个信息单元的统计尽可能在不同节点上运行，提高并行化程度，从而缩短运行时间。\\
+~\\2.~~\textbf{日志记录的切割过程：}~通过查看日志的具体格式，我们可以看到日志记录的以空格进行切割所得字符串序列的长度并不一定。由于可能出现部分信息的缺失，记录分段可能会出现变化，因而首先要判断记录是哪种类型才能进行正确的切割从而统计。这会涉及到很多的字符串与数字的比较，带来大量的操作。通过进一步的分析，我们发现可以通过正向及逆向两个方向定位来快速切割出所需信息，而不必通过较多操作来判断记录是哪种类型。例如：访问IP总是记录按照空格切割所得字符串数组的0号元素，而请求响应时间总是数组的最后一个元素，状态码总是该数组的倒数第三个元素。\\因而，\textbf{借助于数组长度这一个值，我们可以将不同类型的记录的切割统一起来。}这样便可避免判断记录类型所可能带来的大量字符串的操作。
+\subsubsection{预测型任务的优化}
+\noindent
+由于对预测型任务存在评价标准——RMSE，因而预测型任务优化的主要方向便是算法上的优化，效率上的优化在这部分较为次要。\\
+~\\面对这样的任务，取平均值可以说是最简单的方法，也是我们最容易想到的方法。我们首先使用这个方法作为 baseline 。后面的方法将用来和次方法进行比较。在前面一章，我们可以看到使用平均值法进行实验，预测结果与真实值做RMSE验证得到的结果为11776。\\
+~\\在此基础上，陈越琦同学提出了使用多项式插值来进行预测的方法。因而，我们实现了使用拉格朗日多项式插值来进行插值的算法。为确定插值应该使用的多项式次数，我们进行了一些尝试，分别得到对应预测结果的RMSE值，如下图：
+\begin{center}
+\includegraphics[width = 11cm]{interrmse.png}
+\end{center}
+由上图可见，由于数据本身的特性，最简单的模型反而获得了最好的效果的。因而，我们使用了一次多项式插值来作为最终的预测方法。\\~\\
+在前面的基础上我们又尝试了线性回归进行预测的方法，最终获得了比一次多项式插值稍好的结果，三种方法所得RMSE值的比较见下图：
+\begin{center}
+\includegraphics[width = 11cm]{RMSECOM.jpg}
+\end{center}
+由上可见，最终我们获得了比平均值方法好很多的RMSE验证效果。采用一次多项式插值与线性回归预测均可以获得可以接受的较好的预测效果。
+\subsection{实验性能分析}
+\noindent
+1.~~\textbf{运行时间分析}\\
+根据集群的运行记录，我们可以得到几个任务的运行时间如下：
+\begin{center}
+\includegraphics[width = 11cm]{TIME.png}
+\end{center}
+将数据按照饼状图进行展示，可以得到如下结果：
+\begin{center}
+\includegraphics[width = 10cm]{TIME2.png}
+\end{center}
+由上面的图可以看到，Stat1-Stat4 和~Ana1~所需时间较短，Pred 过程需要运行较长的时间。这也比较好理解，Stat1-Stat4 和~Ana1~任务只处理 2015-09-08.log 的数据，时间相对较短，其中在~Stat4~任务中可能由于集群情况，比其他程序略慢。而Pred处理了所有15天的日志文件数据，因而运行时间明显更长，尤其是在~Step1。程序运行速度虽然受到集群任务多少和计算资源的波动影响，但整体的速度都是比较快的，多次测试下来运行速度较为稳定。\\
+可以看到由于我们前面进行了算法与代码的优化，程序的整体运行速度还是比较快的。\\~
+\\2.~~\textbf{程序可扩展性分析}\\
+在整体设计过程中，我们保持了比较好的模块化风格，程序的可扩展性较强。很多模块能被其他程序直接使用或者进行简单修改即可使用，例如RMSE的计算程序可被重复利用，以及统计型任务整体只可在一个任务的程序上进行较少修改便可实现。\\~
+\\3.~~\textbf{实验的进一步扩展方向}\\
+日志分析有很多应用，可以从中发掘很多信息，我们可以在前面的基础上设计更多的程序来进行进一步地挖掘有用的信息。同时，通过对于数据的更深层次的规律探索，通过更好的模型，可能会获得更好更准确的预测结果。
+\section{实验总结}
+\subsection{实验内容总结}
+\noindent
+本次实验是大数据处理综合实验的课程设计实验。经过仔细权衡实现难度和时间，考虑到我们组员各自的投入时间和需求。我们最终在三个题目以及自拟题目中做出了完成“日志统计分析”的选择。在本次综合实验中，我们将主要实现日志数据的统计分析和基于Mapreduce的预测模型设计，通过对历史日志数据的分析建立预测模型，并在完成基本任务的要求上做一些拓展和创新。我们完成了以下几个任务：
+\begin{itemize}
+\item	统计日志中各个状态码出现的频次，并按照小时时间窗、输出各个时间段状态码的统计情况。
+\item	统计每个IP访问总的频次，并且按照小时时间窗，输出各个时间段各个IP访问的情况。
+\item	统计每个接口（请求的URL）访问总的频次，并且以接口名为文件名，按照秒为单位的时间窗，统计各个时间段各接口的访问情况。
+\item	统计每个接口的平均响应时间，并且以接口为分组，按照小时时间窗、输出各个时间段各个接口平均的响应时间。
+\item	接口访问频次预测，给2015-09-08.log到2015-09-21.log共14天的日志文件，作为训练数据，设计了不同的预测算法（平均值、一次插值、两次插值、三次插值、拟合）来预测2015-09-22.log每个小时时间窗每个接口的访问总频次，并计算不同算法获得的RMSE，对比方法优劣并进行改进优化。
+\end{itemize}
+\subsection{团队合作总结}
+\noindent
+在本次课程设计实验中，通过前面几次平时实验的磨合，合作过程较为顺利。遵循“由易到难、由简到繁、多路并行”的原则进行分工。在算法和模型设计阶段。依靠平时实验积累的经验，快速确立了统计任务部分（前四个要求）的解题思路，同步开始编程工作；与此同时对较难的预测任务部分，让每个人通过阅读一些文章与博客，找助教探讨，搜索引擎等方式进行准备，最终获得了不同的方法，从最简单的平均值法，到较为复杂的插值法和回归算法，都进行了尝试，并进行了充分的验证。在代码编写过程中，充分利用Github进行团队协作与管理，保证代码的实时共享和快速交流。在实验报告编写中，每个人对自己所属的任务的设计原理、伪代码等进行了阐述，并安排专人对实验结果、执行报告、分析图表等成果性内容进行整理和收集，最终合并实验报告进行美化排版，形成了最终的成果。
+\subsection{实验任务分工}
+\noindent
+本次实验的分工如下：
+\begin{center}
+\begin{tabular}{|c|c|}
+\hline
+陈越琦 & \tabincell{c}{完成预测型任务的平均值法与插值法设计与代码编写；\\提供拓展分析部分思路；\\完成对应部分实验报告初稿；\\完善实验报告初稿.} \\
+\hline
+刘威 & \tabincell{c}{完成统计型任务的设计与代码编写；\\实现预测分析的线性回归法；\\完成对应部分以及实验优化部分实验报告的初稿；\\设计实验报告结构；\\汇总每个人编写的实验报告得到初稿.}  \\
+\hline
+杨杰才 & \tabincell{c}{协助刘威和陈越琦进行代码的测试与错误查找；\\对实验运行的结果与数据进行汇总与截图；\\完成实验报告的性能分析和实验结果部分的初稿；\\完成实验报告的图表绘制.}\\
+\hline
+周子博 & \tabincell{c}{协助杨杰才完成实验数据的统计，汇总与截图；\\协助刘威进行实验报告初稿的排版.}\\
+\hline
+共同完成 & \tabincell{c}{实验思路探讨；\\实验优化方法探讨；\\实验报告校对与修改.}  \\
+\hline
+\end{tabular}\\
+~\\
+\textbf{组员分工表}
+\end{center}
+\newpage
+\section{附录：各任务执行报告截图}
+\subsection{统计型任务}
+\noindent
+统计型任务共有四个，四个任务的执行报告的截图分别为：\\
+1.~任务~1(Stat 1)\\
+(1)~集群All Application（http://114.212.190.91:8088/）WebUI页面中查看Job的执行状态
+\begin{center}
+\includegraphics[width = 13cm]{./Stat1/Stat1-1.jpg}
+\end{center}
+(2)~WebUIx页面（http://114.212.190.91:19888/jobhistory）
+\begin{center}
+\includegraphics[width = 12cm]{./Stat1/Stat1-2.jpg}
+\end{center}
+根据Job ID链接进入Job详细页面，如下所示：
+\begin{center}
+\includegraphics[width = 13.5cm]{./Stat1/Stat1-3.jpg}
+\end{center}
+2.~任务~2(Stat 2)\\
+(1)~集群All Application（http://114.212.190.91:8088/）WebUI页面中查看Job的执行状态
+\begin{center}
+\includegraphics[width = 13cm]{./Stat2/Stat2-1.jpg}
+\end{center}
+(2)~WebUIx页面（http://114.212.190.91:19888/jobhistory）
+\begin{center}
+\includegraphics[width = 12cm]{./Stat2/Stat2-2.jpg}
+\end{center}
+根据Job ID链接进入Job详细页面，如下所示：
+\begin{center}
+\includegraphics[width = 13cm]{./Stat2/Stat2-3.jpg}
+\end{center}
+3.~任务~3(Stat 3)\\
+(1)~集群All Application（http://114.212.190.91:8088/）WebUI页面中查看Job的执行状态
+\begin{center}
+\includegraphics[width = 13cm]{./Stat3/Stat3-1.jpg}
+\end{center}
+(2)~WebUIx页面（http://114.212.190.91:19888/jobhistory）
+\begin{center}
+\includegraphics[width = 12cm]{./Stat3/Stat3-2.jpg}
+\end{center}
+根据Job ID链接进入Job详细页面，如下所示：
+\begin{center}
+\includegraphics[width = 13cm]{./Stat3/Stat3-3.jpg}
+\end{center}
+4.~任务~4(Stat 4)\\
+(1)~集群All Application（http://114.212.190.91:8088/）WebUI页面中查看Job的执行状态
+\begin{center}
+\includegraphics[width = 12cm]{./Stat4/Stat4-1.jpg}
+\end{center}
+(2)~WebUIx页面（http://114.212.190.91:19888/jobhistory）
+\begin{center}
+\includegraphics[width = 12cm]{./Stat4/Stat4-2.jpg}
+\end{center}
+根据Job ID链接进入Job详细页面，如下所示：
+\begin{center}
+\includegraphics[width = 13cm]{./Stat4/Stat4-3.jpg}
+\end{center}
+\subsection{预测型任务}
+预测型任务分为两个步骤~Step1~与~Step2~，分别为访问频次预测与RMSE值的计算。下面为两个步骤的执行报告：\\
+1.~Step~1\\
+(1)~集群All Application（http://114.212.190.91:8088/）WebUI页面中查看Job的执行状态
+\begin{center}
+\includegraphics[width = 13cm]{./Pred/Step1/Pred-step1-1.jpg}
+\end{center}
+(2)~WebUIx页面（http://114.212.190.91:19888/jobhistory）
+\begin{center}
+\includegraphics[width = 12cm]{./Pred/Step1/Pred-step1-2.jpg}
+\end{center}
+根据Job ID链接进入Job详细页面，如下所示：
+\begin{center}
+\includegraphics[width = 13.5cm]{./Pred/Step1/Pred-step1-3.jpg}
+\end{center}
+2.~Step~2\\
+(1)~集群All Application（http://114.212.190.91:8088/）WebUI页面中查看Job的执行状态
+\begin{center}
+\includegraphics[width = 13cm]{./Pred/Step2/Pred-step2-1.jpg}
+\end{center}
+(2)~WebUIx页面（http://114.212.190.91:19888/jobhistory）
+\begin{center}
+\includegraphics[width = 12cm]{./Pred/Step2/Pred-step2-2.jpg}
+\end{center}
+根据Job ID链接进入Job详细页面，如下所示：
+\begin{center}
+\includegraphics[width = 13cm]{./Pred/Step2/Pred-step2-3.jpg}
+\end{center}
+\vspace{6mm}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%  参考文献
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\zihao{-5}
+\begin{thebibliography}{99}
+%\setlength{\parskip}{0pt}  %段落之间的竖直距离
+\addtolength{\itemsep}{-0.8 em} % 缩小参考文献间的垂直间距
+  \bibitem{Book} 黄宜华. {\kaishu 深入理解大数据~大数据处理与编程实践}[M]. 北京: 机械工业出版社, 2014.7.
+  \bibitem{Book} 日志分析方法概述 - 百度技术博客 - 51CTO技术博客\\http://baidutech.blog.51cto.com/4114344/743786/
+  \bibitem{Book} 海量Web日志分析 用Hadoop提取KPI统计指标 | 粉丝日志\\http://blog.fens.me/hadoop-mapreduce-log-kpi/
+  \bibitem{Book} 赵龙. 基于hadoop的海量搜索日志分析平台的设计和实现[D]. 大连理工大学, 2013.
+\end{thebibliography}
+\clearpage
+\end{document}
